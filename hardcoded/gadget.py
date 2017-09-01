@@ -1,3 +1,23 @@
+import re
+def find(gadgets, mnem, op1=None, op2=None):
+    for gadget in gadgets:
+        ops = list(filter(lambda x: x != None, [op1, op2]))
+        if gadget.eq(mnem, ops):
+            return gadget
+
+# movLimm, _ = gadget.findByRegex('mov', '%s' % toL8bitReg(reg), r'0x[0-9a-fA-Z]*')
+def findByRegex(gadgets, mnem, op1=None, op2=None):
+    for gadget in gadgets:
+        for i, _mnem in enumerate(gadget.mnems):
+            if not re.match(mnem, _mnem):
+                continue
+            ops = gadget.ops[i]
+            if op1 and not re.match(op1, ops[0]):
+                continue
+            if op2 and not re.match(op2, ops[1]):
+                continue
+            return mnem, ops[0], ops[1]
+
 class Gadget:
     def __init__(self, gadgets, addr=0):
         gadgets = list(filter(lambda x: len(x) > 0, gadgets))
@@ -17,6 +37,10 @@ class Gadget:
 
     def puts(self):
         print(str(self))
+
+    def eq(self, _mnem, _ops):
+        return any([mnem == _mnem and ops == _ops for mnem, ops in zip(self.mnems, self.ops)])
+
 
 def readGadgets(filePath):
     return open(filePath).readlines()

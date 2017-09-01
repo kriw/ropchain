@@ -3,6 +3,8 @@ from gadget import Gadget
 
 class ROPChain:
     def __init__(self, gadgets, base=0):
+        if not isinstance(gadgets, list):
+            gadgets = [gadgets]
         self.gadgets = gadgets
         self.base = base
 
@@ -29,8 +31,36 @@ class ROPChain:
                 payload += p32(gadget.addr)
         return payload
 
+    def chain(self, ropChain):
+        self.gadgets += ropChain.gadgets
+
     def isGadget(self, gadget):
         return len(gadget.mnems) > 0
+
+    def __iadd__(self, ropChain):
+        self.chain(ropChain)
+        return self
+
+    def __add__(self, ropChain):
+        return self.gadgets + ropChain.gadgets
+
+    def __radd__(self, ropChain):
+        return self.__add__(ropChain)
+
+def fromIncAdd(init, dest, inc, add, base=0):
+    ropChain = ROPChain([], base)
+    SIZE = 32
+    while init > 0:
+        init <<= 1
+        init &= (1 << SIZE) - 1
+
+    while dest > 0:
+        ropChain.appendGadget(add)
+        if dest & 1:
+            ropChain.appendGadget(inc)
+        dest >>= 1
+    return ropChain
+
 
 def constructROPChain(remains, movs, leas, xchgs, pops, dests, base):
     ropChain = ROPChain([], base)

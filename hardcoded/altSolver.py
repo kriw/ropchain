@@ -25,7 +25,10 @@ def solveByAlt(dests, gadgets):
                 tmpAns = None
                 break
             tmpAns += tmp
-        ans = min(ans, tmpAns) if tmpAns else ans
+        if len(ans.payload()) == 0:
+            ans = tmpAns
+        elif len(ans.payload()) > len(ans.payload()):
+            ans = tmpAns
 
     for reg in ropChains:
         ans += ropChains[reg]
@@ -34,11 +37,12 @@ def solveByAlt(dests, gadgets):
 def canCalc(dest, reg, gadgets):
     pop = gadget.find(gadgets, 'pop', reg)
     if pop != None:
-        return ropchain.ROPChain(pop)
+        ropChainPop = ropchain.ROPChain(pop)
+        ropChainPop.appendValue(dest)
+        return ropChainPop
 
     inc = gadget.find(gadgets, 'inc', reg)
     add = gadget.find(gadgets, 'add', reg, reg)
-    # print(reg, inc, add)
     #check inc reg, add reg, reg
     if inc != None and add != None:
         ret = ropchain.ROPChain([add] * 32)

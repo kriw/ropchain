@@ -74,15 +74,16 @@ def solve(dests, gadgets, base):
     return ropChain.payload()
 
 def main(argv):
-    # dests = {'eax': 0x41414242, 'ebx': 0x7fff1234}
-    dests = {'eax': 0x41414242, 'esi': 0x7fff1234}
+    dests = {'eax': 0x41414242, 'ebx': 0x7fff1234}
+    # dests = {'eax': 0x41414242, 'esi': 0x7fff1234}
     # dests = {'eax': 0x41414242}
     # gadgets = gadget.parseGadget(open(argv[1]).readlines())
     gadgets = gadget.parseGadget(open(argv[1]).readlines())
     gadgets = list(filter(lambda x: not 'pop' in x.mnems, gadgets))
-    import hoge
+    import altSolver
     # print(repr(hoge.hoge(dests, gadgets).payload()))
-    print(hoge.hoge(dests, gadgets).dump())
+    res = altSolver.solveByAlt(dests, gadgets)
+    res.dump()
     # payload = solve(dests, gadgets, 0)
     # print(repr(payload))
 

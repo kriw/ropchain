@@ -3,10 +3,20 @@ from gadget import Gadget
 
 class ROPChain:
     def __init__(self, gadgets, base=0):
+        self.gadgets = []
+        self.base = base
+
         if not isinstance(gadgets, list):
             gadgets = [gadgets]
-        self.gadgets = gadgets
-        self.base = base
+
+        for gadget in gadgets:
+            if gadget == None:
+                continue
+
+            if isinstance(gadget, ROPChain):
+                self.chain(gadget)
+            else:
+                self.gadgets.append(gadget)
 
     def appendGadget(self, gadget):
         self.gadgets.append(gadget)

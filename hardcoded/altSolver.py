@@ -123,6 +123,9 @@ def altPop(dest, reg, gadgets, canUse):
         pop = gadget.find(gadgets, 'pop', r)
         if pop == None:
             pop = altPop(dest, r, gadgets, canUse - set([r]))
+        else:
+            pop = ropchain.ROPChain(pop)
+            pop.appendValue(dest)
 
         mov = gadget.find(gadgets, 'mov', reg, r)
         if mov == None:

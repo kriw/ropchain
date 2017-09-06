@@ -80,6 +80,7 @@ def isImm(op):
         return False
 
 #WIP
+# | mov reg, other; ret; (add reg, reg; ret;)*; ([inc reg], add reg, reg)*; ret
 '''
 alt pop reg
 | mov reg, imm; ret; (add reg, reg; ret;)*; ([inc reg], add reg, reg)*; ret

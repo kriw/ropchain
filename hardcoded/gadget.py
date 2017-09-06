@@ -5,18 +5,18 @@ def find(gadgets, mnem, op1=None, op2=None):
         if gadget.eq(mnem, ops):
             return gadget
 
-# movLimm, _ = gadget.findByRegex('mov', '%s' % toL8bitReg(reg), r'0x[0-9a-fA-Z]*')
 def findByRegex(gadgets, mnem, op1=None, op2=None):
     for gadget in gadgets:
         for i, _mnem in enumerate(gadget.mnems):
             if not re.match(mnem, _mnem):
                 continue
             ops = gadget.ops[i]
-            if op1 and not re.match(op1, ops[0]):
+            if op1 != None and not re.match(op1, ops[0]):
                 continue
-            if op2 and not re.match(op2, ops[1]):
+            if op2 != None and not re.match(op2, ops[1]):
                 continue
             return mnem, ops[0], ops[1]
+    return None, None, None
 
 class Gadget:
     def __init__(self, gadgets, addr=0):

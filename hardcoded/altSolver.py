@@ -3,7 +3,7 @@ import gadget
 import ropchain
 import copy
 
-def hoge(dests, gadgets):
+def solveByAlt(dests, gadgets):
     regs = set(dests.keys())
     solvable = set()
     ropChains = {}
@@ -20,7 +20,7 @@ def hoge(dests, gadgets):
         canUse = copy.deepcopy(regs)
         for reg in rs:
             canUse.remove(reg)
-            tmp = calc(dests[reg], reg, gadgets, canUse)
+            tmp = altPop(dests[reg], reg, gadgets, canUse)
             if tmp == None:
                 tmpAns = None
                 break
@@ -31,10 +31,6 @@ def hoge(dests, gadgets):
         ans += ropChains[reg]
     return ans
 
-# def altPop(init, dest, reg, gadgets, canUse):
-def calc(dest, reg, gadgets, canUse):
-    return altPop(dest, reg, gadgets, canUse)
-
 def canCalc(dest, reg, gadgets):
     pop = gadget.find(gadgets, 'pop', reg)
     if pop != None:
@@ -42,16 +38,16 @@ def canCalc(dest, reg, gadgets):
 
     inc = gadget.find(gadgets, 'inc', reg)
     add = gadget.find(gadgets, 'add', reg, reg)
-    print(reg, inc, add)
+    # print(reg, inc, add)
     #check inc reg, add reg, reg
     if inc != None and add != None:
-        ropChain = [add] * 32
+        ret = ropchain.ROPChain([add] * 32)
         while dest > 0:
             if dest & 1 == 1:
-                ropChain += [inc]
+                ret.appendGadget(inc)
             dest >>= 1
-            ropChain += [add]
-        return ropchain.ROPChain(ropChain)
+            ret.appendGadget(add)
+        return ret
 
     return None
 #
@@ -99,29 +95,28 @@ def altPop(dest, reg, gadgets, canUse):
         inc = gadget.find(gadgets, 'inc', reg)
         if movLimm != None and addRegReg != None and inc != None:
             while dest > 0:
-                ret = [movLimm] + [addRegReg] * 32
+                ret = ropchain.ROPChain([movLimm] + [addRegReg] * 32)
                 if dest & 1 == 1:
-                    ret += [inc]
+                    ret.appendGadget(inc)
                 dest >>= 1
-                ret += [addRegReg]
-            return ropchain.ROPChain(ret)
+                ret.appendGadget(addRegReg)
+            return ret
 
-    # for r in canUse:
-    #     mov = gadget.find(gadgets, 'mov', reg, r)
-    #     addRegReg = gadget.find(gadgets, 'add', r, r)
-    
     xor = gadget.find(gadgets, 'xor', reg, reg)
     inc = gadget.find(gadgets, 'inc', reg)
     addRegReg = gadget.find(gadgets, 'add', reg, reg)
-    print(reg, xor, inc, addRegReg)
+    if xor == None and addRegReg != None:
+        xor = [addRegReg] * 32
+
+    # print(reg, xor, inc, addRegReg)
     if xor != None and inc != None and addRegReg != None:
+        ret = ropchain.ROPChain(xor)
         while dest > 0:
-            ret = xor
             if dest & 1 == 1:
-                ret += inc
+                ret.appendGadget(inc)
             dest >>= 1
-            ret += addRegReg
-        return ropchain.ROPChain(ret)
+            ret.appendGadget(addRegReg)
+        return ret
 
     for r in canUse:
         pop = gadget.find(gadgets, 'pop', r)
@@ -131,10 +126,10 @@ def altPop(dest, reg, gadgets, canUse):
         mov = gadget.find(gadgets, 'mov', reg, r)
         if mov == None:
             mov = altMov(reg, r, gadgets, canUse - set([reg, r]))
-        print(pop, mov)
 
         if pop != None and mov != None:
             return ropchain.ROPChain([pop, mov])
+
         xchg = gadget.find(gadgets, 'xchg', reg, r)
         if pop != None and xchg != None:
             return ropchain.ROPChain([pop, xchg])
@@ -216,6 +211,7 @@ def altXor(r1, r2, gadgets, cauUse):
     dec = gadget.find(gadgets, 'dec %s' % r1)
     if orGadget != None and andGadget != None and dec != None:
         return ropchain.ROPChain([orGadget, andGadget, dec])
+    return None
 
 '''
 * mov, xor, inc make a cycle

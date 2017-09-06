@@ -1,5 +1,5 @@
 from struct import pack
-from gadget import Gadget
+from gadgets.gadget import Gadget
 
 class ROPChain:
     def __init__(self, gadgets, base=0):
@@ -52,10 +52,15 @@ class ROPChain:
         return self
 
     def __add__(self, ropChain):
-        return self.gadgets + ropChain.gadgets
+        self.gadgets += ropChain.gadgets
+        return self
 
     def __radd__(self, ropChain):
         return self.__add__(ropChain)
+
+    def __mul__(self, times):
+        self.gadgets *= times
+        return self
 
 def fromIncAdd(init, dest, inc, add, base=0):
     ropChain = ROPChain([], base)

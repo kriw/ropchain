@@ -5,13 +5,9 @@ import copy
 
 def solveByAlt(dests, gadgets):
     regs = set(dests.keys())
-    solvable = set()
-    ropChains = {}
-    for reg in regs:
-        tmp = calcByOneReg(dests[reg], reg, gadgets)
-        if tmp != None:
-            ropChains[reg] = tmp
-            solvable.add(reg)
+    ropChains = {reg: calcByOneReg(dests[reg], reg, gadgets) for reg in regs}
+    ropChains = dict((k, v) for k, v in ropChains.iteritems() if v)
+    solvable = set(ropChains.keys())
 
     remains = regs - solvable
     ans = ropchain.ROPChain([])

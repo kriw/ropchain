@@ -1,5 +1,5 @@
 import ropchain
-from gadgets import gadget, pop, mov, dec, neg, xor, inc
+from gadgets import gadget, setVal
 import itertools
 import copy
 
@@ -32,10 +32,10 @@ def solve(dests, gadgets):
     return sum([ropChains[reg] for reg in ropChains], ans)
 
 def calcByOneReg(dest, reg, gadgets):
-    return pop.find(reg, dest, gadgets, set())
+    return setVal.find(reg, dest, gadgets, set())
 
 def calcWithOtherRegs(dest, reg, gadgets, canUse):
-    return pop.find(reg, dest, gadgets, canUse)
+    return setVal.find(reg, dest, gadgets, canUse)
 
 def main(argv):
     # dests = {'eax': 0x41414242, 'ebx': 0x7fff1234}

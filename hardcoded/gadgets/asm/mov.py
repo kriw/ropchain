@@ -1,4 +1,5 @@
-from gadgets import gadget, util, lea, xor, xchg, dec, orGadget, andGadget
+from gadgets.asm import lea, xor, xchg, dec, orGadget, andGadget
+from gadgets import util, gadget
 import ropchain
 
 '''

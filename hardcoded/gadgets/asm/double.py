@@ -1,4 +1,5 @@
-from gadgets import util, add, shl, mov
+from gadgets import util
+from gadgets.asm import add, shl, mov
 
 def find(reg, gadgets, canUse):
     rop = add.find(reg, reg, gadgets, canUse)

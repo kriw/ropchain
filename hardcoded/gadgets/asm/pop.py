@@ -1,5 +1,6 @@
 import ropchain
-from gadgets import gadget, util, mov, xor, inc, xchg, add, toZero, double
+from gadgets.asm import mov, xor, inc, xchg, add, double
+from gadgets import util, gadget, toZero
 import ropchain
 
 '''
@@ -28,12 +29,10 @@ def find(reg, dest, gadgets, canUse):
 xor reg, reg; ret; ([inc reg], add reg, reg)*; ret
 '''
 def fromIncAdd(dest, reg, gadgets, canUse):
-    #TODO replace gadget.find with xor, inc searching routine
     zero = toZero.find(reg, gadgets, canUse)
     _inc = inc.find(reg, gadgets, canUse)
     _double = double.find(reg, gadgets, canUse)
 
-    # print(reg, xor, inc, addRegReg)
     if zero != None and _inc != None and _double != None:
         ret = zero
         while dest > 0:

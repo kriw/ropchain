@@ -1,4 +1,5 @@
-from gadgets import util, gadget, neg, dec, add
+from gadgets import util, gadget
+from gadgets.asm import neg, dec, add
 import ropchain
 
 def find(reg, gadgets, canUse):

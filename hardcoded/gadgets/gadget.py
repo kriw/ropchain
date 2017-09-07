@@ -1,11 +1,12 @@
 import re
-def find(gadgets, mnem, op1=None, op2=None):
+def find(gadgets, mnem, op1=None, op2=None, op3=None):
     for gadget in gadgets:
-        ops = list(filter(lambda x: x != None, [op1, op2]))
+        ops = list(filter(lambda x: x != None, [op1, op2, op3]))
         if gadget.eq(mnem, ops):
             return gadget
+    return None
 
-def findByRegex(gadgets, mnem, op1=None, op2=None):
+def findByRegex(gadgets, mnem, op1=None, op2=None, op3=None):
     for gadget in gadgets:
         for i, _mnem in enumerate(gadget.mnems):
             if not re.match(mnem, _mnem):
@@ -15,7 +16,9 @@ def findByRegex(gadgets, mnem, op1=None, op2=None):
                 continue
             if op2 != None and not re.match(op2, ops[1]):
                 continue
-            return mnem, ops[0], ops[1]
+            if op3 != None and not re.match(op3, ops[2]):
+                continue
+            return mnem, ops[0], ops[1], op[2]
     return None, None, None
 
 class Gadget:

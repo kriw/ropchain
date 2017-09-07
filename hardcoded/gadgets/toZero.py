@@ -1,10 +1,12 @@
 import ropchain
-from gadgets import gadget, util, xor, add
+from gadgets import gadget, util
+from gadgets.asm import xor, add, inc, dec, orGadget, andGadget, movzx
 
 def find(reg, gadgets, canUse):
     rop = fromXor(reg, gadgets, canUse)
     rop = util.optMap(rop, fromAddRegReg, reg, gadgets, canUse)
-    rop = util.optMap(rop, fromOrAndDec, reg, reg, gadgets, canUse)
+    rop = util.optMap(rop, fromOrAndDec, reg, gadgets, canUse)
+    rop = util.optMap(rop, fromMovzx, reg, gadgets, canUse)
     return rop
 
 def fromXor(reg, gadget, canUse):
@@ -24,3 +26,16 @@ def fromOrAndDec(reg, gadgets, canUse):
     if _or != None and _and != None and _dec != None:
         return _or + _and + _dec
     return None
+
+'''
+mov reg[:8], imm; ret; (inc reg; ret)*; movzx reg, reg[:8]; ret
+'''
+def fromMovzx(reg, gadgets, canUse):
+    movLimm, imm, _ = gadget.findByRegex(gadgets, 'mov', '%s' % util.toL8bitReg(reg), r'0x[0-9a-fA-Z]+')
+    _inc = inc.find(reg, gadgets, canUse)
+    _movzx = movzx.find(reg, util.toL8bitReg(reg), gadgets, canUse)
+    if movLimm != None and _inc != None and _movzx != None:
+        return ropchain.ROPChain([movLimm] + _inc * (0x100 - imm) + _movzx)
+    else:
+        return None
+

@@ -1,9 +1,5 @@
 import itertools
-<<<<<<< HEAD
-from gadgets import gadget
-=======
 from gadgets import gadget, pop, mov, dec, neg, xor, inc
->>>>>>> 6dc821f... WIP refatoring for alternative gadgets
 import ropchain
 import copy
 

@@ -1,4 +1,3 @@
-from struct import pack
 from gadgets.gadget import Gadget
 
 class ROPChain:
@@ -61,6 +60,3 @@ class ROPChain:
     def __mul__(self, times):
         self.gadgets *= times
         return self
-
-def p32(p):
-    return pack("<I", p)

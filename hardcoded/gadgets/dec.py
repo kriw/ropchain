@@ -1,4 +1,5 @@
 import ropchain
+from gadgets import gadget
 
 def find(reg, gadgets, canUse):
     dec = gadget.find(gadgets, 'dec', reg)

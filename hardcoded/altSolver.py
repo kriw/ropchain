@@ -64,12 +64,7 @@ def isImm(op):
 
 
 def altPop(dest, reg, gadgets, canUse):
-<<<<<<< HEAD
-    from gadgets import pop
-    return pop.pop(dest, reg, gadgets, canUse)
-=======
     return pop.find(reg, dest, gadgets, canUse)
->>>>>>> 6dc821f... WIP refatoring for alternative gadgets
 
 '''
 alt mov r1, r2
@@ -81,11 +76,7 @@ alt mov r1, r2
 | xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
 '''
 def altMov(r1, r2, gadgets, canUse):
-<<<<<<< HEAD
-    return mov(r1, r2, gadgets, canUse)
-=======
     return mov.find(r1, r2, gadgets, canUse)
->>>>>>> 6dc821f... WIP refatoring for alternative gadgets
 
 def altMul2(dest, reg, gadgets, cauUse):
     res = add.find(reg, reg, gadgets, canUse)
@@ -104,34 +95,3 @@ def altInc(reg, gadgets, canUse):
 
 def altXor(r1, r2, gadgets, canUse):
     return xor.find(r1, r2, gadgets, canUse)
-
-'''
-* mov, xor, inc make a cycle
-
-alt pop reg
-| mov reg, imm; ret; (add reg, reg; ret;)*; ([inc reg], add reg, reg)*; ret
-| mov reg, other; ret; (add reg, reg; ret;)*; ([inc reg], add reg, reg)*; ret
-| xor reg, reg; ret; ([inc reg], add reg, reg)*; ret
-| pop other; ret; mov reg, other; ret
-| pop other; ret; xchg reg, other; ret
-
-alt mov r1, r2
-| lea r1, [r2]; ret
-| lea r1, [r2+imm]; ret; (dec r1; ret)*
-| xor r1, r1; ret; xor r1, r2; ret
-| xor r1, r1; ret; add r1, r2; ret
-| xor r1, r1; ret; or r1, r2; ret
-| xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
-
-alt imul reg, 2
-| add reg, reg
-| mov r2, r1; ret; add r1, r2; ret
-
-alt inc reg
-| neg reg; ret; dec reg; ret dec reg; ret; neg reg; ret
-| lea r2, [r1+1]; ret; mov r1, r2; ret
-
-alt xor reg, reg
-| mov reg[:8], imm; ret; (mov inc; ret)*; movzx reg, reg[:8]; ret
-| or reg, 1; ret; and reg, 1; ret; dec reg; ret
-'''

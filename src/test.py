@@ -4,8 +4,6 @@ from pwn import asm
 import emulator
 import unittest
 
-import sys
-sys.setrecursionlimit(10000)
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict):
         lib = buildFromGadgets(gadgetsDict)
@@ -90,6 +88,14 @@ class TestROPChain(unittest.TestCase):
         }
         self.do(dests, gadgets)
 
+    def testPopXor(self):
+        dests = {'eax': 0x12345678, 'esi': 0x41414141}
+        gadgets = {
+                0x1000: 'pop esi; ret',
+                0x2000: 'xor eax, eax; ret',
+                0x3000: 'xor eax, esi; ret'
+            }
+        self.do(dests, gadgets)
 
 def buildFromGadgets(gadgets):
     addrs = gadgets.keys()

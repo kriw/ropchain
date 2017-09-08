@@ -41,7 +41,7 @@ def fromIncAdd(dest, reg, gadgets, canUse):
                 ret += _inc
             ret += _double
         if bits[31] == '1':
-            ret += _int
+            ret += _inc
 
         return ret
 

@@ -43,6 +43,10 @@ class Gadget:
 def readGadgets(filePath):
     return open(filePath).readlines()
 
+def fromDict(gadgets):
+    return [Gadget(insn.split(';'), addr) for addr, insn in gadgets.iteritems()]
+
+
 def parseGadget(txtGadget):
     addrs = list(map(lambda x: int(x.replace(":", "").split()[0], 16), txtGadget))
     gadgets = list(map(lambda x: ' '.join(x.split()[1:]), txtGadget))

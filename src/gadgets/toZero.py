@@ -13,7 +13,11 @@ def fromXor(reg, gadget, canUse):
     return xor.find(reg, reg, gadget, canUse)
 
 def fromAddRegReg(reg, gadgets, canUse):
-    return add.find(reg, reg, gadgets, canUse) * 32
+    addRegReg =  add.find(reg, reg, gadgets, canUse)
+    if addRegReg != None:
+        return addRegReg * 32
+    else:
+        return None
 
 #move to make 0 routine ?
 '''

@@ -3,7 +3,7 @@ from gadgets import util, gadget
 import ropchain
 
 '''
-alt mov r1, r2
+mov r1, r2
 | lea r1, [r2]; ret
 | lea r1, [r2+imm]; ret; (dec r1; ret)*
 | xor r1, r1; ret; xor r1, r2; ret
@@ -11,8 +11,7 @@ alt mov r1, r2
 | xor r1, r1; ret; or r1, r2; ret
 | xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
 '''
-
-def find(r1, r2, gadgets, canUse):
+def findWithoutXchg(r1, r2, gadgets, canUse):
     rop = gadget.find(gadgets, 'mov', r1, r2)
     if rop != None:
         rop = ropchain.ROPChain(rop)
@@ -21,6 +20,10 @@ def find(r1, r2, gadgets, canUse):
     rop = util.optMap(rop, fromLeaWithOffset, r1, r2, gadgets, canUse)
     rop = util.optMap(rop, fromXorXor, r1, r2, gadgets, canUse)
     rop = util.optMap(rop, fromXorOr, r1, r2, gadgets, canUse)
+    return rop
+
+def find(r1, r2, gadgets, canUse):
+    rop = findWithoutXchg(r1, r2, gadgets, canUse)
     rop = util.optMap(rop, fromXchg, r1, r2, gadgets, canUse)
     return rop
 
@@ -79,10 +82,8 @@ xchg r1, r2
 '''
 def fromXchg(r1, r2, gadgets, canUse):
     _xchg = xchg.find(r1, r2, gadgets, canUse)
-    _mov = find(r2, r1, gadgets, canUse)
+    _mov = findWithoutXchg(r2, r1, gadgets, canUse)
     if _xchg != None and _mov != None:
         return _xchg + _mov + _xchg
     else:
         return None
-
-

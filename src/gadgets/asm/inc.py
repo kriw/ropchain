@@ -1,12 +1,12 @@
 from gadgets import util, gadget
-from gadgets.asm import neg, dec, add
+from gadgets.asm import neg, dec, add, lea
 import ropchain
 
 def find(reg, gadgets, canUse):
     rop = util.optROPChain(gadget.find(gadgets, 'inc', reg))
     rop = util.optMap(rop, fromNegDec, reg, gadgets, canUse)
     rop = util.optMap(rop, fromLeaPlusOne, reg, gadgets, canUse)
-    rop = util.optMap(rop, fromAddOne, reg, gadgets)
+    rop = util.optMap(rop, fromAddOne, reg, gadgets, canUse)
     return rop
 
 def fromNegDec(reg, gadgets, canUse):
@@ -18,7 +18,7 @@ def fromNegDec(reg, gadgets, canUse):
         return None
 
 def fromAddOne(reg, gadgets, canUse):
-    addOne = add.find(reg, '0x1', gadgets)
+    addOne = add.find(reg, '0x1', gadgets, canUse)
     if addOne != None:
         return ropchain.ROPChain(addOne)
     else:
@@ -28,7 +28,9 @@ def fromAddOne(reg, gadgets, canUse):
 def fromLeaPlusOne(reg, gadgets, canUse):
     for r in canUse:
         _lea = lea.find(reg, '[%s+0x1]' % r, gadgets, canUse)
-        _mov = mov.find(r, reg, gadgets, canUse - set([r]))
+        # #FIXME importing module 'mov' make import cycle
+        # _mov = mov.find(r, reg, gadgets, canUse - set([r]))
+        _mov = util.optROPChain(gadget.find(gadgets, 'mov', r, reg))
         if _lea != None and _mov != None:
             return ropchain.ROPChain([_lea, _mov])
     return None

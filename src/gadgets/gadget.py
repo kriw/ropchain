@@ -6,7 +6,7 @@ def find(gadgets, mnem, op1=None, op2=None, op3=None):
             return gadget
     return None
 
-def findByRegex(gadgets, mnem, op1=None, op2=None, op3=None):
+def findByRegex(gadgets, mnem, op1=None, op2=None):
     for gadget in gadgets:
         for i, _mnem in enumerate(gadget.mnems):
             if not re.match(mnem, _mnem):
@@ -16,9 +16,7 @@ def findByRegex(gadgets, mnem, op1=None, op2=None, op3=None):
                 continue
             if op2 != None and not re.match(op2, ops[1]):
                 continue
-            if op3 != None and not re.match(op3, ops[2]):
-                continue
-            return mnem, ops[0], ops[1], op[2]
+            return mnem, ops[0], ops[1]
     return None, None, None
 
 class Gadget:
@@ -35,11 +33,8 @@ class Gadget:
             self.mnems.append(mnem)
             self.ops.append(ops)
 
-    def __str__(self):
-        return hex(self.addr) + " " + '; '.join(map(lambda x: "%s %s" % (x[0], x[1]), zip(self.mnems, self.ops)))
-
-    def puts(self):
-        print(str(self))
+    def puts(self, base=0):
+        print(hex(self.addr + base) + " " + '; '.join(map(lambda x: "%s %s" % (x[0], ', '.join(x[1])), zip(self.mnems, self.ops))))
 
     def eq(self, _mnem, _ops):
         return any([mnem == _mnem and ops == _ops for mnem, ops in zip(self.mnems, self.ops)])

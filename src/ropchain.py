@@ -1,4 +1,5 @@
 from gadgets.gadget import Gadget
+from struct import pack
 
 class ROPChain:
     def __init__(self, gadgets, base=0):
@@ -25,10 +26,13 @@ class ROPChain:
         self.gadgets.append(gadget)
 
     def dump(self):
-        for g in self.gadgets:
-            g.puts()
+        for gadget in self.gadgets:
+            if self.isGadget(gadget):
+                gadget.puts(self.base)
+            else:
+                gadget.puts()
 
-    def setBase(base):
+    def setBase(self, base):
         self.base = base
 
     def payload(self):
@@ -60,3 +64,5 @@ class ROPChain:
     def __mul__(self, times):
         self.gadgets *= times
         return self
+def p32(n):
+    return pack("<I", n)

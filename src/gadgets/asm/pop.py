@@ -21,7 +21,6 @@ def find(reg, dest, gadgets, canUse):
 
     rop = util.optMap(rop, fromIncAdd, dest, reg, gadgets, canUse)
     rop = util.optMap(rop, fromOtherReg, dest, reg, gadgets, canUse)
-    rop = util.optMap(rop, fromCalc, dest, reg, gadgets, canUse)
 
     return rop
 
@@ -35,11 +34,15 @@ def fromIncAdd(dest, reg, gadgets, canUse):
 
     if zero != None and _inc != None and _double != None:
         ret = zero
-        while dest > 0:
-            if dest & 1 == 1:
+        bits = bin(dest)[2:]
+        bits = '0' * (32 - len(bits)) + bits
+        for i in range(31):
+            if bits[i] == '1':
                 ret += _inc
-            dest >>= 1
             ret += _double
+        if bits[31] == '1':
+            ret += _int
+
         return ret
 
     return None
@@ -59,22 +62,5 @@ def fromOtherReg(dest, reg, gadgets, canUse):
         _xchg = xchg.find(reg, r, gadgets, canUse - set(r))
         if _pop != None and _xchg != None:
             return _pop + _xchg
-
-    return None
-
-#FIXME
-def fromCalc(dest, reg, gadgets, canUse):
-    if not reg in ['esi', 'edi']:
-        movLimm, _, _ = gadget.findByRegex(gadgets, 'mov', '%s' % util.toL8bitReg(reg), r'0x[0-9a-fA-Z]*')
-        addRegReg = add.find(reg, reg, gadgets, canUse)
-        _inc = inc.find(reg, gadgets, canUse)
-        if movLimm != None and addRegReg != None and _inc != None:
-            while dest > 0:
-                ret = ropchain.ROPChain([movLimm] + addRegReg * 32)
-                if dest & 1 == 1:
-                    ret += _inc
-                dest >>= 1
-                ret += addRegReg
-            return ret
 
     return None

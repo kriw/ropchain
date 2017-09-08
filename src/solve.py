@@ -3,7 +3,7 @@ from gadgets import gadget, setVal
 import itertools
 import copy
 
-def solve(dests, gadgets):
+def solve(dests, gadgets, base=0):
     regs = set(dests.keys())
     ropChains = {reg: calcByOneReg(dests[reg], reg, gadgets) for reg in regs}
     ropChains = dict((k, v) for k, v in ropChains.iteritems() if v)
@@ -29,25 +29,12 @@ def solve(dests, gadgets):
         elif len(ans.payload()) > len(ans.payload()):
             ans = tmpAns
 
-    return sum([ropChains[reg] for reg in ropChains], ans)
+    r = sum([ropChains[reg] for reg in ropChains], ans)
+    r.setBase(base)
+    return r
 
 def calcByOneReg(dest, reg, gadgets):
     return setVal.find(reg, dest, gadgets, set())
 
 def calcWithOtherRegs(dest, reg, gadgets, canUse):
     return setVal.find(reg, dest, gadgets, canUse)
-
-def main(argv):
-    # dests = {'eax': 0x41414242, 'ebx': 0x7fff1234}
-    # dests = {'eax': 0x41414242, 'esi': 0x7fff1234}
-    dests = {'esi': 0x7fff1234}
-    # dests = {'eax': 0x41414242}
-    gadgets = gadget.parseGadget(open(argv[1]).readlines())
-    gadgets = list(filter(lambda x: not 'pop' in x.mnems, gadgets))
-    # gadgets = list(filter(lambda x: not ('pop' in x.mnems and 'eax' in x.ops[0]), gadgets))
-    res = solve(dests, gadgets)
-    res.dump()
-
-if __name__ == '__main__':
-    import sys
-    main(sys.argv)

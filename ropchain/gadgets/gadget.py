@@ -1,4 +1,9 @@
+from ropchain import frontend
+from subprocess import call
 import re
+import os
+import md5
+
 def find(gadgets, mnem, op1=None, op2=None, op3=None):
     for gadget in gadgets:
         ops = list(filter(lambda x: x != None, [op1, op2, op3]))
@@ -45,6 +50,17 @@ def readGadgets(filePath):
 
 def fromDict(gadgets):
     return [Gadget(insn.split(';'), addr) for addr, insn in gadgets.iteritems()]
+
+#HACKME
+def load(filePath):
+    #check gadgetfile
+    md5sum = ''.join(map(lambda x: "%02x" % ord(x), md5.new(open(filePath).read()).digest()))
+    hashFullPath = "./.cache/ropchain/%s" % md5sum
+    if not os.path.exists(hashFullPath):
+        fullPathFrontEnd = os.path.dirname(os.path.abspath(frontend.__file__))
+        call(["bash", "%s/ropgadget.sh" % fullPathFrontEnd, filePath])
+    lines = readGadgets(hashFullPath)
+    return parseGadget(lines)
 
 
 def parseGadget(txtGadget):

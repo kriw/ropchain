@@ -1,4 +1,4 @@
-import ropchain
+from ropchain import ropchain
 def optMap(x, y, *args):
     if x != None:
         return x

@@ -1,6 +1,6 @@
-from gadgets.asm import lea, xor, xchg, dec, orGadget, andGadget
-from gadgets import util, gadget
-import ropchain
+from ropchain.gadgets.asm import lea, xor, xchg, dec, orGadget, andGadget
+from ropchain.gadgets import util, gadget
+from ropchain import ropchain
 
 '''
 mov r1, r2

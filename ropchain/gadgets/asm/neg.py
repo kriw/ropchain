@@ -1,5 +1,5 @@
-import ropchain
-from gadgets import gadget 
+from ropchain import ropchain
+from ropchain.gadgets import gadget 
 
 def find(reg, gadgets, canUse):
     neg = gadget.find(gadgets, 'neg', reg)

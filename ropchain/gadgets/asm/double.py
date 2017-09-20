@@ -1,5 +1,5 @@
-from gadgets import util
-from gadgets.asm import add, shl, mov
+from ropchain.gadgets import util
+from ropchain.gadgets.asm import add, shl, mov
 
 def find(reg, gadgets, canUse):
     rop = add.find(reg, reg, gadgets, canUse)

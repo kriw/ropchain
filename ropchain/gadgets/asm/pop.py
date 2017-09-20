@@ -1,7 +1,6 @@
-import ropchain
-from gadgets.asm import mov, xor, inc, xchg, add, double
-from gadgets import util, gadget, toZero
-import ropchain
+from ropchain import ropchain
+from ropchain.gadgets.asm import mov, xor, inc, xchg, add, double
+from ropchain.gadgets import util, gadget, toZero
 
 '''
 alt pop reg

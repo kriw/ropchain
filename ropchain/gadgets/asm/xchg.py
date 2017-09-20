@@ -1,5 +1,5 @@
-import ropchain
-from gadgets import util, gadget
+from ropchain import ropchain
+from ropchain.gadgets import util, gadget
 
 def find(r1, r2, gadgets, canUse):
     rop = util.optROPChain(gadget.find(gadgets, 'xchg', r1, r2))

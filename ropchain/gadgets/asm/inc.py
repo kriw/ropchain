@@ -1,6 +1,6 @@
-from gadgets import util, gadget
-from gadgets.asm import neg, dec, add, lea
-import ropchain
+from ropchain.gadgets import util, gadget
+from ropchain.gadgets.asm import neg, dec, add, lea
+from ropchain import ropchain
 
 def find(reg, gadgets, canUse):
     rop = util.optROPChain(gadget.find(gadgets, 'inc', reg))

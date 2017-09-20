@@ -1,6 +1,6 @@
-import ropchain
-from gadgets import gadget, util
-from gadgets.asm import xor, add, inc, dec, orGadget, andGadget, movzx
+from ropchain import ropchain
+from ropchain.gadgets import gadget, util
+from ropchain.gadgets.asm import xor, add, inc, dec, orGadget, andGadget, movzx
 
 def find(reg, gadgets, canUse):
     rop = fromXor(reg, gadgets, canUse)

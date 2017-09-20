@@ -1,4 +1,4 @@
-from solve import solve
+from solver import solve
 from gadgets import gadget
 from pwn import asm
 import emulator

@@ -42,7 +42,6 @@ pip install ropchain
 
 # TODO
 
-* Instruction for how to install.
 * Fix bugs.
 * Support for x64, other archtectures.
 * Generation ROPChain without newline('\n') and space(' ') characters

@@ -35,7 +35,9 @@ Using alternative gadgets in case pop gadgets cannot be used.
 
 # Installation
 
-TODO
+```
+pip install ropchain
+```
 
 # TODO
 

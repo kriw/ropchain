@@ -11,11 +11,12 @@ You can construct ROPChain like following.
 from ropchain import solver
 from ropchain.gadgets import gadget
 
+lib = './libc.so.6'
 base = 0xf7000000
 binsh = base + 0x15b9ab
 regs = {'eax': 0xb, 'ebx': binsh, 'ecx': 0x0, 'edx': 0x0}
 print("libc base: %s" % hex(base))
-gadgets = gadget.parseGadget(open('./gadgetList.txt').readlines())
+gadgets = gadget.load(lib)
 rop = solver.solve(regs, gadgets, base)
 rop.dump()
 

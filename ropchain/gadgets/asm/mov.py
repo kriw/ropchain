@@ -1,6 +1,7 @@
 from ropchain.gadgets.asm import lea, xor, xchg, dec, orGadget, andGadget
 from ropchain.gadgets import util, gadget
 from ropchain import ropchain
+from copy import deepcopy
 
 '''
 mov r1, r2
@@ -44,7 +45,7 @@ lea r1, [r2+n]
 '''
 def fromLeaWithOffset(r1, r2, gadgets, canUse):
     #TODO replace find.ByRegex with wrapper function of lea
-    _lea, _, imm = gadget.findByRegex(gadgets, 'lea', r1, r'\[%s\+0x[0-9a-fA-F]*]')
+    _lea, _, imm = gadget.findByRegex(gadgets, r'lea', r'%s' % r1, r'\[%s\+0x[0-9a-fA-F]*]')
     _dec = dec.find(r1, gadgets, canUse)
     if _lea != None and _dec != None:
         return ropchain.ROPChain([_lea] +  [_dec] * imm)
@@ -84,6 +85,6 @@ def fromXchg(r1, r2, gadgets, canUse):
     _xchg = xchg.find(r1, r2, gadgets, canUse)
     _mov = findWithoutXchg(r2, r1, gadgets, canUse)
     if _xchg != None and _mov != None:
-        return _xchg + _mov + _xchg
+        return deepcopy(_xchg) + _mov + _xchg
     else:
         return None

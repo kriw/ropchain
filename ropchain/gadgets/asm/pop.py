@@ -14,7 +14,7 @@ alt pop reg
 def find(reg, dest, gadgets, canUse):
     rop = gadget.find(gadgets, 'pop', reg)
     if rop != None:
-        rop =  ropchain.ROPChain(rop)
+        rop = ropchain.ROPChain(rop)
         rop.appendValue(dest)
         return rop
 
@@ -52,13 +52,15 @@ pop other; ret; xchg reg, other; ret
 '''
 def fromOtherReg(dest, reg, gadgets, canUse):
     for r in canUse:
-        _pop = find(r, dest, gadgets, canUse - set([r]))
+        _pop = find(r, dest, gadgets, canUse - set([reg, r]))
         _mov = mov.find(reg, r, gadgets, canUse - set([reg, r]))
 
         if _pop != None and _mov != None:
+            # print("dump", reg)
+            # (_pop + _mov).dump()
             return _pop + _mov
 
-        _xchg = xchg.find(reg, r, gadgets, canUse - set(r))
+        _xchg = xchg.find(reg, r, gadgets, canUse - set([reg, r]))
         if _pop != None and _xchg != None:
             return _pop + _xchg
 

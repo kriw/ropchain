@@ -14,7 +14,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.3',
+        version          = '0.1.4',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

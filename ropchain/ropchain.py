@@ -1,5 +1,6 @@
 from gadgets.gadget import Gadget
-from struct import pack
+import struct
+import arch
 
 class ROPChain:
     def __init__(self, gadgets, base=0):
@@ -39,9 +40,9 @@ class ROPChain:
         payload = ''
         for gadget in self.gadgets:
             if self.isGadget(gadget):
-                payload += p32(gadget.addr + self.base)
+                payload += pack(gadget.addr + self.base)
             else:
-                payload += p32(gadget.addr)
+                payload += pack(gadget.addr)
         return payload
 
     def chain(self, ropChain):
@@ -64,5 +65,8 @@ class ROPChain:
     def __mul__(self, times):
         self.gadgets *= times
         return self
-def p32(n):
-    return pack("<I", n)
+def pack(n):
+    if arch.arch == arch.X86:
+        return struct.pack("<I", n)
+    elif arch.arch == arch.AMD64:
+        return struct.pack("<Q", n)

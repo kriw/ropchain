@@ -3,10 +3,14 @@ from gadgets import gadget, setVal
 from struct import pack
 import itertools
 import copy
+import arch
 
 def _solve(dests, gadgets, base, cond, proc):
     #FIXME support for x64
-    regs = {'eax', 'ebx', 'ecx', 'edx', 'edi', 'esi'}
+    if arch.arch == arch.X86:
+        regs = {'eax', 'ebx', 'ecx', 'edx', 'edi', 'esi'}
+    elif arch.arch == arch.AMD64:
+        regs = {'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi'}
     ropChains = {reg: find(dests[reg], reg, gadgets, set(), cond, proc) for reg in dests}
     ropChains = dict((k, v) for k, v in ropChains.iteritems() if v)
     solvable = set(ropChains.keys())

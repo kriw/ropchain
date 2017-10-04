@@ -1,4 +1,4 @@
-from ropchain import ropchain
+from ropchain import ropchain, arch
 from ropchain.gadgets.asm import mov, xor, inc, xchg, add, double
 from ropchain.gadgets import util, gadget, toZero
 
@@ -31,15 +31,19 @@ def fromIncAdd(dest, reg, gadgets, canUse):
     _inc = inc.find(reg, gadgets, canUse)
     _double = double.find(reg, gadgets, canUse)
 
+    if arch.arch == arch.X86:
+        BITS = 32
+    elif arch.arch == arch.AMD64:
+        BITS = 64
     if zero != None and _inc != None and _double != None:
         ret = zero
         bits = bin(dest)[2:]
-        bits = '0' * (32 - len(bits)) + bits
-        for i in range(31):
+        bits = '0' * (BITS - len(bits)) + bits
+        for i in range(BITS-1):
             if bits[i] == '1':
                 ret += _inc
             ret += _double
-        if bits[31] == '1':
+        if bits[BITS-1] == '1':
             ret += _inc
 
         return ret

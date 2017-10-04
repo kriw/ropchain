@@ -6,11 +6,11 @@ import copy
 import arch
 
 def _solve(dests, gadgets, base, cond, proc):
-    #FIXME support for x64
     if arch.arch == arch.X86:
-        regs = {'eax', 'ebx', 'ecx', 'edx', 'edi', 'esi'}
+        regs = {'eax', 'ebx', 'ecx', 'edx', 'edi', 'esi', 'ebp'}
     elif arch.arch == arch.AMD64:
-        regs = {'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi'}
+        regs = {'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp',
+                'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'r15'}
     ropChains = {reg: find(dests[reg], reg, gadgets, set(), cond, proc) for reg in dests}
     ropChains = dict((k, v) for k, v in ropChains.iteritems() if v)
     solvable = set(ropChains.keys())
@@ -37,12 +37,23 @@ def _solve(dests, gadgets, base, cond, proc):
     r.setBase(base)
     return r
 
-def solve(dests, gadgets, base=0):
+def solveWithFile(dests, fileName, base=0):
+    gadgets = gadget.load(fileName)
     return _solve(dests, gadgets, base, lambda x: True, lambda a, b, c, d: None)
 
+def solveWithGadget(dests, gadgets, base=0):
+    return _solve(dests, gadgets, base, lambda x: True, lambda a, b, c, d: None)
+
+#TODO
 def solveAvoidChars(dests, gadgets, avoids=[], base=0):
     avoids = set(avoids)
-    cond = lambda v: avoids & set(pack("<I", v)) == set()
+    def cond(v):
+        chars = set()
+        while v:
+            chars.add(chr(v & 0xff))
+            v >>= 8
+        return avoids & chars == set()
+
     def proc(dest, reg, gadgets, canUse):
         chars = set(map(chr, range(0xff))) - avoids
         print "hoge"

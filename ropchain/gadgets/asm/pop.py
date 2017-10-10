@@ -60,8 +60,6 @@ def fromOtherReg(dest, reg, gadgets, canUse):
         _mov = mov.find(reg, r, gadgets, canUse - set([reg, r]))
 
         if _pop != None and _mov != None:
-            # print("dump", reg)
-            # (_pop + _mov).dump()
             return _pop + _mov
 
         _xchg = xchg.find(reg, r, gadgets, canUse - set([reg, r]))

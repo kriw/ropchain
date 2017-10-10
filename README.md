@@ -40,9 +40,7 @@ pip install ropchain
 
 # TODO
 
-* Fix bugs.
+* Writing test for x64
 * Support for other archtectures.
-* Generating ROPChain without newline('\n') and space(' ') characters
-* Generating ascii printable ROPChain.
-* Rewriting to C++.
+* Reimplement to C++.
 * Automatically finding equivalent gadgets.

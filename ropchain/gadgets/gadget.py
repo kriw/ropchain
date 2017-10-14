@@ -1,4 +1,4 @@
-from ropchain import frontend
+from ropchain import frontend, arch
 from subprocess import call
 import re
 import os
@@ -47,6 +47,8 @@ class Gadget:
             ops = list(map(lambda x: x.strip(), ' '.join(ls[1:]).split(",")))
             self.insns.append(Insn(mnem, ops))
 
+        self.changedRegs = findChangedRegs(self.insns[1:])
+
     def toStr(self, base=0):
         return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))
 
@@ -54,6 +56,38 @@ class Gadget:
         if len(self.insns) == 0:
             return False
         return self.insns[0] == _insn
+
+def containIndirect(insn):
+    return all([re.match('\[.+\]', s) != None for s in [insn.mnem] + insn.ops])
+
+def findRegKind(reg):
+    reg = reg.lower()
+    convReg = lambda x: x if arch.arch == arch.AMD64 else 'e' + x[1:]
+    if reg in ['rax', 'eax', 'ax', 'al', 'ah']:
+        return convReg('rax')
+    elif reg in ['rbx', 'ebx', 'bx', 'bl', 'bh']:
+        return convReg('rbx')
+    elif reg in ['rcx', 'ecx', 'cx', 'cl', 'ch']:
+        return convReg('rcx')
+    elif reg in ['rdx', 'edx', 'dx', 'dl', 'dh']:
+        return convReg('rdx')
+    elif reg in ['rdi', 'edi']:
+        return convReg('rdi')
+    elif reg in ['rsi', 'esi']:
+        return convReg('rsi')
+    elif reg in ['rbp', 'ebp']:
+        return convReg('rbp')
+    elif reg in ['r%d%s' % (i, s) for i in range(8, 16) for s in ['', 'd', 'w', 'b']]:
+        if reg[-1] in ['d', 'w', 'b']:
+            return reg[:-1]
+        return reg
+    else:
+        return None
+
+def findChangedRegs(insns):
+    r1 = {findRegKind(insn.ops[0]) for insn in insns if len(insn.ops) > 0}
+    r2 = {findRegKind(insn.ops[1]) for insn in insns if insn.mnem == 'xchg'}
+    return r1 | r2
 
 def readGadgets(filePath):
     return open(filePath).readlines()

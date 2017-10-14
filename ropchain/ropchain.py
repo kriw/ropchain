@@ -29,9 +29,9 @@ class ROPChain:
     def dump(self):
         for gadget in self.gadgets:
             if self.isGadget(gadget):
-                gadget.puts(self.base)
+                print gadget.toStr(self.base)
             else:
-                gadget.puts()
+                print gadget.toStr()
 
     def setBase(self, base):
         self.base = base

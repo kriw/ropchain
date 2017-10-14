@@ -47,8 +47,8 @@ class Gadget:
             ops = list(map(lambda x: x.strip(), ' '.join(ls[1:]).split(",")))
             self.insns.append(Insn(mnem, ops))
 
-    def puts(self, base=0):
-        print(hex(self.addr + base) + " " + '; '.join(map(str, self.insns)))
+    def toStr(self, base=0):
+        return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))
 
     def __eq__(self, _insn):
         if len(self.insns) == 0:

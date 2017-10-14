@@ -42,7 +42,6 @@ def solveWithFile(dests, fileName, base=0, avoids=[]):
     return solveWithGadget(dests, gadgets, base, avoids)
 
 def solveWithGadget(dests, gadgets, base=0, avoids=[]):
-    # return _solve(dests, gadgets, base, lambda x: True, lambda a, b, c, d: None)
     return solveAvoidChars(dests, gadgets, base, avoids)
 
 #TODO

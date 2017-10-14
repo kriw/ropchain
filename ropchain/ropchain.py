@@ -49,7 +49,7 @@ class ROPChain:
         self.gadgets += ropChain.gadgets
 
     def isGadget(self, gadget):
-        return len(gadget.mnems) > 0
+        return len(gadget.insns) > 0
 
     def __iadd__(self, ropChain):
         self.chain(ropChain)

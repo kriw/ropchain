@@ -5,45 +5,55 @@ import os
 import md5
 
 def find(gadgets, mnem, op1=None, op2=None, op3=None):
+    ops = list(filter(lambda x: x != None, [op1, op2, op3]))
+    insn = Insn(mnem, ops)
     for gadget in gadgets:
-        ops = list(filter(lambda x: x != None, [op1, op2, op3]))
-        if gadget.eq(mnem, ops):
+        if gadget == insn:
             return gadget
     return None
 
 def findByRegex(gadgets, mnem, op1=None, op2=None):
     for gadget in gadgets:
-        for i, _mnem in enumerate(gadget.mnems):
-            if not re.match(mnem, _mnem):
+        for insn in gadget.insns:
+            if not re.match(mnem, insn.mnem):
                 continue
-            ops = gadget.ops[i]
-            if op1 != None and not re.match(op1, ops[0]):
+            if op1 != None and not re.match(op1, insn.ops[0]):
                 continue
-            if op2 != None and not re.match(op2, ops[1]):
+            if op2 != None and not re.match(op2, insn.ops[1]):
                 continue
-            return mnem, ops[0], ops[1]
+            return mnem, insn.ops[0], insn.ops[1]
     return None, None, None
+
+class Insn:
+    def __init__(self, mnem, ops):
+        self.mnem = mnem
+        self.ops = ops
+    def __str__(self):
+        return '%s %s' % (self.mnem, ', '.join(self.ops))
+    def __eq__(a, b):
+        if not a or not b:
+            return False
+        return a.mnem == b.mnem and a.ops == b.ops
 
 class Gadget:
     def __init__(self, gadgets, addr=0):
         gadgets = list(filter(lambda x: len(x) > 0, gadgets))
         self.addr = addr
-        self.mnems = []
-        self.ops = []
+        self.insns = []
         for gadget in gadgets:
             ls = gadget.split()
             ls = list(map(lambda x: x.strip(), ls))
             mnem = ls[0]
             ops = list(map(lambda x: x.strip(), ' '.join(ls[1:]).split(",")))
-            self.mnems.append(mnem)
-            self.ops.append(ops)
+            self.insns.append(Insn(mnem, ops))
 
     def puts(self, base=0):
-        print(hex(self.addr + base) + " " + '; '.join(map(lambda x: "%s %s" % (x[0], ', '.join(x[1])), zip(self.mnems, self.ops))))
+        print(hex(self.addr + base) + " " + '; '.join(map(str, self.insns)))
 
-    def eq(self, _mnem, _ops):
-        return any([mnem == _mnem and ops == _ops for mnem, ops in zip(self.mnems, self.ops)])
-
+    def __eq__(self, _insn):
+        if len(self.insns) == 0:
+            return False
+        return self.insns[0] == _insn
 
 def readGadgets(filePath):
     return open(filePath).readlines()

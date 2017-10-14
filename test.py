@@ -1,14 +1,14 @@
-from solver import solve
-from gadgets import gadget
+from ropchain.solver import solveWithGadget
+from ropchain.gadgets import gadget
+from ropchain import emulator
 from pwn import asm
-import emulator
 import unittest
 
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict):
         lib = buildFromGadgets(gadgetsDict)
         gadgets = gadget.fromDict(gadgetsDict)
-        payload = solve(dests, gadgets, emulator.LIB_BASE).payload()
+        payload = solveWithGadget(dests, gadgets, emulator.LIB_BASE).payload()
         testResult = emulator.execROPChain(payload, lib)
         self.assertTrue(isCorrect(dests, testResult))
 

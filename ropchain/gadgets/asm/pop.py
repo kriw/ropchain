@@ -12,7 +12,7 @@ alt pop reg
 '''
 
 def find(reg, dest, gadgets, canUse):
-    rop = gadget.find(gadgets, 'pop', reg)
+    rop, canUse = gadget.find(gadgets, canUse, 'pop', reg)
     if rop != None:
         rop = ropchain.ROPChain(rop)
         rop.appendValue(dest)

@@ -1,6 +1,6 @@
 from ropchain.gadgets import util, gadget
 
 def find(op1, op2, gadgets, canUse):
-    rop = util.optROPChain(gadget.find(gadgets, 'and', op1, op2))
-    return rop
+    rop, canUse = gadget.find(gadgets, canUse, 'and', op1, op2)
+    return util.optROPChain(rop)
 

@@ -3,7 +3,8 @@ from ropchain.gadgets.asm import neg, dec, add, lea
 from ropchain import ropchain
 
 def find(reg, gadgets, canUse):
-    rop = util.optROPChain(gadget.find(gadgets, 'inc', reg))
+    rop, canUse = gadget.find(gadgets, canUse, 'inc', reg)
+    rop = util.optROPChain(rop)
     rop = util.optMap(rop, fromNegDec, reg, gadgets, canUse)
     rop = util.optMap(rop, fromLeaPlusOne, reg, gadgets, canUse)
     rop = util.optMap(rop, fromAddOne, reg, gadgets, canUse)

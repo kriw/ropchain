@@ -65,6 +65,7 @@ class ROPChain:
     def __mul__(self, times):
         self.gadgets *= times
         return self
+
 def pack(n):
     if arch.arch == arch.X86:
         return struct.pack("<I", n)

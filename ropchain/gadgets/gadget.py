@@ -4,25 +4,27 @@ import re
 import os
 import md5
 
-def find(gadgets, mnem, op1=None, op2=None, op3=None):
+def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
     ops = list(filter(lambda x: x != None, [op1, op2, op3]))
     insn = Insn(mnem, ops)
     for gadget in gadgets:
-        if gadget == insn:
-            return gadget
-    return None
+        if gadget == insn and gadget.canUsed(canUse):
+            return gadget, canUse - gadget.changedRegs
+    return None, canUse
 
-def findByRegex(gadgets, mnem, op1=None, op2=None):
+def findByRegex(gadgets, canUse, mnem, op1=None, op2=None):
     for gadget in gadgets:
         for insn in gadget.insns:
+            if not gadget.canUsed(canUse):
+                continue
             if not re.match(mnem, insn.mnem):
                 continue
             if op1 != None and not re.match(op1, insn.ops[0]):
                 continue
             if op2 != None and not re.match(op2, insn.ops[1]):
                 continue
-            return mnem, insn.ops[0], insn.ops[1]
-    return None, None, None
+            return mnem, insn.ops[0], insn.ops[1], canUse - gadgets.changedRegs
+    return None, None, None, canUse
 
 class Insn:
     def __init__(self, mnem, ops):
@@ -48,6 +50,9 @@ class Gadget:
             self.insns.append(Insn(mnem, ops))
 
         self.changedRegs = findChangedRegs(self.insns[1:])
+
+    def canUsed(self, regCanUse):
+        return self.changedRegs & regCanUse == set()
 
     def toStr(self, base=0):
         return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))

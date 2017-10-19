@@ -13,10 +13,8 @@ mov r1, r2
 | xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
 '''
 def findWithoutXchg(r1, r2, gadgets, canUse):
-    rop = gadget.find(gadgets, 'mov', r1, r2)
-    if rop != None:
-        rop = ropchain.ROPChain(rop)
-        return rop
+    rop, canUse = gadget.find(gadgets, canUse, 'mov', r1, r2)
+    rop = util.optROPChain(rop)
     rop = util.optMap(rop, fromLea, r1, r2, gadgets, canUse)
     rop = util.optMap(rop, fromLeaWithOffset, r1, r2, gadgets, canUse)
     rop = util.optMap(rop, fromXorXor, r1, r2, gadgets, canUse)
@@ -45,7 +43,7 @@ lea r1, [r2+n]
 '''
 def fromLeaWithOffset(r1, r2, gadgets, canUse):
     #TODO replace find.ByRegex with wrapper function of lea
-    _lea, _, imm = gadget.findByRegex(gadgets, r'lea', r'%s' % r1, r'\[%s\+0x[0-9a-fA-F]*]')
+    _lea, _, imm, canUse = gadget.findByRegex(gadgets, canUse, r'lea', r'%s' % r1, r'\[%s\+0x[0-9a-fA-F]*]')
     _dec = dec.find(r1, gadgets, canUse)
     if _lea != None and _dec != None:
         return ropchain.ROPChain([_lea] +  [_dec] * imm)

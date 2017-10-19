@@ -1,10 +1,6 @@
 from ropchain import ropchain
-from ropchain.gadgets import gadget 
+from ropchain.gadgets import gadget, util
 
 def find(reg, gadgets, canUse):
-    neg = gadget.find(gadgets, 'neg', reg)
-    if neg != None:
-        return ropchain.ROPChain(neg)
-    else:
-        return None
-
+    neg, canUse = gadget.find(gadgets, canUse, 'neg', reg)
+    return util.optROPChain(neg)

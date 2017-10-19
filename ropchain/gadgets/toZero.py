@@ -35,7 +35,7 @@ def fromOrAndDec(reg, gadgets, canUse):
 mov reg[:8], imm; ret; (inc reg; ret)*; movzx reg, reg[:8]; ret
 '''
 def fromMovzx(reg, gadgets, canUse):
-    movLimm, imm, _ = gadget.findByRegex(gadgets, 'mov', '%s' % util.toL8bitReg(reg), r'0x[0-9a-fA-Z]+')
+    movLimm, imm, _, canUse = gadget.findByRegex(gadgets, canUse, 'mov', '%s' % util.toL8bitReg(reg), r'0x[0-9a-fA-Z]+')
     _inc = inc.find(reg, gadgets, canUse)
     _movzx = movzx.find(reg, util.toL8bitReg(reg), gadgets, canUse)
     if movLimm != None and _inc != None and _movzx != None:

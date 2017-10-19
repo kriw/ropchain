@@ -7,8 +7,10 @@ import md5
 def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
     ops = list(filter(lambda x: x != None, [op1, op2, op3]))
     insn = Insn(mnem, ops)
+    gadgets = sorted(gadgets, cmp=lambda a, b: len(a.insns) < len(b.insns))
     for gadget in gadgets:
         if gadget == insn and gadget.canUsed(canUse):
+            print gadget.changedRegs, canUse
             return gadget, canUse - gadget.changedRegs
     return None, canUse
 
@@ -52,7 +54,7 @@ class Gadget:
         self.changedRegs = findChangedRegs(self.insns[1:])
 
     def canUsed(self, regCanUse):
-        return self.changedRegs & regCanUse == set()
+        return self.changedRegs & regCanUse == self.changedRegs
 
     def toStr(self, base=0):
         return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))

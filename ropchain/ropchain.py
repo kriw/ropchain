@@ -11,7 +11,7 @@ class ROPChain:
             gadgets = [gadgets]
 
         for gadget in gadgets:
-            if gadget == None:
+            if gadget is None:
                 continue
 
             if isinstance(gadget, ROPChain):

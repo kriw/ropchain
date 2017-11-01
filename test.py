@@ -10,8 +10,6 @@ class TestROPChain(unittest.TestCase):
         gadgets = gadget.fromDict(gadgetsDict)
         payload = solveWithGadget(dests, gadgets, emulator.LIB_BASE).payload()
         testResult = emulator.execROPChain(payload, lib)
-        print dests
-        print testResult
         self.assertTrue(isCorrect(dests, testResult))
 
     def testPop(self):

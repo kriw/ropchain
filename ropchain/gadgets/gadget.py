@@ -7,7 +7,6 @@ import md5
 def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
     ops = list(filter(lambda x: x != None, [op1, op2, op3]))
     insn = Insn(mnem, ops)
-    # gadgets = sorted(gadgets, cmp=lambda a, b: len(a.insns) < len(b.insns))
     for gadget in gadgets:
         if gadget.insns[0] == insn and gadget.canUsed(canUse):
             return gadget, canUse - gadget.changedRegs

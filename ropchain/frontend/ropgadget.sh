@@ -5,8 +5,7 @@ dir="./.cache/ropchain/"
 if [ ! -e $save ]
 then
     tmpFile='/tmp/tmpGadget.txt'
-    rp++ --file=$file --rop=4 > $tmpFile
-    # rp++ --file=$file --rop=1 --unique > $tmpFile
+    rp++ --file=$file --rop=6 > $tmpFile
     sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $tmpFile
     grep '0x' $tmpFile |
     grep -v ']' | #eliminate memory reference

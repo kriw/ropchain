@@ -68,7 +68,7 @@ def containIndirect(insn):
     return all([re.match('\[.+\]', s) != None for s in [insn.mnem] + insn.ops])
 
 def findRegKind(reg):
-    reg = reg.lower()
+    reg = reg.lower().strip()
     convReg = lambda x: x if arch.arch == arch.AMD64 else 'e' + x[1:]
     if reg in ['rax', 'eax', 'ax', 'al', 'ah']:
         return convReg('rax')
@@ -84,6 +84,8 @@ def findRegKind(reg):
         return convReg('rsi')
     elif reg in ['rbp', 'ebp']:
         return convReg('rbp')
+    elif reg in ['rsp', 'esp']:
+        return convReg('rsp')
     elif reg in ['r%d%s' % (i, s) for i in range(8, 16) for s in ['', 'd', 'w', 'b']]:
         if reg[-1] in ['d', 'w', 'b']:
             return reg[:-1]
@@ -122,5 +124,8 @@ def parseGadget(txtGadget):
     gadgets = list(map(lambda x: ' '.join(x.split()[1:]), txtGadget))
     gadgets = list(map(lambda x: list(map(lambda y: y.strip(),x.split(';'))), gadgets))
     gadgets, addrs = zip(*list(filter(lambda xs: any([x == 'ret' for x in xs[0]]), zip(gadgets, addrs))))
-    return list(map(lambda x: Gadget(x[0], x[1]), zip(gadgets, addrs)))
+    gadgets, addrs = zip(*list(filter(lambda xs: all(['leave' not in x for x in xs[0]]), zip(gadgets, addrs))))
+    gadgets, addrs = zip(*list(filter(lambda xs: all(['enter' not in x for x in xs[0]]), zip(gadgets, addrs))))
+    # print '\n'.join(map(str, gadgets))
 
+    return list(map(lambda x: Gadget(x[0], x[1]), zip(gadgets, addrs)))

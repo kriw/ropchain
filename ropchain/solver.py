@@ -36,6 +36,8 @@ def _solve(dests, gadgets, base, cond, proc):
             ans = tmpAns
 
     r = sum([ropChains[reg] for reg in ropChains], ans)
+    if r is None:
+        return None
     r.setBase(base)
     return r
 

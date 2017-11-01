@@ -10,7 +10,7 @@ def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
     gadgets = sorted(gadgets, cmp=lambda a, b: len(a.insns) < len(b.insns))
     for gadget in gadgets:
         if gadget == insn and gadget.canUsed(canUse):
-            print gadget.changedRegs, canUse
+            # print gadget.changedRegs, canUse
             return gadget, canUse - gadget.changedRegs
     return None, canUse
 
@@ -94,7 +94,10 @@ def findRegKind(reg):
 def findChangedRegs(insns):
     r1 = {findRegKind(insn.ops[0]) for insn in insns if len(insn.ops) > 0}
     r2 = {findRegKind(insn.ops[1]) for insn in insns if insn.mnem == 'xchg'}
-    return r1 | r2
+    r12 = r1 | r2
+    if None in r12:
+        r12.remove(None)
+    return r12
 
 def readGadgets(filePath):
     return open(filePath).readlines()

@@ -7,10 +7,9 @@ import md5
 def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
     ops = list(filter(lambda x: x != None, [op1, op2, op3]))
     insn = Insn(mnem, ops)
-    gadgets = sorted(gadgets, cmp=lambda a, b: len(a.insns) < len(b.insns))
+    # gadgets = sorted(gadgets, cmp=lambda a, b: len(a.insns) < len(b.insns))
     for gadget in gadgets:
         if gadget == insn and gadget.canUsed(canUse):
-            # print gadget.changedRegs, canUse
             return gadget, canUse - gadget.changedRegs
     return None, canUse
 
@@ -59,10 +58,11 @@ class Gadget:
     def toStr(self, base=0):
         return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))
 
-    def __eq__(self, _insn):
-        if len(self.insns) == 0:
+
+    def __eq__(self, gadget):
+        if len(self.insns) != len(gadget.insns):
             return False
-        return self.insns[0] == _insn
+        return all(map(lambda x, y: x == y, self.insns, gadget.insns))
 
 def containIndirect(insn):
     return all([re.match('\[.+\]', s) != None for s in [insn.mnem] + insn.ops])

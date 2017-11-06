@@ -86,16 +86,15 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return None
 
     gadgets = list(filter(lambda g: cond(g.addr + base), gadgets))
-    #TODO O(n^2) -> O(nlogn)
     def uniq(xs):
-        ret = []
-        for x in xs:
-            if x not in ret:
+        ret = [xs[0]]
+        for x in xs[1:]:
+            if x != ret[-1]:
                 ret.append(x)
         return ret
-    #It take too much time
     gadgets = sorted(gadgets, cmp=lambda a, b: len(a.changedRegs) < len(b.changedRegs))
     gadgets = uniq(gadgets)
+
     return _solve(dests, gadgets, base, cond, proc)
 
 def find(reg, dest, gadgets, canUse, cond, proc):

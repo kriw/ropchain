@@ -73,14 +73,14 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
                     filteredGadgets = list(filter(lambda g: g.eq('pop', r), filteredGadgets))
                 return find(reg, dest, filteredGadgets, canUse, lambda x: True, lambda a, b, c, d: None)
 
-            left = (left << 8) | a
-            right = (right << 8) | b
+            left = left | ab[0] << (i * 8)
+            right = right | ab[1] << (i * 8)
 
         ropChainLeft = find(reg, left, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
         for r1 in canUse:
             xor = asm.xor.find(reg, r1, gadgets, canUse - set([reg, r1]))
             if xor != None:
-                ropChainRight = find(r1, left, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
+                ropChainRight = find(r1, right, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
                 return ropChainLeft + ropChainRight + xor
 
         return None

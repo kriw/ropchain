@@ -1,14 +1,12 @@
 from unicorn import *
 from unicorn.x86_const import *
-from pwn import asm
 import solver
 from struct import unpack
 import sys
 # memory address where emulation starts
 ADDRESS = 0x1000000
-STACK_BASE = 0xf7000000
-LIB_BASE = 0x7f000000
 STACK_SIZE = 200 * 1024 * 1024
+STACK_BASE = 0xf7000000
 DEST = 0x0
 get_eax = lambda :mu.reg_read(UC_X86_REG_EAX)
 get_ebx = lambda :mu.reg_read(UC_X86_REG_EBX)
@@ -21,24 +19,25 @@ def align(n):
         ret += 0x1000
     return ret
 
-def init(payload, lib):
+def init(payload, lib, libBase):
     LIB_SIZE = align(len(lib))
 
     # initialize unicorn emulator
     mu = Uc(UC_ARCH_X86, UC_MODE_32)
     mu.mem_map(ADDRESS, 0x1000)
-    mu.mem_map(LIB_BASE, LIB_SIZE)
+    mu.mem_map(libBase, LIB_SIZE)
     mu.mem_map(STACK_BASE, STACK_SIZE)
     mu.mem_map(DEST, 0x1000)
 
     mu.reg_write(UC_X86_REG_ESP, STACK_BASE + STACK_SIZE / 2)
-    mu.mem_write(ADDRESS, asm('ret'))
-    mu.mem_write(LIB_BASE, lib)
+    #ret: \xc3
+    mu.mem_write(ADDRESS, '\xc3')
+    mu.mem_write(libBase, lib)
     mu.mem_write(mu.reg_read(UC_X86_REG_ESP), payload)
     return mu
 
-def execROPChain(payload, lib, output=False):
-    mu = init(payload, lib)
+def execROPChain(payload, lib, libBase, output=False):
+    mu = init(payload, lib, libBase)
     # emulate code in infinite time & unlimited instructions
     mu.emu_start(ADDRESS, DEST)
 

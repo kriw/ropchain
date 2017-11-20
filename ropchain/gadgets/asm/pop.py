@@ -14,8 +14,7 @@ alt pop reg
 def find(reg, dest, gadgets, canUse):
     rop, canUse = gadget.find(gadgets, canUse, 'pop', reg)
     if rop != None:
-        rop = ropchain.ROPChain(rop)
-        rop.appendValue(dest)
+        rop = ropchain.ROPChain(rop, dest)
         return rop
 
     rop = util.optMap(rop, fromIncAdd, dest, reg, gadgets, canUse)

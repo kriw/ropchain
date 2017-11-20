@@ -58,7 +58,8 @@ def fromXorXor(r1, r2, gadgets, canUse):
     xorR1R1 = xor.find(r1, r1, gadgets, canUse)
     xorR1R2 = xor.find(r1, r2, gadgets, canUse)
     if xorR1R1 != None and xorR1R2 != None:
-        return ropchain.ROPChain([xorR1R1, xorR1R2])
+        r = ropchain.ROPChain
+        return r(xorR1R1) + r(xorR1R2)
     else:
         return None
 

@@ -18,9 +18,10 @@ def _solve(dests, gadgets, base, cond, proc):
     solvable = set(ropChains.keys())
 
     remains = set(dests.keys()) - solvable
-    ans = None
+    ans = ropchain.ROPChain(None)
+
     for rs in itertools.permutations(remains):
-        tmpAns = ropchain.ROPChain([])
+        tmpAns = ropchain.ROPChain(None)
         canUse = copy.deepcopy(regs)
         for reg in rs:
             canUse.remove(reg)
@@ -28,9 +29,12 @@ def _solve(dests, gadgets, base, cond, proc):
             if tmp == None:
                 tmpAns = None
                 break
-            tmpAns += tmp
+            tmpAns = tmpAns + tmp if tmpAns else tmp
 
-        if ans == None:
+        if tmpAns is None:
+            continue
+
+        if ans.isEmpty():
             ans = tmpAns
         elif tmpAns != None and len(ans.payload()) > len(tmpAns.payload()):
             ans = tmpAns

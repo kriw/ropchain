@@ -97,6 +97,22 @@ class TestROPChain(unittest.TestCase):
             }
         self.do(dests, gadgets)
 
+    def testPopPop1(self):
+        dests = {'eax': 0x12345678, 'esi': 0x41414141}
+        gadgets = {
+                0x1000: 'pop esi; pop eax; ret',
+                0x2000: 'pop eax; ret',
+            }
+        self.do(dests, gadgets)
+
+    def testPopPop2(self):
+        dests = {'eax': 0x12345678, 'esi': 0x41414141}
+        gadgets = {
+                0x1000: 'pop eax; pop esi; ret',
+                0x2000: 'pop esi; ret',
+            }
+        self.do(dests, gadgets)
+
     def testAscii(self):
         libBase = 0x55550000
         avoids = set([i for i in range(0x100) if not 0x20 <= i <= 0x7e])

@@ -31,7 +31,8 @@ def fromLeaPlusOne(reg, gadgets, canUse):
         _lea = lea.find(reg, '[%s+0x1]' % r, gadgets, canUse)
         # #FIXME importing module 'mov' make import cycle
         # _mov = mov.find(r, reg, gadgets, canUse - set([r]))
-        _mov = util.optROPChain(gadget.find(gadgets, 'mov', r, reg))
+        _mov, canUse  = gadget.find(gadgets, 'mov', r, reg)
+        _mov = util.optROPChain(_mov)
         if _lea != None and _mov != None:
             return ropchain.ROPChain([_lea, _mov])
     return None

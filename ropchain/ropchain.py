@@ -3,35 +3,38 @@ import struct
 import arch
 
 class ROPChain:
-    def __init__(self, gadgets, base=0):
+    def __init__(self, gadget, value=None, base=0):
         self.gadgets = []
         self.base = base
 
-        if not isinstance(gadgets, list):
-            gadgets = [gadgets]
+        if gadget is None:
+            return
 
-        for gadget in gadgets:
-            if gadget is None:
-                continue
+        if isinstance(gadget, ROPChain):
+            self.chain(gadget)
+        else:
+            self.appendGadget(gadget, value)
+            
+    def isEmpty(self):
+        return len(self.gadgets) == 0
 
-            if isinstance(gadget, ROPChain):
-                self.chain(gadget)
-            else:
-                self.gadgets.append(gadget)
-
-    def appendGadget(self, gadget):
+    def appendGadget(self, gadget, value=None):
         self.gadgets.append(gadget)
+        payload = ''
+        if value is None:
+            payload = 'A' * gadget.useStack
+        else:
+            payload = pack(value) + 'A' * (gadget.useStack - arch.word())
 
-    def appendValue(self, value):
-        gadget = Gadget([], value)
-        self.gadgets.append(gadget)
+        if len(payload) > 0:
+            self.gadgets.append(payload);
 
     def dump(self):
         for gadget in self.gadgets:
-            if self.isGadget(gadget):
+            if isinstance(gadget, Gadget):
                 print gadget.toStr(self.base)
             else:
-                print gadget.toStr()
+                print gadget
 
     def setBase(self, base):
         self.base = base
@@ -39,17 +42,17 @@ class ROPChain:
     def payload(self):
         payload = ''
         for gadget in self.gadgets:
-            if self.isGadget(gadget):
+            if isinstance(gadget, Gadget):
                 payload += pack(gadget.addr + self.base)
+            elif isinstance(gadget, basestring):
+                payload += gadget
             else:
-                payload += pack(gadget.addr)
+                print 'payload: something is wrong'
+                # payload += pack(gadget.addr)
         return payload
 
     def chain(self, ropChain):
         self.gadgets += ropChain.gadgets
-
-    def isGadget(self, gadget):
-        return len(gadget.insns) > 0
 
     def __iadd__(self, ropChain):
         self.chain(ropChain)

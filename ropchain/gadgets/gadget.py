@@ -49,6 +49,7 @@ class Gadget:
             ops = list(map(lambda x: x.strip(), ' '.join(ls[1:]).split(",")))
             self.insns.append(Insn(mnem, ops))
 
+        self.useStack = sum(map(countUseStack, self.insns))
         self.changedRegs = findChangedRegs(self.insns[1:])
 
     def canUsed(self, regCanUse):
@@ -57,11 +58,22 @@ class Gadget:
     def toStr(self, base=0):
         return hex(self.addr + base) + " " + '; '.join(map(str, self.insns))
 
-
     def __eq__(self, gadget):
         if len(self.insns) != len(gadget.insns):
             return False
         return all(map(lambda x, y: x == y, self.insns, gadget.insns))
+
+def countUseStack(insn):
+    mnem, ops = insn.mnem, insn.ops
+    # print 'mnem: %s, ops: %s' % (mnem, str(ops))
+    if mnem == 'pop':
+        return arch.word() * 1
+    elif mnem == 'popad':
+        return arch.word() * 7
+    elif mnem == 'add' and (ops[0] == 'esp' or ops[0] == 'rsp'):
+        return arch.word() * int(ops[1][2:], 16)
+    else:
+        return 0
 
 def containIndirect(insn):
     return all([re.match('\[.+\]', s) != None for s in [insn.mnem] + insn.ops])

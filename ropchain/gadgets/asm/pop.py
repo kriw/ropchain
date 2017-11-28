@@ -13,19 +13,19 @@ alt pop reg
 
 def find(reg, dest, gadgets, canUse):
     rop, canUse = gadget.find(gadgets, canUse, 'pop', reg)
-    if rop != None:
+    if rop is not None:
         rop = ropchain.ROPChain(rop, dest)
         return rop
 
-    rop = util.optMap(rop, fromIncAdd, dest, reg, gadgets, canUse)
-    rop = util.optMap(rop, fromOtherReg, dest, reg, gadgets, canUse)
+    rop = util.optMap(rop, fromIncAdd, reg, dest, gadgets, canUse)
+    rop = util.optMap(rop, fromOtherReg, reg, dest, gadgets, canUse)
 
     return rop
 
 '''
 xor reg, reg; ret; ([inc reg], add reg, reg)*; ret
 '''
-def fromIncAdd(dest, reg, gadgets, canUse):
+def fromIncAdd(reg, dest, gadgets, canUse):
     zero = toZero.find(reg, gadgets, canUse)
     _inc = inc.find(reg, gadgets, canUse)
     _double = double.find(reg, gadgets, canUse)
@@ -53,7 +53,7 @@ def fromIncAdd(dest, reg, gadgets, canUse):
 pop other; ret; mov reg, other; ret
 pop other; ret; xchg reg, other; ret
 '''
-def fromOtherReg(dest, reg, gadgets, canUse):
+def fromOtherReg(reg, dest, gadgets, canUse):
     for r in canUse:
         _pop = find(r, dest, gadgets, canUse - set([reg, r]))
         _mov = mov.find(reg, r, gadgets, canUse - set([reg, r]))

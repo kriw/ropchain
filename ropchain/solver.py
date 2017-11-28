@@ -26,7 +26,7 @@ def _solve(dests, gadgets, base, cond, proc):
         for reg in rs:
             canUse.remove(reg)
             tmp = find(reg, dests[reg], gadgets, canUse, cond, proc)
-            if tmp == None:
+            if tmp is None:
                 tmpAns = None
                 break
             tmpAns = tmpAns + tmp if tmpAns else tmp
@@ -40,7 +40,7 @@ def _solve(dests, gadgets, base, cond, proc):
             ans = tmpAns
 
     r = sum([ropChains[reg] for reg in ropChains], ans)
-    if r is None:
+    if len(r.payload()) == 0:
         return None
     r.setBase(base)
     return r
@@ -63,6 +63,10 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return avoids & chars == set()
 
     def proc(reg, dest, gadgets, canUse):
+        if dest == 0:
+            rop = find(reg, dest, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
+            if rop is not None:
+                return rop
         chars = set(range(0xff)) - avoids
         xorTable = [None] * 0x100
         for a in chars:
@@ -98,6 +102,8 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return ret
     gadgets = sorted(gadgets, cmp=lambda a, b: len(a.changedRegs) < len(b.changedRegs))
     gadgets = uniq(gadgets)
+    for g in gadgets:
+        print g.toStr()
 
     return _solve(dests, gadgets, base, cond, proc)
 

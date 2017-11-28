@@ -63,6 +63,9 @@ class Gadget:
             return False
         return all(map(lambda x, y: x == y, self.insns, gadget.insns))
 
+    def __ne__(self, gadget):
+        return not self.__eq__(gadget)
+
 def countUseStack(insn):
     mnem, ops = insn.mnem, insn.ops
     # print 'mnem: %s, ops: %s' % (mnem, str(ops))

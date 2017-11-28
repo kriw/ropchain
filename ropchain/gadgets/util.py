@@ -5,7 +5,7 @@ def optMap(x, y, *args):
     else:
         return y(*args)
 
-optROPChain = lambda x: ropchain.ROPChain(x) if x != None else None
+optROPChain = lambda x: ropchain.ROPChain(x) if x is not None else None
 
 def toH8bitReg(reg):
     if reg == 'eax':

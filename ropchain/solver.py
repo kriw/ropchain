@@ -1,5 +1,5 @@
 import ropchain
-from gadgets import gadget, setVal, toZero, asm
+from gadgets import gadget, setVal, toZero, asm, util
 import arch
 from struct import pack
 import itertools
@@ -18,7 +18,7 @@ def _solve(dests, gadgets, base, cond, proc):
     solvable = set(ropChains.keys())
 
     remains = set(dests.keys()) - solvable
-    ans = ropchain.ROPChain(None)
+    ans = None
     isFail = True
 
     for rs in itertools.permutations(remains):
@@ -35,14 +35,11 @@ def _solve(dests, gadgets, base, cond, proc):
         if tmpAns is None:
             continue
         isFail = False
-        if ans.isEmpty():
-            ans = tmpAns
-        elif tmpAns != None and len(ans.payload()) > len(tmpAns.payload()):
-            ans = tmpAns
+        ans = util.optMin(ans, tmpAns)
 
-    r = sum([ropChains[reg] for reg in ropChains], ans)
     if isFail:
         return None
+    r = sum([ropChains[reg] for reg in ropChains], ans)
     r.setBase(base)
     return r
 
@@ -64,43 +61,63 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return avoids & chars == set()
 
     def proc(reg, dest, gadgets, canUse):
+        ans = None
         if dest == 0:
-            print 'try: %s' % reg, canUse
             rop = toZero.find(reg, gadgets, canUse)
             if rop is not None:
-                return rop
+                ans = util.optMin(ans, rop)
 
         #use xor r1, r2
         chars = set(range(0xff)) - avoids
         xorTable = [None] * 0x100
+        canConstruct = True
         for a in chars:
             for b in chars:
                 xorTable[a^b] = (a, b)
         left, right = 0, 0
         for i in range(arch.bits() / 8):
             ab = xorTable[(dest >> (8*i)) & 0xff]
-            if ab == None:
-                filteredGadgets = copy.deepcopy(gadgets)
-                for r in set(reg) | canUse:
-                    filteredGadgets = list(filter(lambda g: g.eq('pop', r), filteredGadgets))
-                return find(reg, dest, filteredGadgets, canUse, lambda x: True, lambda a, b, c, d: None)
-
+            if ab is None:
+                canConstruct = False
+                break
             left = left | ab[0] << (i * 8)
             right = right | ab[1] << (i * 8)
 
-        ropChainLeft = find(reg, left, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
-        for r1 in canUse:
-            xor = asm.xor.find(reg, r1, gadgets, canUse - set([reg, r1]))
-            if xor != None:
-                ropChainRight = find(r1, right, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
-                return ropChainLeft + ropChainRight + xor
+        if canConstruct:
+            ropChainLeft = find(reg, left, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
+            for r1 in canUse:
+                xor = asm.xor.find(reg, r1, gadgets, canUse - set([reg, r1]))
+                if xor != None:
+                    ropChainRight = find(r1, right, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
+                    ans = util.optMin(ans, ropChainLeft + ropChainRight + xor)
+
+        #use reg <- somevalue; ret; (inc reg)*(value-someValue)
+        tmpDest = 0
+        canConstruct = True
+        for i in range(arch.bits()/8):
+            byte = (dest >> (arch.bits() - 8*(i+1))) & 0xff
+            filtered = filter(lambda x: x <= byte, chars)
+            if len(filtered) > 0 and max(filtered) == byte:
+                tmpDest = (tmpDest << 8) + byte
+            elif len(filtered) > 0:
+                a = max(chars)
+                tmpDest = (tmpDest << (arch.bits() - 8*i)) + int((arch.bits()/8-i)*("%x"%(a)), 16)
+                break
+            else:
+                canConstruct = False
+        if canConstruct:
+            _pop = setVal.find(reg, tmpDest, gadgets, canUse)
+            _inc = asm.inc.find(reg, gadgets, canUse)
+            if _pop is not None and _inc is not None:
+                ans = util.optMin(ans, _pop + _inc * (dest - tmpDest))
 
         #use reg <- 0; ret; (inc reg)*value
         zero = toZero.find(reg, gadgets, canUse)
-        inc = asm.inc.find(reg, gadgets, canUse)
-        if zero is not None and inc is not None:
-            return zero + inc * dest
-        return None
+        _inc = asm.inc.find(reg, gadgets, canUse)
+        if zero is not None and _inc is not None:
+            ans = util.optMin(ans, zero + _inc * dest)
+
+        return ans
 
     gadgets = list(filter(lambda g: cond(g.addr + base), gadgets))
     def uniq(xs):
@@ -111,8 +128,8 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return ret
     gadgets = sorted(gadgets, key=lambda x: len(x.changedRegs))
     gadgets = uniq(gadgets)
-    for g in gadgets:
-        print g.toStr()
+    # for g in gadgets:
+    #     print g.toStr()
 
     return _solve(dests, gadgets, base, cond, proc)
 

@@ -32,7 +32,7 @@ lea r1, [r2]
 '''
 def fromLea(r1, r2, gadgets, canUse):
     _lea = lea.find(r1, '[%s]' % r2, gadgets, canUse)
-    if _lea != None:
+    if _lea is not None:
         return ropchain.ROPChain(_lea)
     else:
         return None
@@ -45,7 +45,7 @@ def fromLeaWithOffset(r1, r2, gadgets, canUse):
     #TODO replace find.ByRegex with wrapper function of lea
     _lea, _, imm, canUse = gadget.findByRegex(gadgets, canUse, r'lea', r'%s' % r1, r'\[%s\+0x[0-9a-fA-F]*]')
     _dec = dec.find(r1, gadgets, canUse)
-    if _lea != None and _dec != None:
+    if _lea is not None and _dec is not None:
         return ropchain.ROPChain([_lea] +  [_dec] * imm)
     else:
         return None
@@ -57,7 +57,7 @@ xor r1, r2;
 def fromXorXor(r1, r2, gadgets, canUse):
     xorR1R1 = xor.find(r1, r1, gadgets, canUse)
     xorR1R2 = xor.find(r1, r2, gadgets, canUse)
-    if xorR1R1 != None and xorR1R2 != None:
+    if xorR1R1 is not None and xorR1R2 is not None:
         r = ropchain.ROPChain
         return r(xorR1R1) + r(xorR1R2)
     else:
@@ -69,9 +69,9 @@ or r1, r2
 '''
 def fromXorOr(r1, r2, gadgets, canUse):
     xorR1R1 = xor.find(r1, r1, gadgets, canUse)
-    _or = orGadget.find(r1, r2, gadgets, canUse)
-    if xorR1R1 != None and _or != None:
-        return xorR1R1 + orGadget
+    orR1R2 = orGadget.find(r1, r2, gadgets, canUse)
+    if xorR1R1 is not None and orR1R2 is not None:
+        return xorR1R1 + orR1R2
     else:
         return None
 
@@ -83,7 +83,7 @@ xchg r1, r2
 def fromXchg(r1, r2, gadgets, canUse):
     _xchg = xchg.find(r1, r2, gadgets, canUse)
     _mov = findWithoutXchg(r2, r1, gadgets, canUse)
-    if _xchg != None and _mov != None:
+    if _xchg is not None and _mov is not None:
         return deepcopy(_xchg) + _mov + _xchg
     else:
         return None

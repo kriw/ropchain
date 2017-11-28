@@ -35,14 +35,14 @@ int main(){
     mprotect(mem, MEMSIZE, PROT_READ | PROT_EXEC);
 
 
-    const int BUFSIZE = 0x800;
+    const int BUFSIZE = 0xffff;
     int i;
     char *heap = (char *)malloc(BUFSIZE);
-    memset(heap, 'A', BUFSIZE);
+    memset(heap, '\0', BUFSIZE);
     read(0, heap, BUFSIZE);
-    for(i=0; i<0x800; i++) {
+    for(i=0; i<BUFSIZE; i++) {
         if(!is_ascii(heap[i])) {
-            memset(heap+i, 'A', BUFSIZE-i);
+            memset(heap+i, '\0', BUFSIZE-i);
             break;
         }
     }

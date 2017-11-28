@@ -34,7 +34,7 @@ def fromIncAdd(reg, dest, gadgets, canUse):
         BITS = 32
     elif arch.arch == arch.AMD64:
         BITS = 64
-    if zero != None and _inc != None and _double != None:
+    if zero is not None and _inc is not None and _double is not None:
         ret = zero
         bits = bin(dest)[2:]
         bits = '0' * (BITS - len(bits)) + bits
@@ -58,11 +58,11 @@ def fromOtherReg(reg, dest, gadgets, canUse):
         _pop = find(r, dest, gadgets, canUse - set([reg, r]))
         _mov = mov.find(reg, r, gadgets, canUse - set([reg, r]))
 
-        if _pop != None and _mov != None:
+        if _pop is not None and _mov is not None:
             return _pop + _mov
 
         _xchg = xchg.find(reg, r, gadgets, canUse - set([reg, r]))
-        if _pop != None and _xchg != None:
+        if _pop is not None and _xchg is not None:
             return _pop + _xchg
 
     return None

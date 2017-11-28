@@ -51,19 +51,19 @@ class ROPChain:
                 # payload += pack(gadget.addr)
         return payload
 
-    def chain(self, ropChain):
-        self.gadgets += ropChain.gadgets
+    def chain(self, rop):
+        self.gadgets += rop.gadgets
 
-    def __iadd__(self, ropChain):
-        self.chain(ropChain)
+    def __iadd__(self, rop):
+        self.chain(rop)
         return self
 
-    def __add__(self, ropChain):
-        self.gadgets += ropChain.gadgets
+    def __add__(self, rop):
+        self.gadgets += rop.gadgets
         return self
 
-    def __radd__(self, ropChain):
-        return self.__add__(ropChain)
+    def __radd__(self, rop):
+        return self.__add__(rop)
 
     def __mul__(self, times):
         self.gadgets *= times

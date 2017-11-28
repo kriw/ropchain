@@ -5,6 +5,13 @@ def optMap(x, y, *args):
     else:
         return y(*args)
 
+def optMin(x, y):
+    if x is None:
+        return y
+    elif y is None:
+        return x
+    return min(x, y, key=lambda x: len(x.payload()))
+
 optROPChain = lambda x: ropchain.ROPChain(x) if x is not None else None
 
 def toH8bitReg(reg):

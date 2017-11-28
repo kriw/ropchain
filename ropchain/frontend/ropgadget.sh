@@ -12,7 +12,8 @@ then
     grep -v 'push' | #avoid using push insn
     grep -v 'div' | #avoid 0 division
     egrep -v '[ge]s[^i]' |
-    grep 'ret ' |
+    grep -v 'hlt' |
+    grep 'ret' |
     sed 's/(.* found)//' > $dir$save
     rm $tmpFile
 fi

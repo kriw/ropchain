@@ -14,16 +14,16 @@ def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
 
 def findByRegex(gadgets, canUse, mnem, op1=None, op2=None):
     for gadget in gadgets:
-        for insn in gadget.insns:
-            if not gadget.canUsed(canUse):
-                continue
-            if not re.match(mnem, insn.mnem):
-                continue
-            if op1 != None and not re.match(op1, insn.ops[0]):
-                continue
-            if op2 != None and not re.match(op2, insn.ops[1]):
-                continue
-            return mnem, insn.ops[0], insn.ops[1], canUse - gadgets.changedRegs
+        insn = gadget.insns[0]
+        if not gadget.canUsed(canUse):
+            continue
+        if not re.match(mnem, insn.mnem):
+            continue
+        if op1 != None and not re.match(op1, insn.ops[0]):
+            continue
+        if op2 != None and not re.match(op2, insn.ops[1]):
+            continue
+        return gadget, insn.ops[0], insn.ops[1], canUse - gadget.changedRegs
     return None, None, None, canUse
 
 class Insn:

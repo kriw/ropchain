@@ -1,5 +1,5 @@
 import ropchain
-from gadgets import gadget, setVal, asm
+from gadgets import gadget, setVal, toZero, asm
 import arch
 from struct import pack
 import itertools
@@ -19,6 +19,7 @@ def _solve(dests, gadgets, base, cond, proc):
 
     remains = set(dests.keys()) - solvable
     ans = ropchain.ROPChain(None)
+    isFail = True
 
     for rs in itertools.permutations(remains):
         tmpAns = ropchain.ROPChain(None)
@@ -33,14 +34,14 @@ def _solve(dests, gadgets, base, cond, proc):
 
         if tmpAns is None:
             continue
-
+        isFail = False
         if ans.isEmpty():
             ans = tmpAns
         elif tmpAns != None and len(ans.payload()) > len(tmpAns.payload()):
             ans = tmpAns
 
     r = sum([ropChains[reg] for reg in ropChains], ans)
-    if len(r.payload()) == 0:
+    if isFail:
         return None
     r.setBase(base)
     return r
@@ -64,9 +65,12 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
 
     def proc(reg, dest, gadgets, canUse):
         if dest == 0:
-            rop = find(reg, dest, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
+            print 'try: %s' % reg, canUse
+            rop = toZero.find(reg, gadgets, canUse)
             if rop is not None:
                 return rop
+
+        #use xor r1, r2
         chars = set(range(0xff)) - avoids
         xorTable = [None] * 0x100
         for a in chars:
@@ -91,6 +95,11 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
                 ropChainRight = find(r1, right, gadgets, canUse, lambda x: True, lambda a, b, c, d: None)
                 return ropChainLeft + ropChainRight + xor
 
+        #use reg <- 0; ret; (inc reg)*value
+        zero = toZero.find(reg, gadgets, canUse)
+        inc = asm.inc.find(reg, gadgets, canUse)
+        if zero is not None and inc is not None:
+            return zero + inc * dest
         return None
 
     gadgets = list(filter(lambda g: cond(g.addr + base), gadgets))
@@ -100,7 +109,7 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
             if x != ret[-1]:
                 ret.append(x)
         return ret
-    gadgets = sorted(gadgets, cmp=lambda a, b: len(a.changedRegs) < len(b.changedRegs))
+    gadgets = sorted(gadgets, key=lambda x: len(x.changedRegs))
     gadgets = uniq(gadgets)
     for g in gadgets:
         print g.toStr()

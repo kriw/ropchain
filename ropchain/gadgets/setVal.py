@@ -7,4 +7,3 @@ def find(reg, dest, gadgets, canUse):
         rop = toZero.find(reg, gadgets, canUse)
     rop = util.optMap(rop, pop.find, reg, dest, gadgets, canUse)
     return rop
-

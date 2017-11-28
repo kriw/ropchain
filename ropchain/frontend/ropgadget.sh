@@ -9,6 +9,9 @@ then
     sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" $tmpFile
     grep '0x' $tmpFile |
     grep -v ']' | #eliminate memory reference
+    grep -v 'push' | #avoid using push insn
+    grep -v 'div' | #avoid 0 division
+    egrep -v '[ge]s[^i]' |
     grep 'ret ' |
     sed 's/(.* found)//' > $dir$save
     rm $tmpFile

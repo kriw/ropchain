@@ -67,6 +67,7 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
             if rop is not None:
                 ans = util.optMin(ans, rop)
 
+        print reg, canUse
         #use xor r1, r2
         chars = set(range(0xff)) - avoids
         xorTable = [None] * 0x100
@@ -94,27 +95,40 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         #use reg <- somevalue; ret; (inc reg)*(value-someValue)
         tmpDest = 0
         canConstruct = True
-        for i in range(arch.bits()/8):
+        for i in range(arch.word()):
             byte = (dest >> (arch.bits() - 8*(i+1))) & 0xff
             filtered = filter(lambda x: x <= byte, chars)
             if len(filtered) > 0 and max(filtered) == byte:
                 tmpDest = (tmpDest << 8) + byte
             elif len(filtered) > 0:
                 a = max(chars)
-                tmpDest = (tmpDest << (arch.bits() - 8*i)) + int((arch.bits()/8-i)*("%x"%(a)), 16)
+                tmpDest = (tmpDest << (arch.bits() - 8*i)) + \
+                        int((arch.word()-i)*("%x"%(a)), 16)
                 break
             else:
-                canConstruct = False
+                tmpDest -= 1
+                p = lambda x: all([chr((x>>j)&0xff) for j in range(i)])
+                while not p(tmpDest) and tmpDest > 0:
+                    tmpDest -= 1
+                if tmpDest <= 0:
+                    canConstruct = False
+                else:
+                    a = max(chars)
+                    tmpDest = (tmpDest << (arch.bits() - 8*i)) + \
+                            int((arch.word()-i)*("%x"%(a)), 16)
+                break
+
         if canConstruct:
+            print hex(dest), hex(tmpDest)
             _pop = setVal.find(reg, tmpDest, gadgets, canUse)
             _inc = asm.inc.find(reg, gadgets, canUse)
             if _pop is not None and _inc is not None:
                 ans = util.optMin(ans, _pop + _inc * (dest - tmpDest))
 
         #use reg <- 0; ret; (inc reg)*value
-        zero = toZero.find(reg, gadgets, canUse)
+        zero = setVal.find(reg, 0, gadgets, canUse)
         _inc = asm.inc.find(reg, gadgets, canUse)
-        if zero is not None and _inc is not None:
+        if dest < 0x1000 and zero is not None and _inc is not None:
             ans = util.optMin(ans, zero + _inc * dest)
 
         return ans
@@ -128,8 +142,6 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return ret
     gadgets = sorted(gadgets, key=lambda x: len(x.changedRegs))
     gadgets = uniq(gadgets)
-    # for g in gadgets:
-    #     print g.toStr()
 
     return _solve(dests, gadgets, base, cond, proc)
 

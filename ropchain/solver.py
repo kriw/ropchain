@@ -50,7 +50,6 @@ def solveWithFile(dests, fileName, base=0, avoids=[]):
 def solveWithGadget(dests, gadgets, base=0, avoids=[]):
     return solveAvoidChars(dests, gadgets, base, avoids)
 
-#TODO
 def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
     avoids = set(avoids)
     def cond(v):
@@ -142,6 +141,8 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
         return ret
     gadgets = sorted(gadgets, key=lambda x: len(x.changedRegs))
     gadgets = uniq(gadgets)
+    # for g in gadgets:
+    #     print g.toStr()
 
     return _solve(dests, gadgets, base, cond, proc)
 

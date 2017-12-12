@@ -1,7 +1,7 @@
-#include "../gadget.h"
+#include "../ropchain.h"
 #include "../regs.h"
 
 namespace Pop {
-    Gadget find(RegType::Reg r, uint64_t dest,
-            Gadgets gadgets, RegSet aval);
+    Ropchain find(RegType::Reg r, uint64_t dest,
+            Ropchains ropchains, RegSet aval);
 }

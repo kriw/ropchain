@@ -1,7 +1,7 @@
-#include "../gadget.h"
+#include "../ropchain.h"
 #include "../regs.h"
 
 namespace Xor {
-    Gadget find(RegType::Reg r1, RegType::Reg r2,
-            uint64_t dest, Gadgets gadgets, RegSet aval);
+    Ropchain find(RegType::Reg r1, RegType::Reg r2,
+            uint64_t dest, Ropchains ropchains, RegSet aval);
 }

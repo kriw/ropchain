@@ -1,10 +1,10 @@
-#include "../Ropchain.h"
+#include "../ropchain.h"
 
 namespace Middle {
-    Ropchain setVal(RegType::Reg r, uint64_t dest,
-            Ropchains ropchains, RegSet aval);
-    Ropchain toZero(RegType::Reg r, uint64_t dest,
-            Ropchains ropchains, RegSet aval);
+    ROPChain setVal(RegType::Reg r, uint64_t dest,
+            ROPChains ropchains, RegSet aval);
+    ROPChain toZero(RegType::Reg r, uint64_t dest,
+            ROPChains ropchains, RegSet aval);
 };
 
 

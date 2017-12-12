@@ -7,7 +7,7 @@
 typedef std::optional<ROPChain> OptROP;
 typedef const std::function<bool(uint64_t)>& Cond;
 typedef const std::function<OptROP(const Reg, const uint64_t,
-        const Gadgets&, std::set<Reg>)> Proc;
+        const Gadgets&, RegSet)> Proc;
 
 OptROP _solve(const std::map<Reg, uint64_t>& dests, const Gadgets& gadgets,
         uint64_t base, Cond cond, Proc proc) {
@@ -34,14 +34,14 @@ OptROP solveAvoidChars(const std::map<Reg, uint64_t>& dests, const Gadgets& gadg
         return false;
     };
     Proc proc = [](const Reg reg, const uint64_t base,
-            const Gadgets& gadgets, std::set<Reg> availables) {
+            const Gadgets& gadgets, RegSet availables) {
         return ROPChain(Gadget(0, std::vector<Insn>()), 0, 0);
     };
     return _solve(dests, gadgets, base, cond, proc);
 }
 
 OptROP find(const Reg reg, const uint64_t dest, const Gadgets& gadgets,
-        std::set<Reg> availables, Cond& cond, Proc& proc) {
+        RegSet availables, Cond& cond, Proc& proc) {
     //TODO
     return {};
 }

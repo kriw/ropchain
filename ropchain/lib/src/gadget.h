@@ -33,7 +33,7 @@ private:
 typedef std::vector<Gadget> Gadgets;
 
 namespace GadgetUtil {
-    Gadget find(Gadgets gadgets, std::set<Reg> avl, Mnem mnem, 
+    Gadget find(Gadgets gadgets, RegSet avl, Mnem mnem, 
             std::optional<Opcode> op1,
             std::optional<Opcode> op2,
             std::optional<Opcode> op3);

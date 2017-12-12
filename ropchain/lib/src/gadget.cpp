@@ -77,7 +77,7 @@ namespace GadgetUtil {
 //         return reg
 //     else:
 //         return None
-        return (RegType::rax){};
+        return RegType::rax;
     }
 
     std::set<RegType::Reg> listChangedRegs(std::vector<Insn> insns) {

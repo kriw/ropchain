@@ -1,4 +1,5 @@
 CC = g++
+RM = rm
 CPPFLAGS = -std=c++17
 TARGET = ./bin/ropchain
 SRC_DIRS = ./src
@@ -15,8 +16,8 @@ $(TARGET): $(OBJS)
 		$(CC) $(CPPFLAGS) $(OBJS) -o $@ $(LOADLIBES) $(LDLIBS)
 
 .PHONY: clean
-	clean:
-		$(RM) $(TARGET) $(OBJS) $(DEPS)
+clean:
+	$(RM) $(TARGET) $(OBJS) $(DEPS)
 
 -include $(DEPS)
 

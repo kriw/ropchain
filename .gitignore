@@ -1,5 +1,7 @@
 *.pyc
 *.swp
+*.o
+*.d
 .cache
 build
 dist

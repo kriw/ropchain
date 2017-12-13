@@ -20,20 +20,38 @@ void ROPChain::setBaseAddr(uint64_t addr) {
     baseAddr = addr;
 }
 
-void ROPChain::dump() {
+void ROPChain::dump() const {
     //TODO
+    std::cout << "TODO" << std::endl;
 }
 
-char *ROPChain::payload() {
+std::string ROPChain::payload() const {
     //TODO
-    return NULL;
+    return "TODO";
 }
 
 void ROPChain::chain(const ROPChain& ropchain) {
-    //TODO
+    const auto gs = ropchain.getGadgets();
+    gadgets.insert(std::end(gadgets), std::begin(gs), std::end(gs));
+}
+
+Gadgets ROPChain::getGadgets() const {
+    return gadgets;
 }
 
 size_t ROPChain::length() {
     //TODO
     return 0;
+}
+
+namespace GadgetUtil {
+    ROPChain toROP(const Gadget& gadget) {
+        return ROPChain(gadget, 0, 0);
+    }
+    OptROP toOptROP(const optGadget& gadget) {
+        if(gadget.has_value()) {
+            return toROP(gadget.value());
+        }
+        return {};
+    }
 }

@@ -27,9 +27,18 @@ namespace RegType {
 
 class RegSet {
 public:
+    RegSet();
+    RegSet(uint64_t v);
     void add(RegType::Reg r);
     void del(RegType::Reg r);
-    bool exist(RegType::Reg r);
+    bool exist(RegType::Reg r) const;
+    uint64_t val() const;
+    RegSet operator&(const RegSet& rs) const;
+    bool operator==(const RegSet& rs) const;
+    bool operator<(const RegSet& rs) const;
+    bool operator>(const RegSet& rs) const;
+    bool operator<=(const RegSet& rs) const;
+    bool operator>=(const RegSet& rs) const;
 private:
     uint64_t v;
 };

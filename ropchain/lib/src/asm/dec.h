@@ -1,7 +1,7 @@
 #include "../ropchain.h"
 #include "../regs.h"
 
-namespace Pop {
-    ROPChain find(RegType::Reg r, uint64_t dest,
-            ROPChains ropchains, RegSet aval);
-}
+namespace Dec {
+    OptROP find(RegType::Reg op, const uint64_t dest,
+            const Gadgets& gadgets, RegSet& aval);
+};

@@ -2,9 +2,9 @@
 
 namespace Middle {
     ROPChain setVal(RegType::Reg r, uint64_t dest,
-            ROPChains ropchains, RegSet aval);
+            Gadgets gadgets, RegSet aval);
     ROPChain toZero(RegType::Reg r, uint64_t dest,
-            ROPChains ropchains, RegSet aval);
+            Gadgets gadgets, RegSet aval);
 };
 
 

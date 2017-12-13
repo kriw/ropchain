@@ -4,7 +4,6 @@
 #include "ropchain.h"
 #include "gadget.h"
 
-typedef std::optional<ROPChain> OptROP;
 typedef const std::function<bool(uint64_t)>& Cond;
 typedef const std::function<OptROP(const Reg, const uint64_t,
         const Gadgets&, RegSet)> Proc;

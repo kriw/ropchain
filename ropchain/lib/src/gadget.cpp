@@ -7,45 +7,66 @@ Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns) {
     changedRegs = GadgetUtil::listChangedRegs(insns);
 }
 
-std::string Gadget::toString() {
+std::string Gadget::toString() const {
     //TODO
-    return "";
+    return "TODO";
 }
 
-bool Gadget::operator==(const Gadget& gadget) {
-    // if len(self.insns) != len(gadget.insns):
-    //     return False
-    // return all(map(lambda x, y: x == y, self.insns, gadget.insns))
-    return false;
+bool Gadget::operator==(const Gadget& gadget) const {
+    const auto _insns = gadget.getInsns();
+    if(insns.size() != _insns.size()) {
+        return false;
+    }
+    return insns == _insns;
 }
 
-bool Gadget::operator!=(const Gadget& gadget) {
+bool Gadget::operator!=(const Gadget& gadget) const {
     return !(*this == gadget);
 }
 
-bool Gadget::isChanged(Reg reg) {
-    //TODO
-    // return changedRegs.find(reg.type) != changedRegs.end();
-    return false;
+bool Gadget::isChanged(const RegType::Reg reg) const {
+    return changedRegs.exist(reg);
+}
+
+bool Gadget::isAvailable(const RegSet& rs) const {
+    return changedRegs > rs;
+}
+
+const std::vector<Insn> Gadget::getInsns() const {
+    return insns;
 }
 
 namespace GadgetUtil {
-    std::optional<Gadget> find(
-            Gadgets gadgets,
-            std::set<RegType::Reg> avl,
-            Mnem mnem, 
-            std::optional<Opcode> op1,
-            std::optional<Opcode> op2,
-            std::optional<Opcode> op3
-            ) {
-        //TODO
-    // def find(gadgets, canUse, mnem, op1=None, op2=None, op3=None):
-    // ops = list(filter(lambda x: x != None, [op1, op2, op3]))
-    // insn = Insn(mnem, ops)
-    // for gadget in gadgets:
-    //     if gadget.insns[0] == insn and gadget.canUsed(canUse):
-    //         return gadget, canUse - gadget.changedRegs
-    // return None, canUse
+    optGadget find(const Gadgets& gadgets, const RegSet& avl,
+            const Mnem& mnem, const std::optional<Opcode>& op1) {
+        return find(gadgets, avl, mnem, op1, {}, {});
+    }
+    optGadget find(const Gadgets& gadgets, const RegSet& avl,
+            const Mnem& mnem, const std::optional<Opcode>& op1,
+            const std::optional<Opcode>& op2) {
+        return find(gadgets, avl, mnem, op1, op2, {});
+    }
+    optGadget find(const Gadgets& gadgets, const RegSet& avl,
+            const Mnem& mnem, const std::optional<Opcode>& op1,
+            const std::optional<Opcode>& op2,
+            const std::optional<Opcode>& op3) {
+        auto ops = std::vector<Opcode>();
+        if(op1.has_value()) {
+            ops.push_back(op1.value());
+        }
+        if(op2.has_value()) {
+            ops.push_back(op2.value());
+        }
+        if(op3.has_value()) {
+            ops.push_back(op3.value());
+        }
+        const Insn insn = Insn{mnem, ops};
+        for(const auto& gadget : gadgets) {
+            const auto insn_g = gadget.getInsns()[0];
+            if(insn == insn_g && gadget.isAvailable(avl)) {
+                return gadget;
+            }
+        }
         return {};
     }
 
@@ -80,7 +101,7 @@ namespace GadgetUtil {
         return RegType::rax;
     }
 
-    std::set<RegType::Reg> listChangedRegs(std::vector<Insn> insns) {
+    RegSet listChangedRegs(const Insns& insns) {
         //TODO
 //r1 = {findRegKind(insn.ops[0]) for insn in insns if len(insn.ops) > 0}
 // r2 = {findRegKind(insn.ops[1]) for insn in insns if insn.mnem == 'xchg'}
@@ -88,10 +109,10 @@ namespace GadgetUtil {
 // if None in r12:
 // r12.remove(None)
 // return r12
-        return std::set<RegType::Reg>();
+        return RegSet();
     }
 
-    size_t calcUseStack(std::vector<Insn> insns) {
+    size_t calcUseStack(const Insns& insns) {
         //TODO
 // mnem, ops = insn.mnem, insn.ops
 // # print 'mnem: %s, ops: %s' % (mnem, str(ops))

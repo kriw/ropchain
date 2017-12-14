@@ -3,10 +3,11 @@
 #include <vector>
 #include <optional>
 #include <set>
+#include <variant>
 #include "regs.h"
 
 typedef std::string Mnem;
-typedef std::variant<uint64_t, Reg> Opcode;
+typedef std::variant<uint64_t, RegType::Reg> Opcode;
 
 typedef struct Insn {
     Mnem mnem;
@@ -41,18 +42,5 @@ private:
     RegSet changedRegs;
 };
 
-typedef std::optional<Gadget> optGadget;
+typedef std::optional<Gadget> OptGadget;
 typedef std::vector<Gadget> Gadgets;
-
-namespace GadgetUtil {
-    optGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
-            const std::optional<Opcode>& op1);
-    optGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
-            const std::optional<Opcode>& op1, const std::optional<Opcode>& op2);
-    optGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
-            const std::optional<Opcode>& op1, const std::optional<Opcode>& op2,
-            const std::optional<Opcode>& op3);
-    RegType::Reg findRegType(Reg reg);
-    RegSet listChangedRegs(const Insns& insns);
-    size_t calcUseStack(const Insns& insns);
-};

@@ -1,10 +1,24 @@
 #include "ropchain.h"
 
-ROPChain::ROPChain(Gadget gadget, uint64_t value, uint64_t base) {
+ROPChain::ROPChain() {
+    //TODO
 }
 
-void ROPChain::append(Gadget gadget, uint64_t value) {
+ROPChain::ROPChain(const ROPElem elem)
+: baseAddr(0) {
+    elems = {elem};
+}
+
+ROPChain::ROPChain(const ROPElems _elems)
+: baseAddr(0) {
+    //TODO
+    elems = _elems;
+}
+
+void ROPChain::append(ROPElem elem) {
    //TODO
+   //consider about useStack
+   elems.push_back(elem);
 // self.gadgets.append(gadget)
 // payload = ''
 // if value is None:
@@ -16,7 +30,7 @@ void ROPChain::append(Gadget gadget, uint64_t value) {
 //     self.gadgets.append(payload);
 }
 
-void ROPChain::setBaseAddr(uint64_t addr) {
+void ROPChain::setBaseAddr(const uint64_t addr) {
     baseAddr = addr;
 }
 
@@ -31,27 +45,20 @@ std::string ROPChain::payload() const {
 }
 
 void ROPChain::chain(const ROPChain& ropchain) {
-    const auto gs = ropchain.getGadgets();
-    gadgets.insert(std::end(gadgets), std::begin(gs), std::end(gs));
+    auto es = ropchain.getElems();
+    es.insert(std::end(elems), std::begin(es), std::end(es));
 }
 
-Gadgets ROPChain::getGadgets() const {
-    return gadgets;
+ROPElems ROPChain::getElems() const {
+    return elems;
 }
 
-size_t ROPChain::length() {
+size_t ROPChain::length() const {
     //TODO
     return 0;
 }
 
-namespace GadgetUtil {
-    ROPChain toROP(const Gadget& gadget) {
-        return ROPChain(gadget, 0, 0);
-    }
-    OptROP toOptROP(const optGadget& gadget) {
-        if(gadget.has_value()) {
-            return toROP(gadget.value());
-        }
-        return {};
-    }
+bool ROPChain::operator<(const ROPChain& rop) const {
+    //TODO
+    return true;
 }

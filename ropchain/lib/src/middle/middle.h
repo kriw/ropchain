@@ -1,10 +1,13 @@
+#pragma once
 #include "../ropchain.h"
+#include "../util.h"
 
 namespace Middle {
-    ROPChain setVal(RegType::Reg r, uint64_t dest,
-            Gadgets gadgets, RegSet aval);
-    ROPChain toZero(RegType::Reg r, uint64_t dest,
-            Gadgets gadgets, RegSet aval);
+    OptROP setVal(const RegType::Reg r,
+            const uint64_t dest, const Gadgets& gadgets,
+            RegSet& aval);
+    OptROP toZero(const RegType::Reg r,
+            const Gadgets& gadgets, RegSet& aval);
 };
 
 

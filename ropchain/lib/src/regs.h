@@ -23,7 +23,7 @@ namespace RegType {
     r14,r14d,r14w, r14b,
     r15,r15d,r15w, r15b
     };
-    typedef uint64_t Reg;
+    typedef int64_t Reg;
 };
 
 typedef std::bitset<68> RegSet;

@@ -100,3 +100,6 @@ size_t Util::calcUseStack(const Insns& insns) {
     //     return 0
 }
 
+RegSet Util::allRegs() {
+	return RegSet();
+}

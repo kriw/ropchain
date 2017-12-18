@@ -7,10 +7,7 @@
 
 
 namespace Util {
-    RegSet allRegs() {
-        //TODO
-        return RegSet();
-    };
+    RegSet allRegs();
     OptROP toOptROP(const OptGadget& gadget);
     Gadgets loadGadgets(const std::string& fileName);
     template <typename T>

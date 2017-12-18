@@ -1,3 +1,4 @@
+#pragma once
 #include "../util.h"
 #include "../ropchain.h"
 #include "../regs.h"

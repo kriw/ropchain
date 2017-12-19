@@ -58,6 +58,12 @@ size_t ROPChain::length() const {
     return 0;
 }
 
+ROPChain ROPChain::operator+(const ROPChain& rop) const {
+	auto e1 = elems;
+	auto e2 = rop.getElems();
+	e1.insert(e1.end(), e2.begin(), e2.end());
+	return ROPChain(e1);
+}
 bool ROPChain::operator<(const ROPChain& rop) const {
     //TODO
     return true;

@@ -9,8 +9,11 @@ Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns) {
 }
 
 std::string Gadget::toString() const {
-    //TODO
-    return "TODO";
+	std::string ret = "";
+	for(auto insn : insns) {
+		ret += insn.toString() + "\n";
+	}
+    return ret;
 }
 
 bool Gadget::operator==(const Gadget& gadget) const {

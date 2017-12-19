@@ -22,6 +22,7 @@ public:
     void chain(const ROPChain& ropchain);
     ROPElems getElems() const;
     size_t length() const;
+	ROPChain operator+(const ROPChain& rop) const;
     bool operator<(const ROPChain& rop) const;
     bool operator>(const ROPChain& rop) const {return rop < *this;};
     bool operator<=(const ROPChain& rop) const {return !(*this < rop);};

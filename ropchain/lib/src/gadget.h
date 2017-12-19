@@ -8,15 +8,32 @@
 
 typedef std::string Mnem;
 typedef std::variant<uint64_t, RegType::Reg> Opcode;
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 typedef struct Insn {
     Mnem mnem;
     std::vector<Opcode> ops;
     bool operator==(const struct Insn& insn) const {
-        //TODO
-        return true;
-        // return mnem == insn.mnem && ops == insn.ops;
+		if(ops.size() != insn.ops.size()) {
+			return false;
+		}
+		for(int i=0; i<ops.size(); i++) {
+			if(std::visit(overloaded {
+						[](uint64_t a, RegType::Reg b) {return false;},
+						[](RegType::Reg a, uint64_t b) {return false;},
+						[](uint64_t a, uint64_t b) {return a == b;},
+						[](RegType::Reg a, RegType::Reg b) {return a == b;},
+						}, ops[i], insn.ops[i])) {
+				return false;
+			}
+		}
+        return mnem == insn.mnem;
     }
+	std::string toString() const {
+		//TODO
+		return "TODO";
+	}
     bool operator!=(const struct Insn& insn) {
         return !(*this == insn);
     }

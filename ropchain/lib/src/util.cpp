@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <string>
+#include "arch.h"
 #include "util.h"
 
 OptROP Util::toOptROP(const OptGadget& gadget) {
@@ -9,6 +12,16 @@ OptROP Util::toOptROP(const OptGadget& gadget) {
 Gadgets Util::loadGadgets(const std::string& fileName) {
     //TODO
     return std::vector<Gadget>();
+}
+
+std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {
+	auto bits = new std::vector<RegType::Reg>();
+	for(int i=0; i<s.size(); i++) {
+		if(s.test(i)) {
+			bits->push_back(i);
+		}
+	}
+	return bits;
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
@@ -86,20 +99,64 @@ RegSet Util::listChangedRegs(const Insns& insns) {
     return RegSet();
 }
 
+//internal function of Util::calcUseStack
+size_t _calcUseStack(const Insn& insn) {
+	auto mnem = insn.mnem;
+	auto ops = insn.ops;
+	if(mnem == "pop") {
+		return Arch::word();
+	} else if(mnem == "popad") {
+		return Arch::word() * 7;
+	} else if(mnem == "add") {
+		//FIXME use std::visit
+		auto r = std::get<RegType::Reg>(ops[0]);
+		if(r == RegType::esp || r == RegType::rsp) {
+			auto s = std::get<uint64_t>(ops[1]);
+			size_t sz = 2;
+			return Arch::word() * std::stoll(RegType::toString(s), &sz, 16);
+		}
+	}
+	return 0;
+}
 size_t Util::calcUseStack(const Insns& insns) {
-    //TODO
-    // mnem, ops = insn.mnem, insn.ops
-    // # print 'mnem: %s, ops: %s' % (mnem, str(ops))
-    // if mnem == 'pop':
-    //     return arch.word() * 1
-    // elif mnem == 'popad':
-    //     return arch.word() * 7
-    // elif mnem == 'add' and (ops[0] == 'esp' or ops[0] == 'rsp'):
-    //     return arch.word() * int(ops[1][2:], 16)
-    // else:
-    //     return 0
+	size_t ret = 0;
+	for(auto& insn : insns) {
+		ret += _calcUseStack(insn);
+	}
+	return ret;
+
 }
 
 RegSet Util::allRegs() {
+	RegSet s;
+	if(Arch::arch == Arch::X86) {
+		s.set(RegType::eax
+				| RegType::ebx
+				| RegType::ecx
+				| RegType::edx
+				| RegType::esi
+				| RegType::edi
+				| RegType::ebp);
+		return s;
+	}
+	if(Arch::arch == Arch::AMD64) {
+		s.set(RegType::rax
+				| RegType::rbx
+				| RegType::rcx
+				| RegType::rdx
+				| RegType::rdi
+				| RegType::rsi
+				| RegType::rbp
+				| RegType::rsp
+				| RegType::r8
+				| RegType::r9
+				| RegType::r10
+				| RegType::r11
+				| RegType::r12
+				| RegType::r13
+				| RegType::r14
+				| RegType::r15);
+		return s;
+	}
 	return RegSet();
 }

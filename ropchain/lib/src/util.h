@@ -9,6 +9,7 @@
 namespace Util {
     RegSet allRegs();
     OptROP toOptROP(const OptGadget& gadget);
+	std::vector<RegType::Reg> *toBits(const RegSet& s);
     Gadgets loadGadgets(const std::string& fileName);
     template <typename T>
         T optMin(T t1, T t2) {

@@ -1,0 +1,176 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Add	src/asm/add.h	/^namespace Add {$/;"	n
+And	src/asm/and.h	/^namespace And {$/;"	n
+CC	Makefile	/^CC = g++$/;"	m
+CPPFLAGS	Makefile	/^CPPFLAGS = -std=c++17$/;"	m
+Cond	src/solver.cpp	/^typedef const std::function<bool(uint64_t)>& Cond;$/;"	t	file:
+DEPS	Makefile	/^DEPS := $(OBJS:.o=.d)$/;"	m
+Dec	src/asm/dec.h	/^namespace Dec {$/;"	n
+Gadget	src/gadget.cpp	/^Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns) {$/;"	f	class:Gadget
+Gadget	src/gadget.h	/^class Gadget {$/;"	c
+Gadgets	src/gadget.h	/^typedef std::vector<Gadget> Gadgets;$/;"	t
+Inc	src/asm/inc.h	/^namespace Inc {$/;"	n
+Insn	src/gadget.h	/^typedef struct Insn {$/;"	s
+Insn	src/gadget.h	/^} Insn;$/;"	t	typeref:struct:Insn
+Insns	src/gadget.h	/^typedef std::vector<Insn> Insns;$/;"	t
+Lea	src/asm/lea.h	/^namespace Lea {$/;"	n
+Middle	src/middle/middle.h	/^namespace Middle {$/;"	n
+Mnem	src/gadget.h	/^typedef std::string Mnem;$/;"	t
+Mov	src/asm/mov.h	/^namespace Mov {$/;"	n
+Movzx	src/asm/movzx.h	/^namespace Movzx {$/;"	n
+Neg	src/asm/neg.h	/^namespace Neg {$/;"	n
+OBJS	Makefile	/^OBJS := $(addsuffix .o,$(basename $(SRCS)))$/;"	m
+Opcode	src/gadget.h	/^typedef std::variant<uint64_t, RegType::Reg> Opcode;$/;"	t
+OptGadget	src/gadget.h	/^typedef std::optional<Gadget> OptGadget;$/;"	t
+OptROP	src/ropchain.h	/^typedef std::optional<ROPChain> OptROP;$/;"	t
+Or	src/asm/or.h	/^namespace Or {$/;"	n
+Pop	src/asm/pop.h	/^namespace Pop {$/;"	n
+Proc	src/solver.cpp	/^        const Gadgets&, RegSet)> Proc;$/;"	t	file:
+RM	Makefile	/^RM = rm$/;"	m
+ROPChain	src/ropchain.cpp	/^ROPChain::ROPChain() {$/;"	f	class:ROPChain
+ROPChain	src/ropchain.cpp	/^ROPChain::ROPChain(const ROPElem elem)$/;"	f	class:ROPChain
+ROPChain	src/ropchain.cpp	/^ROPChain::ROPChain(const ROPElems _elems)$/;"	f	class:ROPChain
+ROPChain	src/ropchain.h	/^class ROPChain {$/;"	c
+ROPElem	src/ropchain.h	/^typedef std::variant<Gadget, uint64_t> ROPElem;$/;"	t
+ROPElems	src/ropchain.h	/^typedef std::vector<ROPElem> ROPElems;$/;"	t
+Reg	src/regs.h	/^    typedef int64_t Reg;$/;"	t	namespace:RegType
+RegSet	src/regs.h	/^typedef std::bitset<68> RegSet;$/;"	t
+RegType	src/regs.h	/^namespace RegType {$/;"	n
+Regs	src/regs.h	/^    enum Regs {$/;"	g	namespace:RegType
+SRCS	Makefile	/^SRCS := $(shell find $(SRC_DIRS) -name *.cpp)$/;"	m
+SRC_DIRS	Makefile	/^SRC_DIRS = .\/src$/;"	m
+Shl	src/asm/shl.h	/^namespace Shl {$/;"	n
+TARGET	Makefile	/^TARGET = .\/bin\/ropchain$/;"	m
+Util	src/util.h	/^namespace Util {$/;"	n
+Xchg	src/asm/xchg.h	/^namespace Xchg {$/;"	n
+Xor	src/asm/xor.h	/^namespace Xor {$/;"	n
+_solve	src/solver.cpp	/^OptROP _solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,$/;"	f
+addr	src/gadget.h	/^    uint64_t addr;$/;"	m	class:Gadget
+ah	src/regs.h	/^    rax,eax, ax, ah, al, $/;"	e	enum:RegType::Regs
+al	src/regs.h	/^    rax,eax, ax, ah, al, $/;"	e	enum:RegType::Regs
+allRegs	src/util.cpp	/^RegSet Util::allRegs() {$/;"	f	class:Util
+append	src/ropchain.cpp	/^void ROPChain::append(ROPElem elem) {$/;"	f	class:ROPChain
+ax	src/regs.h	/^    rax,eax, ax, ah, al, $/;"	e	enum:RegType::Regs
+baseAddr	src/ropchain.h	/^    uint64_t baseAddr;$/;"	m	class:ROPChain
+bh	src/regs.h	/^    rbx,ebx, bx, bh, bl, $/;"	e	enum:RegType::Regs
+bl	src/regs.h	/^    rbx,ebx, bx, bh, bl, $/;"	e	enum:RegType::Regs
+bp	src/regs.h	/^    rbp,ebp, bp,   bpl,$/;"	e	enum:RegType::Regs
+bpl	src/regs.h	/^    rbp,ebp, bp,   bpl,$/;"	e	enum:RegType::Regs
+bx	src/regs.h	/^    rbx,ebx, bx, bh, bl, $/;"	e	enum:RegType::Regs
+calcUseStack	src/util.cpp	/^size_t Util::calcUseStack(const Insns& insns) {$/;"	f	class:Util
+ch	src/regs.h	/^    rcx,ecx, cx, ch, cl, $/;"	e	enum:RegType::Regs
+chain	src/ropchain.cpp	/^void ROPChain::chain(const ROPChain& ropchain) {$/;"	f	class:ROPChain
+changedRegs	src/gadget.h	/^    RegSet changedRegs;$/;"	m	class:Gadget
+cl	src/regs.h	/^    rcx,ecx, cx, ch, cl, $/;"	e	enum:RegType::Regs
+cx	src/regs.h	/^    rcx,ecx, cx, ch, cl, $/;"	e	enum:RegType::Regs
+dh	src/regs.h	/^    rdx,edx, dx, dh, dl, $/;"	e	enum:RegType::Regs
+di	src/regs.h	/^    rdi,edi, di,   dil,$/;"	e	enum:RegType::Regs
+dil	src/regs.h	/^    rdi,edi, di,   dil,$/;"	e	enum:RegType::Regs
+dl	src/regs.h	/^    rdx,edx, dx, dh, dl, $/;"	e	enum:RegType::Regs
+dump	src/ropchain.cpp	/^void ROPChain::dump() const {$/;"	f	class:ROPChain
+dx	src/regs.h	/^    rdx,edx, dx, dh, dl, $/;"	e	enum:RegType::Regs
+eax	src/regs.h	/^    rax,eax, ax, ah, al, $/;"	e	enum:RegType::Regs
+ebp	src/regs.h	/^    rbp,ebp, bp,   bpl,$/;"	e	enum:RegType::Regs
+ebx	src/regs.h	/^    rbx,ebx, bx, bh, bl, $/;"	e	enum:RegType::Regs
+ecx	src/regs.h	/^    rcx,ecx, cx, ch, cl, $/;"	e	enum:RegType::Regs
+edi	src/regs.h	/^    rdi,edi, di,   dil,$/;"	e	enum:RegType::Regs
+edx	src/regs.h	/^    rdx,edx, dx, dh, dl, $/;"	e	enum:RegType::Regs
+elems	src/ropchain.h	/^    ROPElems elems;$/;"	m	class:ROPChain
+esi	src/regs.h	/^    rsi,esi, si,   sil,$/;"	e	enum:RegType::Regs
+esp	src/regs.h	/^    rsp,esp, sp,   spl,$/;"	e	enum:RegType::Regs
+find	src/asm/add.cpp	/^OptROP Add::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Add
+find	src/asm/and.cpp	/^OptROP And::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:And
+find	src/asm/dec.cpp	/^OptROP Dec::find(RegType::Reg op1, const uint64_t dest,$/;"	f	class:Dec
+find	src/asm/inc.cpp	/^OptROP Inc::find(RegType::Reg op1, const uint64_t dest,$/;"	f	class:Inc
+find	src/asm/lea.cpp	/^OptROP Lea::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Lea
+find	src/asm/mov.cpp	/^OptROP Mov::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Mov
+find	src/asm/movzx.cpp	/^OptROP Movzx::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Movzx
+find	src/asm/neg.cpp	/^OptROP Neg::find(const RegType::Reg op1, const uint64_t dest,$/;"	f	class:Neg
+find	src/asm/or.cpp	/^OptROP Or::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Or
+find	src/asm/pop.cpp	/^OptROP Pop::find(RegType::Reg op1, const uint64_t dest,$/;"	f	class:Pop
+find	src/asm/shl.cpp	/^OptROP Shl::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Shl
+find	src/asm/xchg.cpp	/^OptROP Xchg::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Xchg
+find	src/asm/xor.cpp	/^OptROP Xor::find(const Opcode& op1, const Opcode& op2,$/;"	f	class:Xor
+find	src/util.cpp	/^OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,$/;"	f	class:Util
+findROPChain	src/solver.cpp	/^OptROP findROPChain(const RegType::Reg reg, const uint64_t dest,$/;"	f
+findRegType	src/util.cpp	/^RegType::Reg Util::findRegType(RegType::Reg a) {$/;"	f	class:Util
+getElems	src/ropchain.cpp	/^ROPElems ROPChain::getElems() const {$/;"	f	class:ROPChain
+getInsns	src/gadget.cpp	/^const std::vector<Insn> Gadget::getInsns() const {$/;"	f	class:Gadget
+insns	src/gadget.h	/^    std::vector<Insn> insns;$/;"	m	class:Gadget
+isAvailable	src/gadget.cpp	/^bool Gadget::isAvailable(const RegSet& rs) const {$/;"	f	class:Gadget
+isChanged	src/gadget.cpp	/^bool Gadget::isChanged(const RegType::Reg reg) const {$/;"	f	class:Gadget
+length	src/ropchain.cpp	/^size_t ROPChain::length() const {$/;"	f	class:ROPChain
+listChangedRegs	src/util.cpp	/^RegSet Util::listChangedRegs(const Insns& insns) {$/;"	f	class:Util
+loadGadgets	src/util.cpp	/^Gadgets Util::loadGadgets(const std::string& fileName) {$/;"	f	class:Util
+main	src/solver.cpp	/^int main() {$/;"	f
+mnem	src/gadget.h	/^    Mnem mnem;$/;"	m	struct:Insn
+none	src/regs.h	/^    none = 0,$/;"	e	enum:RegType::Regs
+operator !=	src/gadget.cpp	/^bool Gadget::operator!=(const Gadget& gadget) const {$/;"	f	class:Gadget
+operator !=	src/gadget.h	/^    bool operator!=(const struct Insn& insn) {$/;"	f	struct:Insn
+operator <	src/ropchain.cpp	/^bool ROPChain::operator<(const ROPChain& rop) const {$/;"	f	class:ROPChain
+operator <=	src/ropchain.h	/^    bool operator<=(const ROPChain& rop) const {return !(*this < rop);};$/;"	f	class:ROPChain
+operator ==	src/gadget.cpp	/^bool Gadget::operator==(const Gadget& gadget) const {$/;"	f	class:Gadget
+operator ==	src/gadget.h	/^    bool operator==(const struct Insn& insn) const {$/;"	f	struct:Insn
+operator >	src/ropchain.h	/^    bool operator>(const ROPChain& rop) const {return rop < *this;};$/;"	f	class:ROPChain
+operator >=	src/ropchain.h	/^    bool operator>=(const ROPChain& rop) const {return !(rop > *this);};$/;"	f	class:ROPChain
+ops	src/gadget.h	/^    std::vector<Opcode> ops;$/;"	m	struct:Insn
+optMin	src/util.h	/^        T optMin(T t1, T t2) {$/;"	f	namespace:Util
+payload	src/ropchain.cpp	/^std::string ROPChain::payload() const {$/;"	f	class:ROPChain
+r10	src/regs.h	/^    r10,r10d,r10w, r10b,$/;"	e	enum:RegType::Regs
+r10b	src/regs.h	/^    r10,r10d,r10w, r10b,$/;"	e	enum:RegType::Regs
+r10d	src/regs.h	/^    r10,r10d,r10w, r10b,$/;"	e	enum:RegType::Regs
+r10w	src/regs.h	/^    r10,r10d,r10w, r10b,$/;"	e	enum:RegType::Regs
+r11	src/regs.h	/^    r11,r11d,r11w, r11b,$/;"	e	enum:RegType::Regs
+r11b	src/regs.h	/^    r11,r11d,r11w, r11b,$/;"	e	enum:RegType::Regs
+r11d	src/regs.h	/^    r11,r11d,r11w, r11b,$/;"	e	enum:RegType::Regs
+r11w	src/regs.h	/^    r11,r11d,r11w, r11b,$/;"	e	enum:RegType::Regs
+r12	src/regs.h	/^    r12,r12d,r12w, r12b,$/;"	e	enum:RegType::Regs
+r12b	src/regs.h	/^    r12,r12d,r12w, r12b,$/;"	e	enum:RegType::Regs
+r12d	src/regs.h	/^    r12,r12d,r12w, r12b,$/;"	e	enum:RegType::Regs
+r12w	src/regs.h	/^    r12,r12d,r12w, r12b,$/;"	e	enum:RegType::Regs
+r13	src/regs.h	/^    r13,r13d,r13w, r13b,$/;"	e	enum:RegType::Regs
+r13b	src/regs.h	/^    r13,r13d,r13w, r13b,$/;"	e	enum:RegType::Regs
+r13d	src/regs.h	/^    r13,r13d,r13w, r13b,$/;"	e	enum:RegType::Regs
+r13w	src/regs.h	/^    r13,r13d,r13w, r13b,$/;"	e	enum:RegType::Regs
+r14	src/regs.h	/^    r14,r14d,r14w, r14b,$/;"	e	enum:RegType::Regs
+r14b	src/regs.h	/^    r14,r14d,r14w, r14b,$/;"	e	enum:RegType::Regs
+r14d	src/regs.h	/^    r14,r14d,r14w, r14b,$/;"	e	enum:RegType::Regs
+r14w	src/regs.h	/^    r14,r14d,r14w, r14b,$/;"	e	enum:RegType::Regs
+r15	src/regs.h	/^    r15,r15d,r15w, r15b$/;"	e	enum:RegType::Regs
+r15b	src/regs.h	/^    r15,r15d,r15w, r15b$/;"	e	enum:RegType::Regs
+r15d	src/regs.h	/^    r15,r15d,r15w, r15b$/;"	e	enum:RegType::Regs
+r15w	src/regs.h	/^    r15,r15d,r15w, r15b$/;"	e	enum:RegType::Regs
+r8	src/regs.h	/^    r8, r8d, r8w,  r8b,$/;"	e	enum:RegType::Regs
+r8b	src/regs.h	/^    r8, r8d, r8w,  r8b,$/;"	e	enum:RegType::Regs
+r8d	src/regs.h	/^    r8, r8d, r8w,  r8b,$/;"	e	enum:RegType::Regs
+r8w	src/regs.h	/^    r8, r8d, r8w,  r8b,$/;"	e	enum:RegType::Regs
+r9	src/regs.h	/^    r9, r9d, r9w,  r9b,$/;"	e	enum:RegType::Regs
+r9b	src/regs.h	/^    r9, r9d, r9w,  r9b,$/;"	e	enum:RegType::Regs
+r9d	src/regs.h	/^    r9, r9d, r9w,  r9b,$/;"	e	enum:RegType::Regs
+r9w	src/regs.h	/^    r9, r9d, r9w,  r9b,$/;"	e	enum:RegType::Regs
+rax	src/regs.h	/^    rax,eax, ax, ah, al, $/;"	e	enum:RegType::Regs
+rbp	src/regs.h	/^    rbp,ebp, bp,   bpl,$/;"	e	enum:RegType::Regs
+rbx	src/regs.h	/^    rbx,ebx, bx, bh, bl, $/;"	e	enum:RegType::Regs
+rcx	src/regs.h	/^    rcx,ecx, cx, ch, cl, $/;"	e	enum:RegType::Regs
+rdi	src/regs.h	/^    rdi,edi, di,   dil,$/;"	e	enum:RegType::Regs
+rdx	src/regs.h	/^    rdx,edx, dx, dh, dl, $/;"	e	enum:RegType::Regs
+rsi	src/regs.h	/^    rsi,esi, si,   sil,$/;"	e	enum:RegType::Regs
+rsp	src/regs.h	/^    rsp,esp, sp,   spl,$/;"	e	enum:RegType::Regs
+setBaseAddr	src/ropchain.cpp	/^void ROPChain::setBaseAddr(const uint64_t addr) {$/;"	f	class:ROPChain
+setVal	src/middle/middle.cpp	/^OptROP Middle::setVal(const RegType::Reg r,$/;"	f	class:Middle
+si	src/regs.h	/^    rsi,esi, si,   sil,$/;"	e	enum:RegType::Regs
+sil	src/regs.h	/^    rsi,esi, si,   sil,$/;"	e	enum:RegType::Regs
+solveAvoidChars	src/solver.cpp	/^OptROP solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,$/;"	f
+solveWithFile	src/solver.cpp	/^OptROP solveWithFile(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,$/;"	f
+solveWithGadgets	src/solver.cpp	/^OptROP solveWithGadgets(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,$/;"	f
+sp	src/regs.h	/^    rsp,esp, sp,   spl,$/;"	e	enum:RegType::Regs
+spl	src/regs.h	/^    rsp,esp, sp,   spl,$/;"	e	enum:RegType::Regs
+toOptROP	src/util.cpp	/^OptROP Util::toOptROP(const OptGadget& gadget) {$/;"	f	class:Util
+toString	src/gadget.cpp	/^std::string Gadget::toString() const {$/;"	f	class:Gadget
+toZero	src/middle/middle.cpp	/^OptROP Middle::toZero(const RegType::Reg r,$/;"	f	class:Middle
+useStack	src/gadget.h	/^    uint32_t useStack;$/;"	m	class:Gadget

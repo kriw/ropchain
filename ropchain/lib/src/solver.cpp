@@ -1,6 +1,7 @@
 #include <optional>
 #include <map>
 #include <functional>
+#include <numeric>
 #include "ropchain.h"
 #include "gadget.h"
 #include "util.h"
@@ -20,23 +21,52 @@ OptROP _solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadg
     auto ropChains = std::map<RegType::Reg, ROPChain>();
     auto solvables = RegSet();
     auto remains = regs;
-    for(const auto& kv : dests) {
-        auto reg = kv.first;
-        auto v = kv.second;
-
-// OptROP find(const RegType::Reg reg, const uint64_t dest,
-//         const Gadgets& gadgets, RegSet aval,
-//         Cond& cond, Proc& proc) {
- 
-        auto rop = findROPChain(reg, v, gadgets, RegSet(RegType::none), cond, proc);
-        if(rop.has_value()) {
-            ropChains[reg] = rop.value();
-            solvables.set(reg);
-            remains.reset(reg);
-        }
-    }
-    //TODO
-    return {};
+	//Construct ROPChain by itself
+	{
+		const auto allBits = Util::toBits(regs);
+		for(auto reg : *allBits) {
+			auto tmp = findROPChain(reg, dests.at(reg), gadgets, RegSet(RegType::none), cond, proc);
+			if(tmp.has_value()) {
+				solvables.set(reg);
+				remains.reset(reg);
+				ropChains[reg] = tmp.value();
+			}
+		}
+		delete allBits;
+	}
+	std::vector<RegType::Reg> *bits = nullptr;
+	OptROP ans = {};
+	//Brute force remains
+	{
+		auto bits = Util::toBits(remains);
+		while (next_permutation(bits->begin(), bits->end())) {
+			auto rop = ROPChain();
+			auto aval = regs;
+			bool isDone = true;
+			//Construct ROPChain with set of registers 'remain'
+			for(RegType::Reg reg : *bits) {
+				aval.reset(reg);
+				auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc);
+				if(!tmp.has_value()) {
+					isDone = false;
+					break;
+				}
+				rop = rop + tmp.value();
+			}
+			if(isDone) {
+				ans = Util::optMin(ans, (OptROP)rop);
+			}
+		}
+		delete bits;
+	}
+	if(!ans.has_value()) {
+		return {};
+	}
+	auto rop = std::accumulate(ropChains.begin(), ropChains.end(), ROPChain(),
+			[](const ROPChain& a, const auto& b){return a + b.second;});
+	rop = rop + ans.value();
+	rop.setBaseAddr(base);
+    return (OptROP)rop;
 }
 
 OptROP solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,

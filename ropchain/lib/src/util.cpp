@@ -89,6 +89,17 @@ RegType::Reg Util::findRegType(RegType::Reg a) {
 }
 
 RegSet Util::listChangedRegs(const Insns& insns) {
+	RegSet regs;
+	for(const auto& insn : insns) {
+		if(insn.ops.size() > 0) {
+			regs.set(std::get<RegType::Reg>(insn.ops[0]));
+		}
+		if(insn.mnem == "xchg") {
+			regs.set(std::get<RegType::Reg>(insn.ops[0]));
+			regs.set(std::get<RegType::Reg>(insn.ops[1]));
+		}
+	}
+	return regs;
     //TODO
     //r1 = {findRegKind(insn.ops[0]) for insn in insns if len(insn.ops) > 0}
     // r2 = {findRegKind(insn.ops[1]) for insn in insns if insn.mnem == 'xchg'}

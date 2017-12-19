@@ -6,7 +6,6 @@ namespace Arch {
 	enum _enum_arch {
 		X86, AMD64
 	};
-	Arch _arch;
-	Arch arch();
+	static Arch arch;
 	size_t word();
 };

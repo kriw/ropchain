@@ -4,6 +4,7 @@
 #include <optional>
 #include <set>
 #include <variant>
+#include <cstdio>
 #include "regs.h"
 
 typedef std::string Mnem;
@@ -31,8 +32,14 @@ typedef struct Insn {
         return mnem == insn.mnem;
     }
 	std::string toString() const {
-		//TODO
-		return "TODO";
+		//FIXME replace sprintf with safe function
+		std::string ret(0x100, '\0');
+		auto toStr = [](Opcode op){return std::visit(overloaded {
+					[](uint64_t x){return std::to_string(x);},
+					[](RegType::Reg x){return std::to_string(x);},
+				}, op);};
+		sprintf((char *)ret.c_str(), "%s %d, %d\n", mnem, toStr(ops[0]), toStr(ops[1]));
+		return ret;
 	}
     bool operator!=(const struct Insn& insn) {
         return !(*this == insn);

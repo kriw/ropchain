@@ -38,7 +38,7 @@ typedef struct Insn {
 					[](uint64_t x){return std::to_string(x);},
 					[](RegType::Reg x){return std::to_string(x);},
 				}, op);};
-		sprintf((char *)ret.c_str(), "%s %d, %d\n", mnem, toStr(ops[0]), toStr(ops[1]));
+		sprintf((char *)ret.c_str(), "%s %s, %s\n", mnem.c_str(), toStr(ops[0]).c_str(), toStr(ops[1]).c_str());
 		return ret;
 	}
     bool operator!=(const struct Insn& insn) {

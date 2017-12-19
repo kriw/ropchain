@@ -6,3 +6,6 @@
 build
 dist
 core
+.syntastic_cpp_config
+cscope.out
+.lvimrc

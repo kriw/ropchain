@@ -11,9 +11,9 @@ typedef std::vector<ROPElem> ROPElems;
 class ROPChain {
 public:
     ROPChain();
-    //move?
+    //TODO move?
     ROPChain(const ROPElem elem);
-    //move?
+    //TODO move?
     ROPChain(const ROPElems elems);
     void append(const ROPElem elem);
     void dump() const;

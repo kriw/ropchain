@@ -1,18 +1,22 @@
+#include <variant>
 #include "ropchain.h"
+#include "arch.h"
 
-ROPChain::ROPChain() {
-    //TODO
+ROPChain::ROPChain()
+: baseAddr(0)
+{
 }
 
 ROPChain::ROPChain(const ROPElem elem)
-: baseAddr(0) {
-    elems = {elem};
+: baseAddr(0)
+, elems{{elem}}
+{
 }
 
 ROPChain::ROPChain(const ROPElems _elems)
-: baseAddr(0) {
-    //TODO
-    elems = _elems;
+: baseAddr(0)
+, elems{_elems}
+{
 }
 
 void ROPChain::append(ROPElem elem) {
@@ -35,8 +39,12 @@ void ROPChain::setBaseAddr(const uint64_t addr) {
 }
 
 void ROPChain::dump() const {
-    //TODO
-    std::cout << "TODO" << std::endl;
+	for(auto& elem : elems) {
+		std::visit(overloaded {
+				[](uint64_t e){std::cout << e << std::endl;},
+				[](const Gadget& e){std::cout << e.toString() << std::endl;},
+				}, elem);
+	}
 }
 
 std::string ROPChain::payload() const {
@@ -53,9 +61,9 @@ ROPElems ROPChain::getElems() const {
     return elems;
 }
 
+//unit: byte
 size_t ROPChain::length() const {
-    //TODO
-    return 0;
+    return elems.size() * Arch::word();
 }
 
 ROPChain ROPChain::operator+(const ROPChain& rop) const {
@@ -65,6 +73,5 @@ ROPChain ROPChain::operator+(const ROPChain& rop) const {
 	return ROPChain(e1);
 }
 bool ROPChain::operator<(const ROPChain& rop) const {
-    //TODO
-    return true;
+    return this->length() < rop.length();
 }

@@ -57,57 +57,90 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     return {};
 }
 
-RegType::Reg Util::findRegType(RegType::Reg a) {
-    //TODO
-    //     
-    // def findRegKind(reg):
-    //     reg = reg.lower().strip()
-    //     convReg = lambda x: x if arch.arch == arch.AMD64 else 'e' + x[1:]
-    //     if reg in ['rax', 'eax', 'ax', 'al', 'ah']:
-    //         return convReg('rax')
-    //     elif reg in ['rbx', 'ebx', 'bx', 'bl', 'bh']:
-    //         return convReg('rbx')
-    //     elif reg in ['rcx', 'ecx', 'cx', 'cl', 'ch']:
-    //         return convReg('rcx')
-    //     elif reg in ['rdx', 'edx', 'dx', 'dl', 'dh']:
-    //         return convReg('rdx')
-    //     elif reg in ['rdi', 'edi']:
-    //         return convReg('rdi')
-    //     elif reg in ['rsi', 'esi']:
-    //         return convReg('rsi')
-    //     elif reg in ['rbp', 'ebp']:
-    //         return convReg('rbp')
-    //     elif reg in ['rsp', 'esp']:
-    //         return convReg('rsp')
-    //     elif reg in ['r%d%s' % (i, s) for i in range(8, 16) for s in ['', 'd', 'w', 'b']]:
-    //         if reg[-1] in ['d', 'w', 'b']:
-    //             return reg[:-1]
-    //         return reg
-    //     else:
-    //         return None
-    return RegType::rax;
+RegType::Reg Util::findRegType(RegType::Reg reg) {
+	switch(reg) {
+	case RegType::rax: case RegType::eax:
+	case RegType::ax: case RegType::ah: case RegType::al:
+		return RegType::rax;
+
+	case RegType::rbx: case RegType::ebx:
+	case RegType::bx: case RegType::bh: case RegType::bl:
+		return RegType::rbx;
+
+	case RegType::rcx: case RegType::ecx:
+	case RegType::cx: case RegType::ch: case RegType::cl:
+		return RegType::rcx;
+
+	case RegType::rdx: case RegType::edx:
+	case RegType::dx: case RegType::dh: case RegType::dl:
+		return RegType::rdx;
+
+	case RegType::rdi: case RegType::edi:
+	case RegType::di: case RegType::dil:
+		return RegType::rdi;
+
+	case RegType::rsi: case RegType::esi:
+	case RegType::si: case RegType::sil:
+		return RegType::rdi;
+
+	case RegType::rbp: case RegType::ebp:
+	case RegType::bp: case RegType::bpl:
+		return RegType::rbp;
+
+	case RegType::rsp: case RegType::esp:
+	case RegType::sp: case RegType::spl:
+		return RegType::rsp;
+
+	case RegType::r8: case RegType::r8d:
+	case RegType::r8w: case RegType::r8b:
+		return RegType::r8;
+
+	case RegType::r9: case RegType::r9d:
+	case RegType::r9w: case RegType::r9b:
+		return RegType::r9;
+
+	case RegType::r10: case RegType::r10d:
+	case RegType::r10w: case RegType::r10b:
+		return RegType::r10;
+
+	case RegType::r11: case RegType::r11d:
+	case RegType::r11w: case RegType::r11b:
+		return RegType::r11;
+
+	case RegType::r12: case RegType::r12d:
+	case RegType::r12w: case RegType::r12b:
+		return RegType::r12;
+
+	case RegType::r13: case RegType::r13d:
+	case RegType::r13w: case RegType::r13b:
+		return RegType::r13;
+
+	case RegType::r14: case RegType::r14d:
+	case RegType::r14w: case RegType::r14b:
+		return RegType::r14;
+
+	case RegType::r15: case RegType::r15d:
+	case RegType::r15w: case RegType::r15b:
+		return RegType::r15;
+	}
+    return RegType::none;
 }
 
+//FIXME This might be buggy in some type of insn.
 RegSet Util::listChangedRegs(const Insns& insns) {
 	RegSet regs;
 	for(const auto& insn : insns) {
 		if(insn.ops.size() > 0) {
+			//FIXME avoid std:get
 			regs.set(std::get<RegType::Reg>(insn.ops[0]));
 		}
 		if(insn.mnem == "xchg") {
+			//FIXME avoid std:get
 			regs.set(std::get<RegType::Reg>(insn.ops[0]));
 			regs.set(std::get<RegType::Reg>(insn.ops[1]));
 		}
 	}
 	return regs;
-    //TODO
-    //r1 = {findRegKind(insn.ops[0]) for insn in insns if len(insn.ops) > 0}
-    // r2 = {findRegKind(insn.ops[1]) for insn in insns if insn.mnem == 'xchg'}
-    // r12 = r1 | r2
-    // if None in r12:
-    // r12.remove(None)
-    // return r12
-    return RegSet();
 }
 
 //internal function of Util::calcUseStack

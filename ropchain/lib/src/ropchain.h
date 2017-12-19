@@ -5,7 +5,7 @@
 #include <variant>
 #include "gadget.h"
 
-typedef std::variant<Gadget, uint64_t> ROPElem;
+typedef std::variant<Gadget, uint64_t, std::string, GadgetWithValue> ROPElem;
 typedef std::vector<ROPElem> ROPElems;
     
 class ROPChain {

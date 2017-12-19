@@ -1,6 +1,7 @@
 #include <variant>
 #include "ropchain.h"
 #include "arch.h"
+#include "util.h"
 
 ROPChain::ROPChain()
 : baseAddr(0)
@@ -19,19 +20,21 @@ ROPChain::ROPChain(const ROPElems _elems)
 {
 }
 
-void ROPChain::append(ROPElem elem) {
-   //TODO
-   //consider about useStack
-   elems.push_back(elem);
-// self.gadgets.append(gadget)
-// payload = ''
-// if value is None:
-//     payload = 'A' * gadget.useStack
-// else:
-//     payload = pack(value) + 'A' * (gadget.useStack - arch.word())
-//
-// if len(payload) > 0:
-//     self.gadgets.append(payload);
+void ROPChain::append(const ROPElem elem) {
+	auto v = ROPElems(1, elem);
+	ROPElems es = std::visit([](const auto& e) {
+			using T = std::decay_t<decltype(e)>;
+			if constexpr(std::is_same_v<T, Gadget>) {
+				return ROPElems({std::string(e.getUseStack(), 'A')});
+			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
+				auto s = std::string(e.first.getUseStack() - Arch::word(), 'A');
+				return ROPElems({e, s});
+			}
+			return ROPElems({e});
+		}, elem);
+	for(auto& e : es) {
+		v.push_back(e);
+	}
 }
 
 void ROPChain::setBaseAddr(const uint64_t addr) {
@@ -40,16 +43,40 @@ void ROPChain::setBaseAddr(const uint64_t addr) {
 
 void ROPChain::dump() const {
 	for(auto& elem : elems) {
-		std::visit(overloaded {
-				[](uint64_t e){std::cout << e << std::endl;},
-				[](const Gadget& e){std::cout << e.toString() << std::endl;},
-				}, elem);
+		std::visit([](auto&& e){
+			using T = std::decay_t<decltype(e)>;
+			if constexpr(std::is_same_v<T, Gadget>) {
+				std::cout << e.toString() << std::endl;
+			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
+				std::cout << e.first.toString() << std::endl;
+				std::cout << e.second << std::endl;
+			} else if constexpr(std::is_same_v<T, std::string>) {
+				std::cout << e << std::endl;
+			} else if constexpr(std::is_same_v<T, uint64_t>) {
+				std::cout << e << std::endl;
+			}
+			}, elem);
 	}
 }
 
 std::string ROPChain::payload() const {
-    //TODO
-    return "TODO";
+	std::string payload;
+	for(auto& elem : elems) {
+		std::string s = std::visit([&](auto&& e){
+			using T = std::decay_t<decltype(e)>;
+			if constexpr(std::is_same_v<T, Gadget>) {
+				return Util::pack(e.getAddr() + baseAddr);
+			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
+				return Util::pack(e.first.getAddr() + baseAddr) + Util::pack(e.second);
+			} else if constexpr(std::is_same_v<T, std::string>) {
+				return e;
+			} else if constexpr(std::is_same_v<T, uint64_t>) {
+				return Util::pack(e);
+			}
+			}, elem);
+		payload += s;
+	}
+    return payload;
 }
 
 void ROPChain::chain(const ROPChain& ropchain) {
@@ -73,5 +100,5 @@ ROPChain ROPChain::operator+(const ROPChain& rop) const {
 	return ROPChain(e1);
 }
 bool ROPChain::operator<(const ROPChain& rop) const {
-    return this->length() < rop.length();
+    return length() < rop.length();
 }

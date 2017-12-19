@@ -57,6 +57,8 @@ public:
     bool operator==(const Gadget& gadget) const;
     bool operator!=(const Gadget& gadget) const;
     const std::vector<Insn> getInsns() const;
+	uint32_t getUseStack() const;
+	uint64_t getAddr() const;
 private:
     std::vector<Insn> insns;
     uint64_t addr;
@@ -68,3 +70,4 @@ private:
 
 typedef std::optional<Gadget> OptGadget;
 typedef std::vector<Gadget> Gadgets;
+typedef std::pair<Gadget, uint64_t> GadgetWithValue;

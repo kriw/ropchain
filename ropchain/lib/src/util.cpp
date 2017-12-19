@@ -204,3 +204,20 @@ RegSet Util::allRegs() {
 	}
 	return RegSet();
 }
+
+std::string Util::pack(uint64_t v) {
+	std::string ret;
+	int bytes;
+	if(Arch::arch == Arch::X86) {
+		bytes = 4;
+	} else if(Arch::arch == Arch::AMD64) {
+		bytes = 8;
+	} else {
+		//error
+		return "";
+	}
+	for(int i=bytes-1; i>=0; i--) {
+		ret += (char)((v >> 8*i) & 0xff);
+	}
+	return ret;
+}

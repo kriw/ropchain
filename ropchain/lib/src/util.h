@@ -31,4 +31,5 @@ namespace Util {
     RegType::Reg findRegType(RegType::Reg reg);
     RegSet listChangedRegs(const Insns& insns);
     size_t calcUseStack(const Insns& insns);
+	std::string pack(uint64_t v);
 };

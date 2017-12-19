@@ -122,8 +122,10 @@ RegType::Reg Util::findRegType(RegType::Reg reg) {
 	case RegType::r15: case RegType::r15d:
 	case RegType::r15w: case RegType::r15b:
 		return RegType::r15;
+
+	default:
+		return RegType::none;
 	}
-    return RegType::none;
 }
 
 //FIXME This might be buggy in some type of insn.

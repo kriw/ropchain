@@ -5,6 +5,7 @@
 #include <set>
 #include <variant>
 #include <cstdio>
+#include <cstring>
 #include "regs.h"
 
 typedef std::string Mnem;
@@ -30,6 +31,24 @@ typedef struct Insn {
 			}
 		}
         return mnem == insn.mnem;
+    }
+    static Opcode strToOpcode(std::string s) {
+        //TODO
+        return (uint64_t)0;
+    }
+    static Insn fromString(std::string opcode) {
+        char _mnem[0x100];
+        char *_ops = new char[0x100];
+        char * const p = _ops;
+        sscanf(opcode.c_str(), "%s %[^\n\t]", _mnem, _ops);
+        Mnem mnem = std::string(mnem);
+        auto ops = std::vector<Opcode>();
+        for(char *tmp = strchr(_ops, ','); tmp; _ops = tmp + 1) {
+            auto op = strToOpcode(std::string(tmp + 1));
+            ops.push_back(op);
+        }
+        delete p;
+        return Insn{.mnem = mnem, .ops = ops};
     }
 	std::string toString() const {
 		//FIXME replace sprintf with safe function

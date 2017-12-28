@@ -16,7 +16,7 @@ template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 typedef struct Insn {
     Mnem mnem;
     std::vector<Opcode> ops;
-    bool operator==(const struct Insn& insn) const {
+    bool operator==(const Insn& insn) const {
 		if(ops.size() != insn.ops.size()) {
 			return false;
 		}
@@ -33,8 +33,10 @@ typedef struct Insn {
         return mnem == insn.mnem;
     }
     static Opcode strToOpcode(std::string s) {
-        //TODO
-        return (uint64_t)0;
+        if (s.substr(0, 2) == "0x") {
+            return std::stoul(s, 0, 16);
+        }
+        return RegType::fromString(s);
     }
     static Insn fromString(std::string opcode) {
         char _mnem[0x100];
@@ -43,12 +45,18 @@ typedef struct Insn {
         sscanf(opcode.c_str(), "%s %[^\n\t]", _mnem, _ops);
         Mnem mnem = std::string(mnem);
         auto ops = std::vector<Opcode>();
-        for(char *tmp = strchr(_ops, ','); tmp; _ops = tmp + 1) {
-            auto op = strToOpcode(std::string(tmp + 1));
+        char *oplist[3] = {0};
+        char *tmp = _ops;
+        for(int i = 0; tmp; tmp = strchr(tmp + 1, ','), i++) {
+            *tmp = '\0';
+            oplist[i] = tmp + 1;
+        }
+        for(int i = 0; i < 3 && oplist[i]; i++ ){
+            auto op = strToOpcode(std::string(oplist[i]));
             ops.push_back(op);
         }
         delete p;
-        return Insn{.mnem = mnem, .ops = ops};
+        return Insn{mnem, ops};
     }
 	std::string toString() const {
 		//FIXME replace sprintf with safe function
@@ -60,7 +68,7 @@ typedef struct Insn {
 		sprintf((char *)ret.c_str(), "%s %s, %s\n", mnem.c_str(), toStr(ops[0]).c_str(), toStr(ops[1]).c_str());
 		return ret;
 	}
-    bool operator!=(const struct Insn& insn) {
+    bool operator!=(const Insn& insn) {
         return !(*this == insn);
     }
 } Insn;

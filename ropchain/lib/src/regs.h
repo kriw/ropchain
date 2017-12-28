@@ -25,6 +25,7 @@ namespace RegType {
     };
     typedef int64_t Reg;
 	std::string toString(Reg r);
+    Reg fromString(const std::string s);
 };
 
 typedef std::bitset<68> RegSet;

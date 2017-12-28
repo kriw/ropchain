@@ -1,6 +1,7 @@
 #include "regs.h"
 
 #define TOSTR(x) case x: return "x";
+#define EQSTR(s, x) if (s == "x") return x;
 
 std::string RegType::toString(RegType::Reg r) {
 	switch(r) {
@@ -23,4 +24,24 @@ TOSTR(r15) TOSTR(r15d) TOSTR(r15w) TOSTR(r15b)
 	default:
 		return "none";
 	}
+}
+
+RegType::Reg RegType::fromString(const std::string s) {
+EQSTR(s, rax) EQSTR(s, eax) EQSTR(s, ax) EQSTR(s, ah) EQSTR(s, al)
+EQSTR(s, rbx) EQSTR(s, ebx) EQSTR(s, bx) EQSTR(s, bh) EQSTR(s, bl)
+EQSTR(s, rcx) EQSTR(s, ecx) EQSTR(s, cx) EQSTR(s, ch) EQSTR(s, cl)
+EQSTR(s, rdx) EQSTR(s, edx) EQSTR(s, dx) EQSTR(s, dh) EQSTR(s, dl)
+EQSTR(s, rdi) EQSTR(s, edi) EQSTR(s, di) EQSTR(s, dil)
+EQSTR(s, rsi) EQSTR(s, esi) EQSTR(s, si) EQSTR(s, sil)
+EQSTR(s, rbp) EQSTR(s, ebp) EQSTR(s, bp) EQSTR(s, bpl)
+EQSTR(s, rsp) EQSTR(s, esp) EQSTR(s, sp) EQSTR(s, spl)
+EQSTR(s, r8) EQSTR(s, r8d) EQSTR(s, r8w) EQSTR(s, r8b)
+EQSTR(s, r9) EQSTR(s, r9d) EQSTR(s, r9w) EQSTR(s, r9b)
+EQSTR(s, r10) EQSTR(s, r10d) EQSTR(s, r10w) EQSTR(s, r10b)
+EQSTR(s, r11) EQSTR(s, r11d) EQSTR(s, r11w) EQSTR(s, r11b)
+EQSTR(s, r12) EQSTR(s, r12d) EQSTR(s, r12w) EQSTR(s, r12b)
+EQSTR(s, r13) EQSTR(s, r13d) EQSTR(s, r13w) EQSTR(s, r13b)
+EQSTR(s, r14) EQSTR(s, r14d) EQSTR(s, r14w) EQSTR(s, r14b)
+EQSTR(s, r15) EQSTR(s, r15d) EQSTR(s, r15w) EQSTR(s, r15b)
+    return none;
 }

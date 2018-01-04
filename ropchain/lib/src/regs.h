@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <cstdint>
 #include <bitset>
 
@@ -24,7 +25,7 @@ namespace RegType {
     r15, r15d,r15w, r15b
     };
     typedef int64_t Reg;
-	std::string toString(Reg r);
+    std::optional<std::string> toString(Reg r);
     Reg fromString(const std::string s);
 };
 

@@ -11,7 +11,7 @@ Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns) {
 std::string Gadget::toString() const {
 	std::string ret = "";
 	for(auto insn : insns) {
-		ret += insn.toString() + "\n";
+		ret += insn.toString().value() + "\n";
 	}
     return ret;
 }

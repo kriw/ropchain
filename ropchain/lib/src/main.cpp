@@ -2,6 +2,9 @@
 #include "./frontend/r2_loader.h"
 
 int main() {
-    std::cout << Frontend::test("r2 -q0 /bin/ls") << std::endl;
+    auto gadgets = Frontend::fromR2("/bin/ls").value();
+    for(auto g : gadgets) {
+        std::cout << g.toString() << std::endl;
+    }
     return 0;
 }

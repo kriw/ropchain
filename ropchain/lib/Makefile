@@ -22,4 +22,4 @@ clean:
 	$(RM) $(TARGET) $(OBJS) $(DEPS)
 
 .cpp.o:
-	$(CC) $(CPPFLAGS) $(INCS) -c $< -o $@
+	$(CC) -g $(CPPFLAGS) $(INCS) -c $< -o $@

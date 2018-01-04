@@ -8,6 +8,7 @@
 
 namespace Util {
     RegSet allRegs();
+    std::vector<std::string> split(std::string s, char delim);
     OptROP toOptROP(const OptGadget& gadget);
 	std::vector<RegType::Reg> *toBits(const RegSet& s);
     Gadgets loadGadgets(const std::string& fileName);

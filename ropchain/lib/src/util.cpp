@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <string>
 #include "arch.h"
 #include "util.h"
 
@@ -12,6 +11,20 @@ OptROP Util::toOptROP(const OptGadget& gadget) {
 Gadgets Util::loadGadgets(const std::string& fileName) {
     //TODO
     return std::vector<Gadget>();
+}
+
+std::vector<std::string> Util::split(std::string s, char delim) {
+    std::vector<std::string> ret;
+    auto pos = std::string::npos;
+    while((pos = s.find(delim)) != std::string::npos) {
+        auto tmp = s.substr(pos);
+        ret.push_back(tmp);
+        s = tmp;
+    }
+    if(s.length() > 0) {
+        ret.push_back(s);
+    }
+    return ret;
 }
 
 std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {
@@ -47,7 +60,7 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     if(op3.has_value()) {
         ops.push_back(op3.value());
     }
-    const Insn insn = Insn{mnem, ops};
+    const Insn insn(mnem, ops);
     for(const auto& gadget : gadgets) {
         const auto insn_g = gadget.getInsns()[0];
         if(insn == insn_g && gadget.isAvailable(avl)) {
@@ -158,8 +171,7 @@ size_t _calcUseStack(const Insn& insn) {
 		auto r = std::get<RegType::Reg>(ops[0]);
 		if(r == RegType::esp || r == RegType::rsp) {
 			auto s = std::get<uint64_t>(ops[1]);
-			size_t sz = 2;
-			return Arch::word() * std::stoll(RegType::toString(s), &sz, 16);
+            return Arch::word() * s;
 		}
 	}
 	return 0;

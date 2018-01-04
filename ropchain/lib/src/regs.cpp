@@ -1,9 +1,10 @@
 #include "regs.h"
+#include <iostream>
 
-#define TOSTR(x) case x: return "x";
-#define EQSTR(s, x) if (s == "x") return x;
+#define TOSTR(x) case x: return #x;
+#define EQSTR(s, x) if (s == #x) return x;
 
-std::string RegType::toString(RegType::Reg r) {
+std::optional<std::string> RegType::toString(RegType::Reg r) {
 	switch(r) {
 TOSTR(rax) TOSTR(eax) TOSTR(ax) TOSTR(ah) TOSTR(al)
 TOSTR(rbx) TOSTR(ebx) TOSTR(bx) TOSTR(bh) TOSTR(bl)
@@ -22,7 +23,7 @@ TOSTR(r13) TOSTR(r13d) TOSTR(r13w) TOSTR(r13b)
 TOSTR(r14) TOSTR(r14d) TOSTR(r14w) TOSTR(r14b)
 TOSTR(r15) TOSTR(r15d) TOSTR(r15w) TOSTR(r15b)
 	default:
-		return "none";
+		return {};
 	}
 }
 

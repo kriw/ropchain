@@ -40,6 +40,11 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
     if(opcode.find('[') != std::string::npos) {
         return {};
     }
+    //Ignore jmp/call instruction
+    if(opcode.find('j') != std::string::npos
+            || opcode.find("call") != std::string::npos) {
+        return {};
+    }
     char * const _mnem = new char[0x100];
     char *_ops = new char[0x100];
     char * const p = _ops;

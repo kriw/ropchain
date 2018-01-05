@@ -28,7 +28,7 @@ bool Insn::operator==(const Insn& insn) const {
     return mnem == insn.mnem;
 }
 
-Opcode Insn::strToOpcode(std::string s) {
+std::optional<Opcode> Insn::strToOpcode(std::string s) {
     if (s.substr(0, 2) == "0x") {
         return std::stoul(s, 0, 16);
     }
@@ -60,8 +60,13 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
     Mnem mnem = _mnem;
     auto ops = std::vector<Opcode>();
     auto oplist = Util::split(_ops, ',');
-    for(const auto& op : oplist) {
-        ops.push_back(strToOpcode(op));
+    for(auto& op : oplist) {
+        auto o = strToOpcode(op);
+        if(!o.has_value()) {
+            std::cerr << "Unknown opcode: " << op << std::endl;
+            return {};
+        }
+        ops.push_back(o.value());
     }
     delete[] _mnem;
     delete[] p;

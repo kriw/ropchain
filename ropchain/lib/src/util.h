@@ -9,6 +9,8 @@
 namespace Util {
     RegSet allRegs();
     std::vector<std::string> split(std::string s, char delim);
+    void trim(std::string& s, const std::string& delims);
+    std::string join(const std::vector<std::string>& s, const std::string& separator);
     OptROP toOptROP(const OptGadget& gadget);
 	std::vector<RegType::Reg> *toBits(const RegSet& s);
     Gadgets loadGadgets(const std::string& fileName);

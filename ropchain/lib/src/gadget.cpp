@@ -9,11 +9,10 @@ Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns) {
 }
 
 std::string Gadget::toString() const {
-	std::string ret = "";
-	for(auto insn : insns) {
-		ret += insn.toString().value() + "\n";
-	}
-    return ret;
+    auto ss = std::vector<std::string>(insns.size());
+    std::transform(insns.begin(), insns.end(), ss.begin(),
+            [](const auto& x){return x.toString().value();});
+    return Util::join(ss, "\n");
 }
 
 bool Gadget::operator==(const Gadget& gadget) const {

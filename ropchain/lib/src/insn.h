@@ -20,7 +20,7 @@ public:
     std::vector<Opcode> ops;
     Insn& operator=(const Insn&);
     bool operator==(const Insn& insn) const;
-    static Opcode strToOpcode(std::string s);
+    static std::optional<Opcode> strToOpcode(std::string s);
     static std::optional<Insn> fromString(const std::string& opcode);
     std::optional<std::string> toString() const;
     bool operator!=(const Insn& insn);

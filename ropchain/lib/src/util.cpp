@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <sstream>
 #include "arch.h"
 #include "util.h"
 
@@ -16,15 +17,50 @@ Gadgets Util::loadGadgets(const std::string& fileName) {
 std::vector<std::string> Util::split(std::string s, char delim) {
     std::vector<std::string> ret;
     auto pos = std::string::npos;
+    if(s.length() > 0 && s.find(delim) == std::string::npos) {
+        ret.push_back(s);
+        return ret;
+    }
     while((pos = s.find(delim)) != std::string::npos) {
-        auto tmp = s.substr(pos);
-        ret.push_back(tmp);
+        auto tmp = s.substr(pos + 1);
+        if(tmp.find(delim) == std::string::npos) {
+            ret.push_back(tmp);
+        } else {
+            ret.push_back(tmp.substr(0, tmp.find(delim)));
+        }
         s = tmp;
     }
-    if(s.length() > 0) {
-        ret.push_back(s);
-    }
     return ret;
+}
+
+std::string Util::join(const std::vector<std::string>& s, const std::string& separator) {
+    std::ostringstream oss;
+    if(!s.size()) {
+        return "";
+    }
+    for(int i=0; i<s.size()-1; i++) {
+        oss << s[i] << separator;
+    }
+    oss << s.back();
+    return oss.str();
+}
+
+inline void ltrim(std::string &s, const std::string& delims) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [&](int ch) {
+                return delims.find(ch) == std::string::npos;
+                }));
+}
+
+// trim from end (in place)
+inline void rtrim(std::string &s, const std::string& delims) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [&](int ch) {
+                return delims.find(ch) == std::string::npos;
+                }).base(), s.end());
+}
+
+void Util::trim(std::string& s, const std::string& delims) {
+    ltrim(s, delims);
+    rtrim(s, delims);
 }
 
 std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {

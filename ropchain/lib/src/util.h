@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 #include "ropchain.h"
@@ -8,6 +9,7 @@
 
 namespace Util {
     RegSet allRegs();
+    RegSet map2Regs(const std::map<RegType::Reg, uint64_t>& m);
     std::vector<std::string> split(std::string s, char delim);
     void trim(std::string& s, const std::string& delims);
     std::string join(const std::vector<std::string>& s, const std::string& separator);

@@ -182,13 +182,24 @@ RegSet Util::listChangedRegs(const Insns& insns) {
 	RegSet regs;
 	for(const auto& insn : insns) {
 		if(insn.ops.size() > 0) {
-			//FIXME avoid std:get
-			regs.set(std::get<RegType::Reg>(insn.ops[0]));
+            if(auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+                regs.set(*r);
+            } else {
+                std::cerr << "Error: Unknow Register" << std::endl;
+            }
 		}
 		if(insn.mnem == "xchg") {
 			//FIXME avoid std:get
-			regs.set(std::get<RegType::Reg>(insn.ops[0]));
-			regs.set(std::get<RegType::Reg>(insn.ops[1]));
+            if(auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+                regs.set(*r);
+            } else {
+                std::cerr << "Error: Unknow Register" << std::endl;
+            }
+            if(auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
+                regs.set(*r);
+            } else {
+                std::cerr << "Error: Unknow Register" << std::endl;
+            }
 		}
 	}
 	return regs;
@@ -219,6 +230,14 @@ size_t Util::calcUseStack(const Insns& insns) {
 	}
 	return ret;
 
+}
+
+RegSet Util::map2Regs(const std::map<RegType::Reg, uint64_t>& m) {
+    RegSet s;
+    for(const auto& kv : m) {
+        s.set(kv.first);
+    }
+    return s;
 }
 
 RegSet Util::allRegs() {

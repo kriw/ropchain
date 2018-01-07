@@ -100,6 +100,12 @@ ROPChain ROPChain::operator+(const ROPChain& rop) const {
 	e1.insert(e1.end(), e2.begin(), e2.end());
 	return ROPChain(e1);
 }
+
+ROPChain ROPChain::operator+=(const ROPChain& rop) {
+    *this = *this + rop;
+    return *this;
+}
+
 bool ROPChain::operator<(const ROPChain& rop) const {
     return length() < rop.length();
 }

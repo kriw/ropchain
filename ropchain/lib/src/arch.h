@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <cstdint>
 
 namespace Arch {
 	typedef int Arch;
@@ -8,4 +9,5 @@ namespace Arch {
 	};
 	static Arch arch;
 	size_t word();
+    uint32_t bits();
 };

@@ -61,6 +61,7 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
     auto ops = std::vector<Opcode>();
     auto oplist = Util::split(_ops, ',');
     for(auto& op : oplist) {
+        Util::trim(op, " ");
         auto o = strToOpcode(op);
         if(!o.has_value()) {
             std::cerr << "Unknown opcode: " << op << std::endl;

@@ -36,10 +36,11 @@ std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
         const uint64_t addr = stoull(s.substr(0, s.find(':')), &sz, 16);
         std::vector<Insn> insns;
         s = s.substr(s.find(' '));
+        Util::trim(s, " ;\n");
         auto opcodes = Util::split(s, ';');
         bool canPush = true;
         for(auto& opcode : opcodes) {
-            Util::trim(opcode, " ;\n");
+            Util::trim(opcode, " \n");
             if(opcode.empty()) {
                 continue;
             }

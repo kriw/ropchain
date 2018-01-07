@@ -3,7 +3,7 @@
 #include "arch.h"
 #include "util.h"
 
-OptROP Util::toOptROP(const OptGadget& gadget) {
+OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     if(gadget.has_value()) {
         return ROPChain(gadget.value());
     }
@@ -17,18 +17,13 @@ Gadgets Util::loadGadgets(const std::string& fileName) {
 std::vector<std::string> Util::split(std::string s, char delim) {
     std::vector<std::string> ret;
     auto pos = std::string::npos;
-    if(s.length() > 0 && s.find(delim) == std::string::npos) {
-        ret.push_back(s);
-        return ret;
-    }
     while((pos = s.find(delim)) != std::string::npos) {
         auto tmp = s.substr(pos + 1);
-        if(tmp.find(delim) == std::string::npos) {
-            ret.push_back(tmp);
-        } else {
-            ret.push_back(tmp.substr(0, tmp.find(delim)));
-        }
+        ret.push_back(s.substr(0, pos));
         s = tmp;
+    }
+    if(s.length() > 0 && s.find(delim) == std::string::npos) {
+        ret.push_back(s);
     }
     return ret;
 }
@@ -97,8 +92,11 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     }
     const Insn insn(mnem, ops);
     for(const auto& gadget : gadgets) {
-        const auto insn_g = gadget.getInsns()[0];
-        if(insn == insn_g && gadget.isAvailable(avl)) {
+        const auto insns_g = gadget.getInsns();
+        if(!insns_g.size()) {
+            continue;
+        }
+        if(insn == insns_g[0] && gadget.isAvailable(avl)) {
             return gadget;
         }
     }
@@ -214,11 +212,12 @@ size_t _calcUseStack(const Insn& insn) {
 		return Arch::word() * 7;
 	} else if(mnem == "add") {
 		//FIXME use std::visit
-		auto r = std::get<RegType::Reg>(ops[0]);
-		if(r == RegType::esp || r == RegType::rsp) {
-			auto s = std::get<uint64_t>(ops[1]);
-            return Arch::word() * s;
-		}
+        if(auto r = std::get_if<RegType::Reg>(&ops[0])) {
+            if(*r == RegType::esp || *r == RegType::rsp) {
+                auto s = std::get<uint64_t>(ops[1]);
+                return Arch::word() * s;
+            }
+        }
 	}
 	return 0;
 }

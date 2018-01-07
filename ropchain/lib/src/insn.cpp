@@ -16,7 +16,7 @@ bool Insn::operator==(const Insn& insn) const {
         return false;
     }
     for(int i=0; i<ops.size(); i++) {
-        if(std::visit(overloaded {
+        if(!std::visit(overloaded {
                     [](uint64_t a, RegType::Reg b) {return false;},
                     [](RegType::Reg a, uint64_t b) {return false;},
                     [](uint64_t a, uint64_t b) {return a == b;},
@@ -90,14 +90,14 @@ std::optional<std::string> Insn::toString() const {
         strcpy(ret, mnem.c_str());
         break;
     case 1:
-        sprintf(ret, "%s %s\n", mnem.c_str(), toStr(ops[0]).c_str());
+        sprintf(ret, "%s %s", mnem.c_str(), toStr(ops[0]).c_str());
         break;
     case 2:
-        sprintf(ret, "%s %s, %s\n", mnem.c_str(), toStr(ops[0]).c_str(),
+        sprintf(ret, "%s %s, %s", mnem.c_str(), toStr(ops[0]).c_str(),
                 toStr(ops[1]).c_str());
         break;
     case 3:
-        sprintf(ret, "%s %s, %s, %s\n", mnem.c_str(), toStr(ops[0]).c_str(),
+        sprintf(ret, "%s %s, %s, %s", mnem.c_str(), toStr(ops[0]).c_str(),
                 toStr(ops[1]).c_str(), toStr(ops[2]).c_str());
         break;
     }

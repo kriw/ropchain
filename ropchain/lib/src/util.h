@@ -27,9 +27,9 @@ namespace Util {
             return std::min(t1.value(), t2.value());
         }
     OptGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
-            const std::optional<Opcode> op1);
+            const Opcode op1);
     OptGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
-            const std::optional<Opcode> op1, const std::optional<Opcode> op2);
+            const Opcode op1, const Opcode op2);
     OptGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
             const std::optional<Opcode> op1, const std::optional<Opcode> op2,
             const std::optional<Opcode> op3);

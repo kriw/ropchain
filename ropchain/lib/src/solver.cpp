@@ -9,7 +9,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 
     auto ropChains = std::map<RegType::Reg, ROPChain>();
     auto solvables = RegSet();
-    auto remains = regs;
+    auto remains = RegSet();
 	//Construct ROPChain by itself
 	{
 		const auto allBits = Util::toBits(Util::map2Regs(dests));
@@ -17,17 +17,25 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 			auto tmp = findROPChain(reg, dests.at(reg), gadgets, RegSet(RegType::none), cond, proc);
 			if(tmp.has_value()) {
 				solvables.set(reg);
-				remains.reset(reg);
 				ropChains[reg] = tmp.value();
-			}
+			} else {
+                remains.set(reg);
+            }
 		}
 		delete allBits;
 	}
+    if(remains.none()) {
+        auto rop = std::accumulate(ropChains.begin(), ropChains.end(), ROPChain(),
+			[](const ROPChain& a, const auto& b){return a + b.second;});
+        rop.setBaseAddr(base);
+        return rop;
+    }
 	OptROP ans = {};
 	//Brute force remains
 	{
 		auto bits = Util::toBits(remains);
-		while (next_permutation(bits->begin(), bits->end())) {
+        std::sort(bits->begin(), bits->end());
+        do {
 			auto rop = ROPChain();
 			auto aval = regs;
 			bool isDone = true;
@@ -44,7 +52,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 			if(isDone) {
 				ans = Util::optMin(ans, (OptROP)rop);
 			}
-		}
+        } while (next_permutation(bits->begin(), bits->end()));
 		delete bits;
 	}
 	if(!ans.has_value()) {
@@ -61,7 +69,7 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
         const uint64_t base, const std::set<char>& avoids) {
     //TODO
     auto cond = [](uint64_t value) {
-        return false;
+        return true;
     };
     Proc proc = [](const RegType::Reg reg, const uint64_t base,
             const Gadgets& gadgets, RegSet availables) {
@@ -84,7 +92,7 @@ OptROP Solver::solveWithFile(const std::map<RegType::Reg, uint64_t>& dests, cons
 OptROP Solver::findROPChain(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet aval, Cond& cond, Proc& proc) {
     if(cond(dest)) {
-        Middle::setVal(reg, dest, gadgets, aval);
+        return Middle::setVal(reg, dest, gadgets, aval);
     }
     return proc(reg, dest, gadgets, aval);
 }

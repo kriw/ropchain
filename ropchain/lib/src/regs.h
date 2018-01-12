@@ -29,4 +29,4 @@ namespace RegType {
     std::optional<Reg> fromString(const std::string s);
 };
 
-typedef std::bitset<68> RegSet;
+typedef std::bitset<80> RegSet;

@@ -239,32 +239,32 @@ RegSet Util::map2Regs(const std::map<RegType::Reg, uint64_t>& m) {
 RegSet Util::allRegs() {
 	RegSet s;
 	if(Arch::arch == Arch::X86) {
-		s.set(RegType::eax
-				| RegType::ebx
-				| RegType::ecx
-				| RegType::edx
-				| RegType::esi
-				| RegType::edi
-				| RegType::ebp);
+        s.set(RegType::eax);
+        s.set(RegType::ebx);
+        s.set(RegType::ecx);
+        s.set(RegType::edx);
+        s.set(RegType::esi);
+        s.set(RegType::edi);
+        s.set(RegType::ebp);
 		return s;
 	}
 	if(Arch::arch == Arch::AMD64) {
-		s.set(RegType::rax
-				| RegType::rbx
-				| RegType::rcx
-				| RegType::rdx
-				| RegType::rdi
-				| RegType::rsi
-				| RegType::rbp
-				| RegType::rsp
-				| RegType::r8
-				| RegType::r9
-				| RegType::r10
-				| RegType::r11
-				| RegType::r12
-				| RegType::r13
-				| RegType::r14
-				| RegType::r15);
+		s.set(RegType::rax);
+		s.set(RegType::rbx);
+		s.set(RegType::rcx);
+		s.set(RegType::rdx);
+		s.set(RegType::rdi);
+		s.set(RegType::rsi);
+		s.set(RegType::rbp);
+		s.set(RegType::rsp);
+		s.set(RegType::r8);
+		s.set(RegType::r9);
+		s.set(RegType::r10);
+		s.set(RegType::r11);
+		s.set(RegType::r12);
+		s.set(RegType::r13);
+		s.set(RegType::r14);
+		s.set(RegType::r15);
 		return s;
 	}
 	return RegSet();
@@ -272,15 +272,7 @@ RegSet Util::allRegs() {
 
 std::string Util::pack(uint64_t v) {
 	std::string ret;
-	int bytes;
-	if(Arch::arch == Arch::X86) {
-		bytes = 4;
-	} else if(Arch::arch == Arch::AMD64) {
-		bytes = 8;
-	} else {
-		//error
-		return "";
-	}
+	const size_t bytes = Arch::word();
 	for(int i=bytes-1; i>=0; i--) {
 		ret += (char)((v >> 8*i) & 0xff);
 	}

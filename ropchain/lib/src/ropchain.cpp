@@ -42,7 +42,6 @@ void ROPChain::setBaseAddr(const uint64_t addr) {
 }
 
 void ROPChain::dump() const {
-    printf("elems.size(): %d\n", elems.size());
 	for(auto& elem : elems) {
 		std::visit([](auto&& e){
 			using T = std::decay_t<decltype(e)>;
@@ -56,7 +55,7 @@ void ROPChain::dump() const {
 			} else if constexpr(std::is_same_v<T, uint64_t>) {
 				std::cout << e << std::endl;
 			}
-			}, elem);
+        }, elem);
 	}
 }
 

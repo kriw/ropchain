@@ -10,7 +10,7 @@ OptROP fromXorOr(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, R
 OptROP fromXchg(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, RegSet& aval);
 
 OptROP findWithoutXchg(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, RegSet& aval) {
-    auto gadget = Util::find(gadgets, aval, "mov", op1, op2);
+    const auto gadget = Util::find(gadgets, aval, "mov", op1, op2);
     auto rop = Util::toOptROP(gadget);
     rop = Util::optMin(rop, fromLea(op1, op2, gadgets, aval));
     rop = Util::optMin(rop, fromLeaWithOffset(op1, op2, gadgets, aval));
@@ -34,8 +34,8 @@ OptROP fromLea(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, Reg
 
 //xor r1, r1; ret; or r1, r2; ret
 OptROP fromXorOr(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, RegSet& aval) {
-    auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
-    auto orR1R2 = Or::find(op1, op2, gadgets, aval);
+    const auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
+    const auto orR1R2 = Or::find(op1, op2, gadgets, aval);
     if(xorR1R2.has_value() && orR1R2.has_value()) {
         return xorR1R2.value() + orR1R2.value();
     }
@@ -50,8 +50,8 @@ OptROP fromLeaWithOffset(const Opcode& op1, const Opcode& op2, const Gadgets& ga
 
 //xor r1, r1; ret; xor r1, r2; ret
 OptROP fromXorXor(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, RegSet& aval) {
-    auto xorR1R1 = Xor::find(op1, op1, gadgets, aval);
-    auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
+    const auto xorR1R1 = Xor::find(op1, op1, gadgets, aval);
+    const auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
     if(xorR1R1.has_value() && xorR1R2.has_value()) {
         return xorR1R1.value() + xorR1R2.value();
     }
@@ -60,9 +60,10 @@ OptROP fromXorXor(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, 
 
 //xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
 OptROP fromXchg(const Opcode& op1, const Opcode& op2, const Gadgets& gadgets, RegSet& aval) {
-    auto xchg = Xchg::find(op1, op2, gadgets, aval);
-    auto mov = findWithoutXchg(op2, op1, gadgets, aval);
+    const auto xchg = Xchg::find(op1, op2, gadgets, aval);
+    const auto mov = findWithoutXchg(op2, op1, gadgets, aval);
     if(xchg.has_value() && mov.has_value()) {
-        return xchg.value() + mov.value() + xchg().value();
+        return xchg.value() + mov.value() + xchg.value();
     }
+    return {};
 }

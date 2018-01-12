@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <sstream>
+#include <numeric>
 #include "arch.h"
 #include "util.h"
 
@@ -9,6 +10,7 @@ OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     }
     return {};
 }
+
 Gadgets Util::loadGadgets(const std::string& fileName) {
     //TODO
     return std::vector<Gadget>();
@@ -22,7 +24,7 @@ std::vector<std::string> Util::split(std::string s, char delim) {
         ret.push_back(s.substr(0, pos));
         s = tmp;
     }
-    if(s.length() > 0 && s.find(delim) == std::string::npos) {
+    if(s.length() && s.find(delim) == std::string::npos) {
         ret.push_back(s);
     }
     return ret;
@@ -46,7 +48,6 @@ inline void ltrim(std::string &s, const std::string& delims) {
                 }));
 }
 
-// trim from end (in place)
 inline void rtrim(std::string &s, const std::string& delims) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [&](int ch) {
                 return delims.find(ch) == std::string::npos;
@@ -72,10 +73,12 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const Opcode op1) {
     return find(gadgets, avl, mnem, op1, {}, {});
 }
+
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const Opcode op1, const Opcode op2) {
     return find(gadgets, avl, mnem, op1, op2, {});
 }
+
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const std::optional<Opcode> op1,
         const std::optional<Opcode> op2,
@@ -186,7 +189,6 @@ RegSet Util::listChangedRegs(const Insns& insns) {
             }
 		}
 		if(insn.mnem == "xchg") {
-			//FIXME avoid std:get
             if(auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
@@ -211,7 +213,6 @@ size_t _calcUseStack(const Insn& insn) {
 	} else if(mnem == "popad") {
 		return Arch::word() * 7;
 	} else if(mnem == "add") {
-		//FIXME use std::visit
         if(auto r = std::get_if<RegType::Reg>(&ops[0])) {
             if(*r == RegType::esp || *r == RegType::rsp) {
                 auto s = std::get<uint64_t>(ops[1]);
@@ -221,13 +222,10 @@ size_t _calcUseStack(const Insn& insn) {
 	}
 	return 0;
 }
-size_t Util::calcUseStack(const Insns& insns) {
-	size_t ret = 0;
-	for(auto& insn : insns) {
-		ret += _calcUseStack(insn);
-	}
-	return ret;
 
+size_t Util::calcUseStack(const Insns& insns) {
+    return std::accumulate(insns.begin(), insns.end(), 0,
+            [](auto a, auto b) {return a + _calcUseStack(b);});
 }
 
 RegSet Util::map2Regs(const std::map<RegType::Reg, uint64_t>& m) {

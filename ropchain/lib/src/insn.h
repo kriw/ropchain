@@ -13,17 +13,16 @@ template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 class Insn {
-    //FIXME change some accessors to private
 public:
+    const Mnem mnem;
+    const std::vector<Opcode> ops;
     Insn(Mnem _mnem, std::vector<Opcode> _ops);
-    Mnem mnem;
-    std::vector<Opcode> ops;
-    Insn& operator=(const Insn&);
+    Insn& operator=(const Insn&) const;
     bool operator==(const Insn& insn) const;
+    bool operator!=(const Insn& insn) const;
+    std::optional<std::string> toString() const;
     static std::optional<Opcode> strToOpcode(std::string s);
     static std::optional<Insn> fromString(const std::string& opcode);
-    std::optional<std::string> toString() const;
-    bool operator!=(const Insn& insn);
 };
 
 typedef std::vector<Insn> Insns;

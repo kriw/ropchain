@@ -6,7 +6,7 @@ Insn::Insn(Mnem _mnem, std::vector<Opcode> _ops)
 :   mnem(_mnem),
     ops(_ops) {};
 
-Insn& Insn::operator=(const Insn& insn) {
+Insn& Insn::operator=(const Insn& insn) const {
     auto& a = std::move((const Insn)Insn(insn.mnem, insn.ops));
     return (Insn &)a;
 }
@@ -105,6 +105,6 @@ std::optional<std::string> Insn::toString() const {
     return std::string(ret);
 }
 
-bool Insn::operator!=(const Insn& insn) {
+bool Insn::operator!=(const Insn& insn) const {
     return !(*this == insn);
 }

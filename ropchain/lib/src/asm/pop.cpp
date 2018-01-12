@@ -15,18 +15,12 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
 OptROP Pop::find(RegType::Reg op1, const uint64_t dest,
         const Gadgets& gadgets, RegSet& aval) {
     const auto gadget = Util::find(gadgets, aval, "pop", op1);
-    const auto rop1 = gadget.has_value() 
+    auto rop = gadget.has_value() 
         ?  Util::toOptROP(std::make_pair(gadget.value(), dest))
         :  (std::optional<ROPChain>){};
-    const auto rop2 = Util::minOpt(
-            rop1,
-            fromIncAdd(op1, dest, gadgets, aval)
-        );
-    const auto rop3 = Util::minOpt(
-            rop2,
-            fromOtherReg(op1, dest, gadgets, aval)
-        );
-    return rop3;
+    rop = Util::minOpt(rop, fromIncAdd(op1, dest, gadgets, aval));
+    rop = Util::minOpt(rop, fromOtherReg(op1, dest, gadgets, aval));
+    return rop;
 }
 
 //xor reg, reg; ret; ([inc reg], add reg, reg)* ;ret

@@ -10,18 +10,18 @@ ROPChain::ROPChain()
 
 ROPChain::ROPChain(const ROPElem elem)
 : baseAddr(0)
-, elems{{elem}}
 {
+    append(elem);
 }
 
+//TODO
 ROPChain::ROPChain(const ROPElems _elems)
-: baseAddr(0)
-, elems{_elems}
+:   baseAddr(0),
+    elems(_elems)
 {
 }
 
 void ROPChain::append(const ROPElem elem) {
-	auto v = ROPElems(1, elem);
 	ROPElems es = std::visit([](const auto& e) {
 			using T = std::decay_t<decltype(e)>;
 			if constexpr(std::is_same_v<T, Gadget>) {
@@ -33,7 +33,7 @@ void ROPChain::append(const ROPElem elem) {
 			return ROPElems({e});
 		}, elem);
 	for(auto& e : es) {
-		v.push_back(e);
+		elems.push_back(e);
 	}
 }
 

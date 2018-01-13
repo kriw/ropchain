@@ -14,13 +14,6 @@ ROPChain::ROPChain(const ROPElem elem)
     append(elem);
 }
 
-//TODO
-ROPChain::ROPChain(const ROPElems _elems)
-:   baseAddr(0),
-    elems(_elems)
-{
-}
-
 void ROPChain::append(const ROPElem elem) {
 	ROPElems es = std::visit([](const auto& e) {
 			using T = std::decay_t<decltype(e)>;
@@ -94,14 +87,14 @@ size_t ROPChain::length() const {
 }
 
 ROPChain ROPChain::operator+(const ROPChain& rop) const {
-	auto e1 = elems;
-	auto e2 = rop.getElems();
-	e1.insert(e1.end(), e2.begin(), e2.end());
-	return ROPChain(e1);
+    auto r = *this;
+    r += rop;
+	return r;
 }
 
 ROPChain ROPChain::operator+=(const ROPChain& rop) {
-    *this = *this + rop;
+    const auto e = rop.getElems();
+    std::copy(e.begin(), e.end(), std::back_inserter(elems));
     return *this;
 }
 

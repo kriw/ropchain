@@ -15,14 +15,29 @@ bool Insn::operator==(const Insn& insn) const {
     if(ops.size() != insn.ops.size()) {
         return false;
     }
-    for(int i=0; i<ops.size(); i++) {
-        if(!std::visit(overloaded {
-                    [](uint64_t a, RegType::Reg b) {return false;},
-                    [](RegType::Reg a, uint64_t b) {return false;},
-                    [](uint64_t a, uint64_t b) {return a == b;},
-                    [](RegType::Reg a, RegType::Reg b) {return a == b;},
-                    }, ops[i], insn.ops[i])) {
+    const auto check = [](auto&& a, auto&& b) {
+            using T = std::decay_t<decltype(a)>;
+            using U = std::decay_t<decltype(b)>;
+            if constexpr (!std::is_same_v<T, U>) {
+                return false;
+            }
+            if constexpr (std::is_same_v<T, uint64_t>
+                    && std::is_same_v<U, uint64_t>) {
+                return a == b;
+            }
+            if constexpr (std::is_same_v<T, RegType::Reg>
+                    && std::is_same_v<U, RegType::Reg>) {
+                return a == b;
+            }
+            if constexpr (std::is_same_v<T, MemOp>
+                    && std::is_same_v<U, MemOp>) {
+                return a.first == b.first && a.second == b.second;
+            }
             return false;
+        };
+    for(int i=0; i<ops.size(); i++) {
+        if(!std::visit(check, ops[i], insn.ops[i])) {
+            return true;
         }
     }
     return mnem == insn.mnem;
@@ -81,11 +96,22 @@ std::optional<std::string> Insn::toString() const {
         std::cerr << "Allocation failed" << std::endl;
         return {};
     }
-    auto toStr = [](Operand op){return std::visit(overloaded {
-            [](uint64_t x){return std::to_string(x);},
-            //FIXME return proper value when it fails
-            [](RegType::Reg x){return RegType::toString(x).value();},
-            }, op);};
+    auto toStr = [](Operand op) {
+        return std::visit([](auto&& x) {
+                using T = std::decay_t<decltype(x)>;
+                if constexpr (std::is_same_v<T, uint64_t>) {
+                    return std::to_string(x);
+                }
+                if constexpr (std::is_same_v<T, RegType::Reg>) {
+                    auto retOpt = RegType::toString(x);
+                    if(retOpt.has_value()) {
+                        return retOpt.value();
+                    }
+                }
+                std::cerr << "Failed to convert to String" << std::endl;
+                return std::string();
+            }, op);
+        };
     switch(ops.size()) {
     case 0:
         strcpy(ret, mnem.c_str());
@@ -107,4 +133,16 @@ std::optional<std::string> Insn::toString() const {
 
 bool Insn::operator!=(const Insn& insn) const {
     return !(*this == insn);
+}
+
+// typedef std::pair<RegType::Reg, uint64_t> RegOffset;
+// typedef const std::variant<uint64_t, RegOffset> MemOp;
+std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
+    if(auto r = std::get_if<RegType::Reg>(&op)) {
+        return std::make_pair(*r, offset);
+    }
+    if(auto r = std::get_if<uint64_t>(&op)) {
+        return *r;
+    }
+    return {};
 }

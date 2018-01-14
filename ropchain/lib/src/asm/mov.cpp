@@ -2,6 +2,7 @@
 #include "xor.h"
 #include "or.h"
 #include "xchg.h"
+#include "lea.h"
 
 OptROP fromLea(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval);
 OptROP fromLeaWithOffset(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval);
@@ -28,8 +29,11 @@ OptROP Mov::find(const Operand& op1, const Operand& op2,
 
 //lea r1, [r2]; ret
 OptROP fromLea(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval) {
-    //TODO
-    return {};
+    auto tmp = Insn::memRef(op2, 0);
+    if(!tmp.has_value()) {
+        return {};
+    }
+    return Lea::find(op1, tmp.value(), gadgets, aval);
 }
 
 //xor r1, r1; ret; or r1, r2; ret

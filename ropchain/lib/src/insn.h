@@ -4,13 +4,13 @@
 #include <optional>
 #include <vector>
 #include <iostream>
+#include <utility>
 #include "regs.h"
 
+typedef std::pair<RegType::Reg, uint64_t> RegOffset;
+typedef const std::variant<uint64_t, RegOffset> MemOp;
 typedef const std::string Mnem;
-typedef std::variant<uint64_t, RegType::Reg> Operand;
-
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+typedef std::variant<uint64_t, RegType::Reg, MemOp> Operand;
 
 class Insn {
 public:
@@ -23,6 +23,7 @@ public:
     std::optional<std::string> toString() const;
     static std::optional<Operand> strToOperand(std::string s);
     static std::optional<Insn> fromString(const std::string& opcode);
+    static std::optional<MemOp> memRef(const Operand& op, uint64_t offset);
 };
 
 typedef std::vector<Insn> Insns;

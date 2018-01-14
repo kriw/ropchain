@@ -2,7 +2,7 @@
 #include "insn.h"
 #include "util.h"
 
-Insn::Insn(Mnem _mnem, std::vector<Opcode> _ops)
+Insn::Insn(Mnem _mnem, std::vector<Operand> _ops)
 :   mnem(_mnem),
     ops(_ops) {};
 
@@ -28,7 +28,7 @@ bool Insn::operator==(const Insn& insn) const {
     return mnem == insn.mnem;
 }
 
-std::optional<Opcode> Insn::strToOpcode(std::string s) {
+std::optional<Operand> Insn::strToOperand(std::string s) {
     if (s.substr(0, 2) == "0x") {
         return std::stoul(s, 0, 16);
     }
@@ -58,11 +58,11 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
     }
     sscanf(opcode.c_str(), "%s %[^\n\t]", _mnem, _ops);
     Mnem mnem = _mnem;
-    auto ops = std::vector<Opcode>();
+    auto ops = std::vector<Operand>();
     auto oplist = Util::split(_ops, ',');
     for(auto& op : oplist) {
         Util::trim(op, " ");
-        auto o = strToOpcode(op);
+        auto o = strToOperand(op);
         if(!o.has_value()) {
             std::cerr << "Unknown opcode: " << op << std::endl;
             return {};
@@ -81,7 +81,7 @@ std::optional<std::string> Insn::toString() const {
         std::cerr << "Allocation failed" << std::endl;
         return {};
     }
-    auto toStr = [](Opcode op){return std::visit(overloaded {
+    auto toStr = [](Operand op){return std::visit(overloaded {
             [](uint64_t x){return std::to_string(x);},
             //FIXME return proper value when it fails
             [](RegType::Reg x){return RegType::toString(x).value();},

@@ -3,6 +3,6 @@
 #include "../ropchain.h"
 #include "../regs.h"
 namespace Movzx {
-    OptROP find(const Opcode& op1, const Opcode& op2,
+    OptROP find(const Operand& op1, const Operand& op2,
             const uint64_t dest, const Gadgets& gadgets, RegSet& aval);
 };

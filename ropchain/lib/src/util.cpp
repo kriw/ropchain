@@ -70,20 +70,20 @@ std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
-        const Mnem& mnem, const Opcode op1) {
+        const Mnem& mnem, const Operand op1) {
     return find(gadgets, avl, mnem, op1, {}, {});
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
-        const Mnem& mnem, const Opcode op1, const Opcode op2) {
+        const Mnem& mnem, const Operand op1, const Operand op2) {
     return find(gadgets, avl, mnem, op1, op2, {});
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
-        const Mnem& mnem, const std::optional<Opcode> op1,
-        const std::optional<Opcode> op2,
-        const std::optional<Opcode> op3) {
-    auto ops = std::vector<Opcode>();
+        const Mnem& mnem, const std::optional<Operand> op1,
+        const std::optional<Operand> op2,
+        const std::optional<Operand> op3) {
+    auto ops = std::vector<Operand>();
     if(op1.has_value()) {
         ops.push_back(op1.value());
     }

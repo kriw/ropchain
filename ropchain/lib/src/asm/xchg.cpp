@@ -1,6 +1,6 @@
 #include "xchg.h"
 
-OptROP Xchg::find(const Opcode& op1, const Opcode& op2,
+OptROP Xchg::find(const Operand& op1, const Operand& op2,
         const Gadgets& gadgets, RegSet& aval) {
     if(const auto g1 = Util::find(gadgets, aval, "xchg", op1, op2)) {
         return ROPChain(g1.value());

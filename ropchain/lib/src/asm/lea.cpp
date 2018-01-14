@@ -1,6 +1,6 @@
 #include "lea.h"
 
-OptROP Lea::find(const Opcode& op1, const Opcode& op2,
+OptROP Lea::find(const Operand& op1, const Operand& op2,
         const uint64_t dest, const Gadgets& gadgets, RegSet& aval) {
     auto gadget = Util::find(gadgets, aval, "lea", op1, op2);
     return Util::toOptROP(gadget);

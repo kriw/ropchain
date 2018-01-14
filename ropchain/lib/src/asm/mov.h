@@ -3,6 +3,6 @@
 #include "../ropchain.h"
 #include "../regs.h"
 namespace Mov {
-    OptROP find(const Opcode& op1, const Opcode& op2,
+    OptROP find(const Operand& op1, const Operand& op2,
             const Gadgets& gadgets, RegSet& aval);
 };

@@ -48,7 +48,12 @@ OptROP fromXorOr(const Operand& op1, const Operand& op2, const Gadgets& gadgets,
 
 //lea r1, [r2+imm]; ret; (dec r1; ret)*
 OptROP fromLeaWithOffset(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval) {
-    //TODO
+    // auto tmp = Insn::memRef(op2, 0);
+    // if(!tmp.has_value()) {
+    //     return {};
+    // }
+    // const auto rop = Lea::find(op1, tmp.value(), gadgets, aval);
+    // return rop;
     return {};
 }
 

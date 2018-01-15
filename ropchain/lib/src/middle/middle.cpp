@@ -1,4 +1,5 @@
 #include "middle.h"
+#include "../asm/xor.h"
 #include "../asm/pop.h"
 
 OptROP Middle::setVal(const RegType::Reg r,
@@ -11,9 +12,10 @@ OptROP Middle::setVal(const RegType::Reg r,
     return rop;
 }
 
-//TODO
 OptROP Middle::toZero(const RegType::Reg r,
         const Gadgets& gadgets, RegSet& aval) {
-    return {};
+    const auto rop = Xor::find(r, r, gadgets, aval);
+    //TODO More patterns
+    return rop;
 }
 

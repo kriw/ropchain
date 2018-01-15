@@ -67,8 +67,14 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 
 OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,
         const uint64_t base, const std::set<char>& avoids) {
-    //TODO
-    auto cond = [](uint64_t value) {
+    auto cond = [&avoids](uint64_t value) {
+        for(int i = 0; i < Arch::word(); i++) {
+            const char c = (char)(value & 0xff);
+            if(avoids.find(c) != avoids.end()) {
+                return false;
+            }
+            value >>= 8;
+        }
         return true;
     };
     Proc proc = [](const RegType::Reg reg, const uint64_t base,

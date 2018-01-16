@@ -1,4 +1,5 @@
 #include "solver.h"
+#include "arch.h"
 
 OptROP Solver::findROPChain(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet aval, Cond& cond, Proc& proc);
@@ -79,6 +80,7 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
     };
     Proc proc = [](const RegType::Reg reg, const uint64_t base,
             const Gadgets& gadgets, RegSet availables) {
+        //TODO
         return ROPChain(Gadget(0, std::vector<Insn>()));
     };
     return _solve(dests, gadgets, base, cond, proc);

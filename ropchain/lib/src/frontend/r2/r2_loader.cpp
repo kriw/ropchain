@@ -21,14 +21,13 @@ json r2cmdj(R2Pipe *r2, const std::string& cmd) {
 
 Gadgets Frontend::R2::fromCmd(R2Pipe *r2, const std::string& cmd) {
     auto gadgets = Gadgets();
-    auto outputJson = r2cmdj(r2, cmd);
+    const auto outputJson = r2cmdj(r2, cmd);
     for(const auto& g : outputJson) {
-        auto opcodes = g.at("opcodes");
+        const auto opcodes = g.at("opcodes");
         const uint64_t addr = opcodes[0].at("offset");
         auto insns = std::vector<Insn>();
         for(const auto& opcode : opcodes) {
-            auto insn = Insn::fromString(opcode.at("opcode"));
-            if(insn.has_value()) {
+            if(const auto insn = Insn::fromString(opcode.at("opcode"))) {
                 insns.push_back(insn.value());
             }
         }

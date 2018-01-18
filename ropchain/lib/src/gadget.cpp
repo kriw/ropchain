@@ -22,7 +22,7 @@ std::string Gadget::toString() const {
 }
 
 bool Gadget::operator==(const Gadget& gadget) const {
-    const auto _insns = gadget.getInsns();
+    const auto _insns = gadget.insns;
     if(insns.size() != _insns.size()) {
         return false;
     }
@@ -39,16 +39,4 @@ bool Gadget::isChanged(const RegType::Reg reg) const {
 
 bool Gadget::isAvailable(const RegSet& rs) const {
     return (changedRegs & rs) == rs;
-}
-
-uint32_t Gadget::getUseStack() const {
-	return useStack;
-}
-
-const std::vector<Insn> Gadget::getInsns() const {
-    return insns;
-}
-
-uint64_t Gadget::getAddr() const {
-	return addr;
 }

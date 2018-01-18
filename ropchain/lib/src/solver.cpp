@@ -14,8 +14,8 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 	//Construct ROPChain by itself
 	{
 		const auto allBits = Util::toBits(Util::map2Regs(dests));
-		for(auto reg : *allBits) {
-			auto tmp = findROPChain(reg, dests.at(reg), gadgets, RegSet(RegType::none), cond, proc);
+		for(const auto reg : *allBits) {
+			const auto tmp = findROPChain(reg, dests.at(reg), gadgets, RegSet(RegType::none), cond, proc);
 			if(tmp.has_value()) {
 				solvables.set(reg);
 				ropChains[reg] = tmp.value();
@@ -43,7 +43,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 			//Construct ROPChain with set of registers 'remain'
 			for(RegType::Reg reg : *bits) {
 				aval.reset(reg);
-				auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc);
+				const auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc);
 				if(!tmp.has_value()) {
 					isDone = false;
 					break;

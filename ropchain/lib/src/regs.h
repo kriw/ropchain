@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <bitset>
 
-//More registers (e.g. eax, ebx, al, ax, ...
 namespace RegType {
     enum Regs {
     none = 0,

@@ -12,7 +12,6 @@ class ROPChain {
 public:
     ROPChain();
     ROPChain(const ROPElem elem);
-    void append(const ROPElem elem);
     void dump() const;
     void setBaseAddr(const uint64_t addr);
     std::string payload() const;

@@ -44,7 +44,7 @@ std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
             if(opcode.empty()) {
                 continue;
             }
-            auto insn = Insn::fromString(opcode);
+            const auto insn = Insn::fromString(opcode);
             if(!insn.has_value()) {
                 canPush = false;
                 break;

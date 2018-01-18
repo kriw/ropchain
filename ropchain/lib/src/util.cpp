@@ -11,12 +11,7 @@ OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     return {};
 }
 
-Gadgets Util::loadGadgets(const std::string& fileName) {
-    //TODO
-    return std::vector<Gadget>();
-}
-
-std::vector<std::string> Util::split(std::string s, char delim) {
+std::vector<std::string> Util::split(std::string s, const char delim) {
     std::vector<std::string> ret;
     auto pos = std::string::npos;
     while((pos = s.find(delim)) != std::string::npos) {
@@ -95,7 +90,7 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     }
     const Insn insn(mnem, ops);
     for(const auto& gadget : gadgets) {
-        const auto insns_g = gadget.getInsns();
+        const auto insns_g = gadget.insns;
         if(!insns_g.size()) {
             continue;
         }
@@ -110,91 +105,90 @@ RegType::Reg Util::findRegType(RegType::Reg reg) {
 	switch(reg) {
 	case RegType::rax: case RegType::eax:
 	case RegType::ax: case RegType::ah: case RegType::al:
-		return RegType::rax;
+		return Arch::arch == Arch::X86 ? RegType::eax : RegType::rax;
 
 	case RegType::rbx: case RegType::ebx:
 	case RegType::bx: case RegType::bh: case RegType::bl:
-		return RegType::rbx;
+		return Arch::arch == Arch::X86 ? RegType::ebx : RegType::rbx;
 
 	case RegType::rcx: case RegType::ecx:
 	case RegType::cx: case RegType::ch: case RegType::cl:
-		return RegType::rcx;
+		return Arch::arch == Arch::X86 ? RegType::ecx : RegType::rcx;
 
 	case RegType::rdx: case RegType::edx:
 	case RegType::dx: case RegType::dh: case RegType::dl:
-		return RegType::rdx;
+		return Arch::arch == Arch::X86 ? RegType::edx : RegType::rdx;
 
 	case RegType::rdi: case RegType::edi:
 	case RegType::di: case RegType::dil:
-		return RegType::rdi;
+		return Arch::arch == Arch::X86 ? RegType::edi : RegType::rdi;
 
 	case RegType::rsi: case RegType::esi:
 	case RegType::si: case RegType::sil:
-		return RegType::rdi;
+		return Arch::arch == Arch::X86 ? RegType::esi : RegType::rsi;
 
 	case RegType::rbp: case RegType::ebp:
 	case RegType::bp: case RegType::bpl:
-		return RegType::rbp;
+		return Arch::arch == Arch::X86 ? RegType::ebp : RegType::rbp;
 
 	case RegType::rsp: case RegType::esp:
 	case RegType::sp: case RegType::spl:
-		return RegType::rsp;
+		return Arch::arch == Arch::X86 ? RegType::esp : RegType::rsp;
 
 	case RegType::r8: case RegType::r8d:
 	case RegType::r8w: case RegType::r8b:
-		return RegType::r8;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r8;
 
 	case RegType::r9: case RegType::r9d:
 	case RegType::r9w: case RegType::r9b:
-		return RegType::r9;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r9;
 
 	case RegType::r10: case RegType::r10d:
 	case RegType::r10w: case RegType::r10b:
-		return RegType::r10;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r10;
 
 	case RegType::r11: case RegType::r11d:
 	case RegType::r11w: case RegType::r11b:
-		return RegType::r11;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r11;
 
 	case RegType::r12: case RegType::r12d:
 	case RegType::r12w: case RegType::r12b:
-		return RegType::r12;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r12;
 
 	case RegType::r13: case RegType::r13d:
 	case RegType::r13w: case RegType::r13b:
-		return RegType::r13;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r13;
 
 	case RegType::r14: case RegType::r14d:
 	case RegType::r14w: case RegType::r14b:
-		return RegType::r14;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r14;
 
 	case RegType::r15: case RegType::r15d:
 	case RegType::r15w: case RegType::r15b:
-		return RegType::r15;
+		return Arch::arch == Arch::X86 ? RegType::none : RegType::r15;
 
 	default:
 		return RegType::none;
 	}
 }
 
-//FIXME This might be buggy in some type of insn.
 RegSet Util::listChangedRegs(const Insns& insns) {
 	RegSet regs;
 	for(const auto& insn : insns) {
 		if(insn.ops.size() > 0) {
-            if(auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+            if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
                 std::cerr << "Error: Unknow Register" << std::endl;
             }
 		}
 		if(insn.mnem == "xchg") {
-            if(auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+            if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
                 std::cerr << "Error: Unknow Register" << std::endl;
             }
-            if(auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
+            if(const auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
                 regs.set(*r);
             } else {
                 std::cerr << "Error: Unknow Register" << std::endl;
@@ -204,19 +198,17 @@ RegSet Util::listChangedRegs(const Insns& insns) {
 	return regs;
 }
 
-//internal function of Util::calcUseStack
 size_t _calcUseStack(const Insn& insn) {
-	auto mnem = insn.mnem;
-	auto ops = insn.ops;
+	const auto mnem = insn.mnem;
+	const auto ops = insn.ops;
 	if(mnem == "pop") {
 		return Arch::word();
 	} else if(mnem == "popad") {
 		return Arch::word() * 7;
 	} else if(mnem == "add") {
-        if(auto r = std::get_if<RegType::Reg>(&ops[0])) {
+        if(const auto r = std::get_if<RegType::Reg>(&ops[0])) {
             if(*r == RegType::esp || *r == RegType::rsp) {
-                auto s = std::get<uint64_t>(ops[1]);
-                return Arch::word() * s;
+                return Arch::word() * std::get<uint64_t>(ops[1]);
             }
         }
 	}

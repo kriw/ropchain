@@ -11,16 +11,12 @@ ROPChain::ROPChain()
 ROPChain::ROPChain(const ROPElem elem)
 : baseAddr(0)
 {
-    append(elem);
-}
-
-void ROPChain::append(const ROPElem elem) {
 	ROPElems es = std::visit([](const auto& e) {
 			using T = std::decay_t<decltype(e)>;
 			if constexpr(std::is_same_v<T, Gadget>) {
-				return ROPElems({std::string(e.getUseStack(), 'A')});
+				return ROPElems({std::string(e.useStack, 'A')});
 			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
-				auto s = std::string(e.first.getUseStack() - Arch::word(), 'A');
+				auto s = std::string(e.first.useStack - Arch::word(), 'A');
 				return ROPElems({e, s});
 			}
 			return ROPElems({e});
@@ -58,9 +54,9 @@ std::string ROPChain::payload() const {
 		std::string s = std::visit([&](auto&& e){
 			using T = std::decay_t<decltype(e)>;
 			if constexpr(std::is_same_v<T, Gadget>) {
-				return Util::pack(e.getAddr() + baseAddr);
+				return Util::pack(e.addr + baseAddr);
 			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
-				return Util::pack(e.first.getAddr() + baseAddr) + Util::pack(e.second);
+				return Util::pack(e.first.addr + baseAddr) + Util::pack(e.second);
 			} else if constexpr(std::is_same_v<T, std::string>) {
 				return e;
 			} else if constexpr(std::is_same_v<T, uint64_t>) {

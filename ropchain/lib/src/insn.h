@@ -12,8 +12,7 @@ typedef const std::variant<uint64_t, RegOffset> MemOp;
 typedef const std::string Mnem;
 typedef std::variant<uint64_t, RegType::Reg, MemOp> Operand;
 
-class Insn {
-public:
+struct Insn {
     const Mnem mnem;
     const std::vector<Operand> ops;
     Insn(Mnem _mnem, std::vector<Operand> _ops);

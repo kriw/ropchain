@@ -10,6 +10,7 @@
 
 int c;
 std::string filename = "";
+uint64_t baseAddr = 0;
 bool isDump = false;
 auto gadgetLoader = Frontend::R2::from;
 std::map<RegType::Reg, uint64_t> dests;
@@ -19,7 +20,7 @@ void parseArgs(int argc, char **argv);
 int main(int argc, char **argv) {
     parseArgs(argc, argv);
     auto gadgets = gadgetLoader(filename).value();
-    auto rop = Solver::solveAvoidChars(dests, gadgets, 0x2122232425262728, {});
+    auto rop = Solver::solveAvoidChars(dests, gadgets, baseAddr, {});
     if(!rop.has_value()) {
         std::cerr << "Error" << std::endl;
         exit(1);
@@ -76,20 +77,23 @@ void parseArgs(int argc, char **argv) {
         }
     }
     optind = 0;
-    while((c = getopt_long(argc, argv, "b:df:", ops, &ops_index)) != EOF) {
+    while((c = getopt_long(argc, argv, "b:df:g:", ops, &ops_index)) != EOF) {
         switch(c) {
             case 'b':
-                if(!strcmp("r2", optarg)) {
-                    gadgetLoader = Frontend::R2::from;
-                } else if(!strcmp("rpp", optarg)) {
-                    gadgetLoader = Frontend::RPP::from;
-                }
+                baseAddr = fromStr(optarg);
                 break;
             case 'd':
                 isDump = true;
                 break;
             case 'f':
                 filename = std::string(optarg);
+                break;
+            case 'g':
+                if(!strcmp("r2", optarg)) {
+                    gadgetLoader = Frontend::R2::from;
+                } else if(!strcmp("rpp", optarg)) {
+                    gadgetLoader = Frontend::RPP::from;
+                }
                 break;
             case 'A'://rax/eax
                 if(Arch::arch == Arch::X86) {

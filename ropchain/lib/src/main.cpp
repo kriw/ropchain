@@ -14,6 +14,7 @@ uint64_t baseAddr = 0;
 bool isDump = false;
 auto gadgetLoader = Frontend::R2::from;
 std::map<RegType::Reg, uint64_t> dests;
+std::set<char> avoids;
 
 void parseArgs(int argc, char **argv);
 
@@ -77,7 +78,7 @@ void parseArgs(int argc, char **argv) {
         }
     }
     optind = 0;
-    while((c = getopt_long(argc, argv, "b:df:g:", ops, &ops_index)) != EOF) {
+    while((c = getopt_long(argc, argv, "b:df:g:i:", ops, &ops_index)) != EOF) {
         switch(c) {
             case 'b':
                 baseAddr = fromStr(optarg);
@@ -93,6 +94,11 @@ void parseArgs(int argc, char **argv) {
                     gadgetLoader = Frontend::R2::from;
                 } else if(!strcmp("rpp", optarg)) {
                     gadgetLoader = Frontend::RPP::from;
+                }
+                break;
+            case 'i':
+                for(int i = 0; optarg[i]; i++) {
+                    avoids.insert(optarg[i]);
                 }
                 break;
             case 'A'://rax/eax

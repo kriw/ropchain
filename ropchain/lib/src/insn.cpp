@@ -43,8 +43,8 @@ bool Insn::operator==(const Insn& insn) const {
     return mnem == insn.mnem;
 }
 
-std::optional<Operand> Insn::strToOperand(std::string s) {
-    if (s.substr(0, 2) == "0x") {
+std::optional<Operand> Insn::strToOperand(const std::string& s) {
+    if(s.substr(0, 2) == "0x") {
         return std::stoul(s, 0, 16);
     }
     return RegType::fromString(s);

@@ -15,9 +15,9 @@ std::vector<std::string> Util::split(std::string s, const char delim) {
     std::vector<std::string> ret;
     auto pos = std::string::npos;
     while((pos = s.find(delim)) != std::string::npos) {
-        auto tmp = s.substr(pos + 1);
+        const auto tmp = s.substr(pos + 1);
         ret.push_back(s.substr(0, pos));
-        s = tmp;
+        s = std::move(tmp);
     }
     if(s.length() && s.find(delim) == std::string::npos) {
         ret.push_back(s);
@@ -37,13 +37,13 @@ std::string Util::join(const std::vector<std::string>& s, const std::string& sep
     return oss.str();
 }
 
-inline void ltrim(std::string &s, const std::string& delims) {
+inline void ltrim(std::string& s, const std::string& delims) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [&](int ch) {
                 return delims.find(ch) == std::string::npos;
                 }));
 }
 
-inline void rtrim(std::string &s, const std::string& delims) {
+inline void rtrim(std::string& s, const std::string& delims) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [&](int ch) {
                 return delims.find(ch) == std::string::npos;
                 }).base(), s.end());

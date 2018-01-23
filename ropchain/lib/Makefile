@@ -10,6 +10,7 @@ OBJS := $(addsuffix .o,$(basename $(SRCS)))
 DEPS := $(OBJS:.o=.d)
 INCS := $(shell pkg-config --cflags r_socket)
 LIBS := $(shell pkg-config --libs r_socket)
+OPS  := -Wall -Wextra
 
 .PHONY: all
 all: $(TARGET)
@@ -22,4 +23,4 @@ clean:
 	$(RM) $(TARGET) $(OBJS) $(DEPS)
 
 .cpp.o:
-	$(CC) -g $(CPPFLAGS) $(INCS) -c $< -o $@
+	$(CC) -g $(OPS) $(CPPFLAGS) $(INCS) -c $< -o $@

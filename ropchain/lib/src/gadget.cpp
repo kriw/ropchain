@@ -17,7 +17,7 @@ Gadget& Gadget::operator=(const Gadget& gadget) const {
 std::string Gadget::toString() const {
     auto ss = std::vector<std::string>(insns.size());
     std::transform(insns.begin(), insns.end(), ss.begin(),
-            [](const auto& x){return x.toString().value();});
+            [](const auto& x){return x.toString();});
     return Util::join(ss, "\n");
 }
 

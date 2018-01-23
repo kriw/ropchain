@@ -19,7 +19,7 @@ struct Insn {
     Insn& operator=(const Insn&) const;
     bool operator==(const Insn& insn) const;
     bool operator!=(const Insn& insn) const;
-    std::optional<std::string> toString() const;
+    std::string toString() const;
     static std::optional<Operand> strToOperand(std::string s);
     static std::optional<Insn> fromString(const std::string& opcode);
     static std::optional<MemOp> memRef(const Operand& op, uint64_t offset);

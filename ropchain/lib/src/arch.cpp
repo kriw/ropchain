@@ -11,10 +11,5 @@ size_t Arch::word() {
 }
 
 uint32_t Arch::bits() {
-	if(arch == X86) {
-		return 32;
-	}
-	if(arch == AMD64) {
-		return 64;
-	}
+    return word() * 8;
 }

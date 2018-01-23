@@ -11,7 +11,7 @@
 //FIXME
 const std::string scriptPath = "./src/frontend/rp++/rp_script.sh";
 
-std::optional<std::string> _exec(const std::string cmd) {
+std::optional<std::string> _exec(const std::string& cmd) {
     std::array<char, 128> buffer;
     std::string result;
     std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);

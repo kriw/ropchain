@@ -66,7 +66,11 @@ void parseArgs(int argc, char **argv) {
         {"r15", 1, NULL, 'N'}
     };
     int ops_index;
-    while((c = getopt_long(argc, argv, "a:b:df:", ops, &ops_index) != EOF)) {
+    while(true) {
+        int c = getopt_long(argc, argv, "a:b:df:", ops, &ops_index);
+        if(c == EOF) {
+            break;
+        }
         if(c == 'a') {
             if(!strcmp("x86", optarg)) {
                 Arch::arch = Arch::AMD64;

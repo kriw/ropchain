@@ -27,7 +27,7 @@ TOSTR(r15) TOSTR(r15d) TOSTR(r15w)           TOSTR(r15b)
 	}
 }
 
-std::optional<RegType::Reg> RegType::fromString(const std::string s) {
+std::optional<RegType::Reg> RegType::fromString(const std::string& s) {
 EQSTR(s, rax) EQSTR(s, eax)  EQSTR(s, ax)   EQSTR(s, ah) EQSTR(s, al)
 EQSTR(s, rbx) EQSTR(s, ebx)  EQSTR(s, bx)   EQSTR(s, bh) EQSTR(s, bl)
 EQSTR(s, rcx) EQSTR(s, ecx)  EQSTR(s, cx)   EQSTR(s, ch) EQSTR(s, cl)

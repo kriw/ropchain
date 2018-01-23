@@ -60,18 +60,11 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
             || opcode.find("call") != std::string::npos) {
         return {};
     }
-    char * const _mnem = new char[0x100];
-    char *_ops = new char[0x100];
-    char * const p = _ops;
+    char _mnem[0x100];
+    char _ops[0x100];
     memset(_mnem, '\0', 0x100);
     memset(_ops, '\0', 0x100);
-    if (_mnem == NULL || _ops == NULL) {
-        std::cerr << "Allocation failed" << std::endl;
-        delete[] _mnem;
-        delete[] _ops;
-        return {};
-    }
-    sscanf(opcode.c_str(), "%s %[^\n\t]", _mnem, _ops);
+    sscanf(opcode.c_str(), "%100s %100[^\n\t]", _mnem, _ops);
     Mnem mnem = _mnem;
     auto ops = std::vector<Operand>();
     auto oplist = Util::split(_ops, ',');
@@ -84,18 +77,10 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
         }
         ops.push_back(o.value());
     }
-    delete[] _mnem;
-    delete[] p;
     return Insn(mnem, ops);
 }
 
-std::optional<std::string> Insn::toString() const {
-    //FIXME replace sprintf with safe function
-    auto ret = new char[0x100];
-    if(ret == NULL) {
-        std::cerr << "Allocation failed" << std::endl;
-        return {};
-    }
+std::string Insn::toString() const {
     auto toStr = [](Operand op) {
         return std::visit([](auto&& x) {
                 using T = std::decay_t<decltype(x)>;
@@ -112,23 +97,11 @@ std::optional<std::string> Insn::toString() const {
                 return std::string();
             }, op);
         };
-    switch(ops.size()) {
-    case 0:
-        strcpy(ret, mnem.c_str());
-        break;
-    case 1:
-        sprintf(ret, "%s %s", mnem.c_str(), toStr(ops[0]).c_str());
-        break;
-    case 2:
-        sprintf(ret, "%s %s, %s", mnem.c_str(), toStr(ops[0]).c_str(),
-                toStr(ops[1]).c_str());
-        break;
-    case 3:
-        sprintf(ret, "%s %s, %s, %s", mnem.c_str(), toStr(ops[0]).c_str(),
-                toStr(ops[1]).c_str(), toStr(ops[2]).c_str());
-        break;
+    std::string ret = mnem.c_str();
+    for(size_t i = 0; i < ops.size(); i++) {
+        ret += ", " + toStr(ops[i]);
     }
-    return std::string(ret);
+    return ret;
 }
 
 bool Insn::operator!=(const Insn& insn) const {

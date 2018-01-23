@@ -30,7 +30,7 @@ std::string Util::join(const std::vector<std::string>& s, const std::string& sep
     if(!s.size()) {
         return "";
     }
-    for(int i=0; i<s.size()-1; i++) {
+    for(size_t i=0; i<s.size()-1; i++) {
         oss << s[i] << separator;
     }
     oss << s.back();
@@ -56,7 +56,7 @@ void Util::trim(std::string& s, const std::string& delims) {
 
 std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {
 	auto bits = new std::vector<RegType::Reg>();
-	for(int i=0; i<s.size(); i++) {
+	for(size_t i=0; i < s.size(); i++) {
 		if(s.test(i)) {
 			bits->push_back(i);
 		}

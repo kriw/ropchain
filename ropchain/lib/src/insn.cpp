@@ -35,7 +35,7 @@ bool Insn::operator==(const Insn& insn) const {
             }
             return false;
         };
-    for(int i=0; i<ops.size(); i++) {
+    for(size_t i=0; i < ops.size(); i++) {
         if(!std::visit(check, ops[i], insn.ops[i])) {
             return false;
         }

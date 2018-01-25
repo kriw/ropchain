@@ -2,11 +2,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-#include "regs.h"
-#include "solver.h"
-#include "arch.h"
-#include "./frontend/r2/r2_loader.h"
-#include "./frontend/rp++/rp_loader.h"
+#include "lib/regs.h"
+#include "lib/solver.h"
+#include "lib/arch.h"
+#include "lib/frontend/r2/r2_loader.h"
+#include "lib/frontend/rp++/rp_loader.h"
 
 int c;
 std::string filename = "";

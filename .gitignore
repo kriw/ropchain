@@ -9,3 +9,4 @@ core
 .syntastic_cpp_config
 cscope.out
 .lvimrc
+ropchain/lib/bin/ropchain

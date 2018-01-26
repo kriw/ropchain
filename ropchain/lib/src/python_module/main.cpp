@@ -1,4 +1,3 @@
-#include <Python.h>
 #include <boost/python.hpp>
 #include "../lib/ropchain.h"
 #include "../lib/solver.h"

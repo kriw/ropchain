@@ -13,6 +13,11 @@ OBJS := $(addsuffix .o,$(basename $(SRCS)))
 DEPS := $(OBJS:.o=.d)
 INCS := $(shell pkg-config --cflags r_socket)
 LIBS := $(shell pkg-config --libs r_socket)
+#FIXME
+MODULE_INC = -I/usr/include -I/usr/include/python
+#FIXME
+MODULE_LIB = $(shell find /usr/lib/ -maxdepth 2 -name 'libboost*' | sed -e 's/.*\/lib/-l/' | cut -d'.' -f1)
+# MODULE_LIB += $(shell find /usr/lib/python/ -maxdepth 3 -name '*.so'| sed -e 's/.*\/lib/-l/' | cut -d'.' -f1)
 OPS  := -Wall -Wextra
 
 .PHONY: all
@@ -28,7 +33,7 @@ $(EXECUTABLE): $(EXE_MAIN) $(OBJS)
 module: $(MODULE)
 
 $(MODULE): $(MODULE_MAIN) $(OBJS)
-	$(CC) $(INCS) $(CPPFLAGS) $(LIBS) -o $(EXECUTABLE) $(MODULE_MAIN) $(OBJS)
+	$(CC) $(CPPFLAGS) $(INCS) $(MODULE_INC) $(MODULE_LIB) $(LIBS) -o $(MODULE) $(MODULE_MAIN) $(OBJS)
 
 .PHONY: clean
 clean:

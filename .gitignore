@@ -10,4 +10,4 @@ core
 cscope.out
 .lvimrc
 ropchain/lib/bin/ropchain
-ropchain/lib/lib/libropchain.so
+ropchain/lib/lib/ropchain.so

@@ -9,9 +9,9 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(ropchain) {
     def("solve", Solver::solveAvoidChars);
-    class_<ROPChain>("ROPChain")
-        .def("dump", &ROPChain::dump)
-        .def("setBaseAddr", &ROPChain::dump)
-        .def("payload", &ROPChain::payload)
-        ;
+    // class_<ROPChain>("ROPChain")
+    //     .def("dump", &ROPChain::dump)
+    //     .def("setBaseAddr", &ROPChain::dump)
+    //     .def("payload", &ROPChain::payload)
+    //     ;
 }

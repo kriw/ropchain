@@ -5,7 +5,7 @@ OPS  := -Wall -Wextra -fPIC
 PYTHON = python2.7
 
 EXECUTABLE = ./bin/ropchain
-MODULE = ./lib/libropchain.so
+MODULE = ./lib/ropchain.so
 SRC_DIRS = ./src/lib/
 
 MODULE_MAIN = ./src/python_module/main.cpp
@@ -14,10 +14,9 @@ SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(addsuffix .o,$(basename $(SRCS)))
 INCS := $(shell pkg-config --cflags r_socket)
 LIBS := $(shell pkg-config --libs r_socket)
-MODULE_INC = -I/usr/include -I/usr/include/python
-MODULE_LIB = -lboost_python
-MODULE_LIB += -l$(PYTHON)
-MODULE_OPS := -shared -Wl,--export-dynamic
+MODULE_INC = -I/usr/include -I/usr/include/$(PYTHON)
+MODULE_LIB = -lboost_python -l$(PYTHON)
+MODULE_OPS := -shared -Wl,-soname,$(MODULE)
 
 .PHONY: all
 all: exe module
@@ -26,17 +25,17 @@ all: exe module
 exe: $(EXECUTABLE)
 
 $(EXECUTABLE): $(EXE_MAIN) $(OBJS)
-	$(CC) $(OPS) $(INCS) $(CPPFLAGS) $(EXE_MAIN) $(OBJS) $(LIBS) -o $(EXECUTABLE)
+	$(CC) $(OPS) $(INCS) $(CPPFLAGS) $(EXE_MAIN) -o $(EXECUTABLE) $(OBJS) $(LIBS)
 
 .PHONY: module
 module: $(MODULE)
 
 $(MODULE): $(MODULE_MAIN) $(OBJS)
-	$(CC) $(OPS) $(CPPFLAGS) $(MODULE_OPS) $(MODULE_MAIN) $(OBJS) $(INCS) $(MODULE_INC) $(MODULE_LIB) $(LIBS) -o $(MODULE)
+	$(CC) $(OPS) $(CPPFLAGS) $(MODULE_OPS) $(MODULE_MAIN) -o $(MODULE) $(OBJS) $(INCS) $(MODULE_INC) $(MODULE_LIB) $(LIBS)
 
 .PHONY: clean
 clean:
-	$(RM) $(TARGET) $(OBJS)
+	$(RM) $(EXECUTABLE) $(MODULE) $(OBJS)
 
 .cpp.o:
 	$(CC) -g $(OPS) $(CPPFLAGS) $(INCS) -c $< -o $@

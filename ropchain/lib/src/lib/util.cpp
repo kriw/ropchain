@@ -3,6 +3,7 @@
 #include <numeric>
 #include "arch.h"
 #include "util.h"
+#include "config.h"
 
 OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     if(gadget.has_value()) {

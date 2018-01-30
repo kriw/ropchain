@@ -5,6 +5,7 @@
 #include "lib/regs.h"
 #include "lib/solver.h"
 #include "lib/arch.h"
+#include "lib/config.h"
 #include "lib/frontend/r2/r2_loader.h"
 #include "lib/frontend/rp++/rp_loader.h"
 
@@ -12,7 +13,6 @@ int c;
 std::string filename = "";
 uint64_t baseAddr = 0;
 bool isDump = false;
-auto gadgetLoader = Frontend::R2::from;
 std::map<RegType::Reg, uint64_t> dests;
 std::set<char> avoids;
 
@@ -20,7 +20,7 @@ void parseArgs(int argc, char **argv);
 
 int main(int argc, char **argv) {
     parseArgs(argc, argv);
-    auto gadgets = gadgetLoader(filename).value();
+    auto gadgets = Config::gadgetLoader(filename).value();
     auto rop = Solver::solveAvoidChars(dests, gadgets, baseAddr, {});
     if(!rop.has_value()) {
         std::cerr << "Error" << std::endl;
@@ -95,9 +95,9 @@ void parseArgs(int argc, char **argv) {
                 break;
             case 'g':
                 if(!strcmp("r2", optarg)) {
-                    gadgetLoader = Frontend::R2::from;
+                    Config::gadgetLoader = Frontend::R2::from;
                 } else if(!strcmp("rpp", optarg)) {
-                    gadgetLoader = Frontend::RPP::from;
+                    Config::gadgetLoader = Frontend::RPP::from;
                 }
                 break;
             case 'i':

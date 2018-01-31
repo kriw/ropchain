@@ -1,6 +1,6 @@
 CC = g++
 RM = rm
-OPS  := -Wall -Wextra -fPIC -std=c+17
+OPS  := -Wall -Wextra -fPIC -std=c++17
 ifeq "$(findstring release, $(MAKECMDGOALS))" ""
 	OPS += -g -D_DEBUG
 else

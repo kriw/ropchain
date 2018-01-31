@@ -6,6 +6,22 @@
 #include "ropchain.h"
 #include "regs.h"
 
+#ifdef _DEBUG
+template<typename T>
+void ERR(T&& x) {
+    std::cerr << std::forward<T>(x) << std::endl;
+}
+
+template<typename T, typename ...S>
+void ERR(T&& x, S&& ...xs) {
+        std::cerr << std::forward<T>(x);
+        ERR(std::forward<S>(xs)...);
+}
+#else
+#define UNUSED(x) (void)(x)
+template<typename T, typename ...S>
+void ERR(T&& x, S&& ...xs) {UNUSED(x);};
+#endif
 
 namespace Util {
     RegSet allRegs();

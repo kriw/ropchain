@@ -44,8 +44,11 @@ bool Insn::operator==(const Insn& insn) const {
 }
 
 std::optional<Operand> Insn::strToOperand(const std::string& s) {
-    if(s.substr(0, 2) == "0x") {
+    if(2 < s.length() && s.substr(0, 2) == "0x") {
         return std::stoul(s, 0, 16);
+    }
+    if(0 < s.length() && '0' <= s[0] && s[0] <= '9') {
+        return std::stoul(s);
     }
     return RegType::fromString(s);
 }
@@ -72,7 +75,7 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
         Util::trim(op, " ");
         auto o = strToOperand(op);
         if(!o.has_value()) {
-            std::cerr << "Unknown opcode: " << op << std::endl;
+            ERR("Unknown opcode: ", op);
             return {};
         }
         ops.push_back(o.value());
@@ -93,7 +96,7 @@ std::string Insn::toString() const {
                         return retOpt.value();
                     }
                 }
-                std::cerr << "Failed to convert to String" << std::endl;
+                ERR("Failed to convert to String");
                 return std::string();
             }, op);
         };

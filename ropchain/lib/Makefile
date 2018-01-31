@@ -1,9 +1,13 @@
 CC = g++
 RM = rm
-CPPFLAGS = -std=c++17
-OPS  := -Wall -Wextra -fPIC
-PYTHON = python2.7
+OPS  := -Wall -Wextra -fPIC -std=c+17
+ifeq "$(findstring release, $(MAKECMDGOALS))" ""
+	OPS += -g -D_DEBUG
+else
+	OPS += -O3
+endif
 
+PYTHON = python2.7
 EXECUTABLE = ./bin/ropchain
 MODULE = ./lib/ropchain.so
 SRC_DIRS = ./src/lib/
@@ -16,7 +20,10 @@ INCS := $(shell pkg-config --cflags r_socket)
 LIBS := $(shell pkg-config --libs r_socket)
 MODULE_INC = -I/usr/include -I/usr/include/$(PYTHON)
 MODULE_LIB = -lboost_python -l$(PYTHON)
-MODULE_OPS := -shared -Wl,-soname,$(MODULE)
+MODULE_OPS = -shared -Wl,-soname,$(MODULE)
+
+debug: all
+release: all
 
 .PHONY: all
 all: exe module
@@ -38,4 +45,4 @@ clean:
 	$(RM) $(EXECUTABLE) $(MODULE) $(OBJS)
 
 .cpp.o:
-	$(CC) -g $(OPS) $(CPPFLAGS) $(INCS) -c $< -o $@
+	$(CC) $(OPS) $(CPPFLAGS) $(INCS) -c $< -o $@

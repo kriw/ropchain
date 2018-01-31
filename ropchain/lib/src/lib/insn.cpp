@@ -63,10 +63,10 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
             || opcode.find("call") != std::string::npos) {
         return {};
     }
-    char _mnem[0x100];
-    char _ops[0x100];
-    memset(_mnem, '\0', 0x100);
-    memset(_ops, '\0', 0x100);
+    char _mnem[101];
+    char _ops[101];
+    memset(_mnem, '\0', sizeof(_mnem));
+    memset(_ops, '\0', sizeof(_ops));
     sscanf(opcode.c_str(), "%100s %100[^\n\t]", _mnem, _ops);
     Mnem mnem = _mnem;
     auto ops = std::vector<Operand>();

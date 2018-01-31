@@ -179,19 +179,19 @@ RegSet Util::listChangedRegs(const Insns& insns) {
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
-                std::cerr << "Error: Unknow Register" << std::endl;
+                std::cerr << "Error: Unknown Register" << std::endl;
             }
 		}
 		if(insn.mnem == "xchg") {
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
-                std::cerr << "Error: Unknow Register" << std::endl;
+                std::cerr << "Error: Unknown Register" << std::endl;
             }
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
                 regs.set(*r);
             } else {
-                std::cerr << "Error: Unknow Register" << std::endl;
+                std::cerr << "Error: Unknown Register" << std::endl;
             }
 		}
 	}

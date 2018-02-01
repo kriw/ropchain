@@ -9,7 +9,7 @@
 #include "../../util.h"
 
 //FIXME
-const std::string scriptPath = "./src/frontend/rp++/rp_script.sh";
+const std::string scriptPath = "./src/lib/frontend/rp++/rp_script.sh";
 
 std::optional<std::string> _exec(const std::string& cmd) {
     std::array<char, 128> buffer;
@@ -24,6 +24,7 @@ std::optional<std::string> _exec(const std::string& cmd) {
 }
 
 std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
+    std::cout << "filename: " << fileName << std::endl;
     std::optional<std::string> gadgetsStr = _exec(scriptPath + " " + fileName);
     if(!gadgetsStr.has_value()) {
         return {};

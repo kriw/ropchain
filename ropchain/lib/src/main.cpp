@@ -20,8 +20,7 @@ void parseArgs(int argc, char **argv);
 
 int main(int argc, char **argv) {
     parseArgs(argc, argv);
-    auto gadgets = Config::gadgetLoader(filename).value();
-    auto rop = Solver::solveAvoidChars(dests, gadgets, baseAddr, {});
+    auto rop = Solver::solveWithFile(dests, filename, baseAddr, {});
     if(!rop.has_value()) {
         std::cerr << "Error" << std::endl;
         exit(1);
@@ -67,7 +66,7 @@ void parseArgs(int argc, char **argv) {
     };
     int ops_index;
     while(true) {
-        int c = getopt_long(argc, argv, "a:b:df:", ops, &ops_index);
+        int c = getopt_long(argc, argv, "a:b:df:g:i:", ops, &ops_index);
         if(c == EOF) {
             break;
         }
@@ -94,11 +93,18 @@ void parseArgs(int argc, char **argv) {
                 filename = std::string(optarg);
                 break;
             case 'g':
+                printf("%p\n", Config::gadgetLoader);
+                printf("optarg: %s, rpp ==: %d\n", optarg, strcmp("rpp", optarg));
                 if(!strcmp("r2", optarg)) {
                     Config::gadgetLoader = Frontend::R2::from;
                 } else if(!strcmp("rpp", optarg)) {
+                    printf("rpp!!!\n");
                     Config::gadgetLoader = Frontend::RPP::from;
+                    printf("assigned %p\n", Config::gadgetLoader);
                 }
+                printf("r2 %p\n", Frontend::R2::from);
+                printf("rpp %p\n", Frontend::RPP::from);
+                printf("%p\n", Config::gadgetLoader);
                 break;
             case 'i':
                 for(int i = 0; optarg[i]; i++) {

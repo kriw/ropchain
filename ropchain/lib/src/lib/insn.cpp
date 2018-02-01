@@ -50,12 +50,18 @@ std::optional<Operand> Insn::strToOperand(const std::string& s) {
     if(0 < s.length() && '0' <= s[0] && s[0] <= '9') {
         return std::stoul(s);
     }
+    if(s.front() == '[' && s.back() == ']') {
+        //TODO
+        ERR("Not implemented yet");
+        return {};
+    }
     return RegType::fromString(s);
 }
 
 std::optional<Insn> Insn::fromString(const std::string& opcode) {
-    //Ignore memory access like 'mov [rax], rbx'
-    if(opcode.find('[') != std::string::npos) {
+    //Ignore memory access like 'mov [rax], rbx' except for "lea"
+    if(opcode.find("lea") == std::string::npos
+            && opcode.find('[') != std::string::npos) {
         return {};
     }
     //Ignore jmp/call instruction

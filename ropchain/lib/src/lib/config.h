@@ -5,5 +5,9 @@
 
 namespace Config {
     typedef std::function<std::optional<Gadgets>(const std::string&)> Loader;
-    static Loader gadgetLoader = Frontend::RPP::from;
+    Loader getGadgetLoader();
+    void setGadgetLoader(Loader loader);
+    namespace _ {
+        static Loader gadgetLoader;
+    }
 }

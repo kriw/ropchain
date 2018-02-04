@@ -38,6 +38,7 @@ uint64_t fromStr(char *s) {
     if(!strncmp(s, "0x", 2)) {
         base = 16;
     }
+    //TODO catch exception
     return std::stoul(s, nullptr, base);
 }
 
@@ -93,18 +94,11 @@ void parseArgs(int argc, char **argv) {
                 filename = std::string(optarg);
                 break;
             case 'g':
-                printf("%p\n", Config::gadgetLoader);
-                printf("optarg: %s, rpp ==: %d\n", optarg, strcmp("rpp", optarg));
                 if(!strcmp("r2", optarg)) {
-                    Config::gadgetLoader = Frontend::R2::from;
+                    Config::setGadgetLoader(Frontend::R2::from);
                 } else if(!strcmp("rpp", optarg)) {
-                    printf("rpp!!!\n");
-                    Config::gadgetLoader = Frontend::RPP::from;
-                    printf("assigned %p\n", Config::gadgetLoader);
+                    Config::setGadgetLoader(Frontend::RPP::from);
                 }
-                printf("r2 %p\n", Frontend::R2::from);
-                printf("rpp %p\n", Frontend::RPP::from);
-                printf("%p\n", Config::gadgetLoader);
                 break;
             case 'i':
                 for(int i = 0; optarg[i]; i++) {

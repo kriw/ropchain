@@ -43,8 +43,14 @@ bool Insn::operator==(const Insn& insn) const {
     return mnem == insn.mnem;
 }
 
-std::optional<RegOffset> regOffsetFromString(const std::string& s) {
-    //expect [reg] or [reg+offset] or [reg-offset] (TODO: [reg+reg])
+std::optional<RegOffset> regOffsetFromString(const std::string& _s) {
+    //expect dword [reg] or [reg+offset] or [reg-offset] (TODO: [reg+reg])
+    //XXX This is a dirty way
+    if(_s.substr(0, 5) != "dword") {
+        return {};
+    }
+    //XXX Same as above
+    const auto s = _s.substr(6);
     if(s.front() != '[' || s.back() != ']') {
         return {};
     }

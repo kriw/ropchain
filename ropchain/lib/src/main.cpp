@@ -4,7 +4,6 @@
 #include <getopt.h>
 #include "lib/regs.h"
 #include "lib/solver.h"
-#include "lib/arch.h"
 #include "lib/config.h"
 #include "lib/frontend/r2/r2_loader.h"
 #include "lib/frontend/rp++/rp_loader.h"
@@ -73,16 +72,16 @@ void parseArgs(int argc, char **argv) {
         }
         if(c == 'a') {
             if(!strcmp("x86", optarg)) {
-                Arch::arch = Arch::AMD64;
+                Config::setArch(Config::Arch::X86);
             } else if(!strcmp("amd64", optarg)) {
-                Arch::arch = Arch::X86;
+                Config::setArch(Config::Arch::AMD64);
             } else {
-                Arch::arch = Arch::AMD64;
+                Config::setArch(Config::Arch::AMD64);
             }
         }
     }
     optind = 0;
-    while((c = getopt_long(argc, argv, "b:df:g:i:", ops, &ops_index)) != EOF) {
+    while((c = getopt_long(argc, argv, "a:b:df:g:i:", ops, &ops_index)) != EOF) {
         switch(c) {
             case 'b':
                 baseAddr = fromStr(optarg);
@@ -106,84 +105,84 @@ void parseArgs(int argc, char **argv) {
                 }
                 break;
             case 'A'://rax/eax
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::eax] = fromStr(optarg);
                 } else {
                     dests[RegType::rax] = fromStr(optarg);
                 }
                 break;
             case 'B'://rbx/ebx
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::ebx] = fromStr(optarg);
                 } else {
                     dests[RegType::rbx] = fromStr(optarg);
                 }
                 break;
             case 'C'://rcx/ecx
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::ecx] = fromStr(optarg);
                 } else {
                     dests[RegType::rcx] = fromStr(optarg);
                 }
                 break;
             case 'D'://rdx/edx
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::edx] = fromStr(optarg);
                 } else {
                     dests[RegType::rdx] = fromStr(optarg);
                 }
                 break;
             case 'E'://rdi/edi
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::edi] = fromStr(optarg);
                 } else {
                     dests[RegType::rdi] = fromStr(optarg);
                 }
                 break;
             case 'F'://rsi/esi
-                if(Arch::arch == Arch::X86) {
+                if(Config::getArch() == Config::Arch::X86) {
                     dests[RegType::esi] = fromStr(optarg);
                 } else {
                     dests[RegType::rsi] = fromStr(optarg);
                 }
                 break;
             case 'G'://r8
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r8] = fromStr(optarg);
                 }
                 break;
             case 'H'://r9
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r9] = fromStr(optarg);
                 }
                 break;
             case 'I'://r10
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r10] = fromStr(optarg);
                 }
                 break;
             case 'J'://r11
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r11] = fromStr(optarg);
                 }
                 break;
             case 'K'://r12
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r12] = fromStr(optarg);
                 }
                 break;
             case 'L'://r13
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r13] = fromStr(optarg);
                 }
                 break;
             case 'M'://r14
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r14] = fromStr(optarg);
                 }
                 break;
             case 'N'://r15
-                if(Arch::arch == Arch::AMD64) {
+                if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r15] = fromStr(optarg);
                 }
                 break;

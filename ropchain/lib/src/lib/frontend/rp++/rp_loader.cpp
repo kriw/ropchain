@@ -38,7 +38,7 @@ std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
         std::vector<Insn> insns;
         s = s.substr(s.find(' '));
         Util::trim(s, " ;\n");
-        auto opcodes = Util::split(s, ';');
+        auto opcodes = Util::split(s, ";");
         bool canPush = true;
         for(auto& opcode : opcodes) {
             Util::trim(opcode, " \n");

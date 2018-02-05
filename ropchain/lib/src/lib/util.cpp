@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <sstream>
 #include <numeric>
-#include "arch.h"
 #include "util.h"
 #include "config.h"
 
@@ -12,17 +11,29 @@ OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     return {};
 }
 
-std::vector<std::string> Util::split(std::string s, const char delim) {
+std::vector<std::string> Util::split(const std::string& s, const std::string& delims) {
     std::vector<std::string> ret;
-    auto pos = std::string::npos;
-    while((pos = s.find(delim)) != std::string::npos) {
-        ret.push_back(s.substr(0, pos));
-        s = s.substr(pos + 1);
+    char *buf = (char *)malloc(s.length() + 1);
+    strcpy(buf, s.c_str());
+    buf[s.length()] = '\0';
+    const auto next = [&buf, &delims]() {
+        return std::strtok(NULL, delims.c_str());
+    };
+    for(char *p = std::strtok(buf, delims.c_str()); p; p = next()) {
+        ret.push_back(std::string(p));
     }
-    if(s.length() && s.find(delim) == std::string::npos) {
-        ret.push_back(s);
-    }
+    free(buf);
     return ret;
+}
+
+std::optional<uint64_t> Util::toInt(const std::string& s) {
+    if(2 < s.length() && s.substr(0, 2) == "0x") {
+        return std::stoul(s, 0, 16);
+    }
+    if(0 < s.length() && '0' <= s[0] && s[0] <= '9') {
+        return std::stoul(s);
+    }
+    return {};
 }
 
 std::string Util::join(const std::vector<std::string>& s, const std::string& separator) {
@@ -105,67 +116,67 @@ RegType::Reg Util::findRegType(RegType::Reg reg) {
 	switch(reg) {
 	case RegType::rax: case RegType::eax:
 	case RegType::ax: case RegType::ah: case RegType::al:
-		return Arch::arch == Arch::X86 ? RegType::eax : RegType::rax;
+		return Config::getArch() == Config::Arch::X86 ? RegType::eax : RegType::rax;
 
 	case RegType::rbx: case RegType::ebx:
 	case RegType::bx: case RegType::bh: case RegType::bl:
-		return Arch::arch == Arch::X86 ? RegType::ebx : RegType::rbx;
+		return Config::getArch() == Config::Arch::X86 ? RegType::ebx : RegType::rbx;
 
 	case RegType::rcx: case RegType::ecx:
 	case RegType::cx: case RegType::ch: case RegType::cl:
-		return Arch::arch == Arch::X86 ? RegType::ecx : RegType::rcx;
+		return Config::getArch() == Config::Arch::X86 ? RegType::ecx : RegType::rcx;
 
 	case RegType::rdx: case RegType::edx:
 	case RegType::dx: case RegType::dh: case RegType::dl:
-		return Arch::arch == Arch::X86 ? RegType::edx : RegType::rdx;
+		return Config::getArch() == Config::Arch::X86 ? RegType::edx : RegType::rdx;
 
 	case RegType::rdi: case RegType::edi:
 	case RegType::di: case RegType::dil:
-		return Arch::arch == Arch::X86 ? RegType::edi : RegType::rdi;
+		return Config::getArch() == Config::Arch::X86 ? RegType::edi : RegType::rdi;
 
 	case RegType::rsi: case RegType::esi:
 	case RegType::si: case RegType::sil:
-		return Arch::arch == Arch::X86 ? RegType::esi : RegType::rsi;
+		return Config::getArch() == Config::Arch::X86 ? RegType::esi : RegType::rsi;
 
 	case RegType::rbp: case RegType::ebp:
 	case RegType::bp: case RegType::bpl:
-		return Arch::arch == Arch::X86 ? RegType::ebp : RegType::rbp;
+		return Config::getArch() == Config::Arch::X86 ? RegType::ebp : RegType::rbp;
 
 	case RegType::rsp: case RegType::esp:
 	case RegType::sp: case RegType::spl:
-		return Arch::arch == Arch::X86 ? RegType::esp : RegType::rsp;
+		return Config::getArch() == Config::Arch::X86 ? RegType::esp : RegType::rsp;
 
 	case RegType::r8: case RegType::r8d:
 	case RegType::r8w: case RegType::r8b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r8;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r8;
 
 	case RegType::r9: case RegType::r9d:
 	case RegType::r9w: case RegType::r9b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r9;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r9;
 
 	case RegType::r10: case RegType::r10d:
 	case RegType::r10w: case RegType::r10b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r10;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r10;
 
 	case RegType::r11: case RegType::r11d:
 	case RegType::r11w: case RegType::r11b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r11;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r11;
 
 	case RegType::r12: case RegType::r12d:
 	case RegType::r12w: case RegType::r12b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r12;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r12;
 
 	case RegType::r13: case RegType::r13d:
 	case RegType::r13w: case RegType::r13b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r13;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r13;
 
 	case RegType::r14: case RegType::r14d:
 	case RegType::r14w: case RegType::r14b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r14;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r14;
 
 	case RegType::r15: case RegType::r15d:
 	case RegType::r15w: case RegType::r15b:
-		return Arch::arch == Arch::X86 ? RegType::none : RegType::r15;
+		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r15;
 
 	default:
 		return RegType::none;
@@ -202,13 +213,13 @@ size_t _calcUseStack(const Insn& insn) {
 	const auto mnem = insn.mnem;
 	const auto ops = insn.ops;
 	if(mnem == "pop") {
-		return Arch::word();
+		return Config::Arch::word();
 	} else if(mnem == "popad") {
-		return Arch::word() * 7;
+		return Config::Arch::word() * 7;
 	} else if(mnem == "add") {
         if(const auto r = std::get_if<RegType::Reg>(&ops[0])) {
             if(*r == RegType::esp || *r == RegType::rsp) {
-                return Arch::word() * std::get<uint64_t>(ops[1]);
+                return Config::Arch::word() * std::get<uint64_t>(ops[1]);
             }
         }
 	}
@@ -230,7 +241,7 @@ RegSet Util::map2Regs(const std::map<RegType::Reg, uint64_t>& m) {
 
 RegSet Util::allRegs() {
 	RegSet s;
-	if(Arch::arch == Arch::X86) {
+	if(Config::getArch() == Config::Arch::X86) {
         s.set(RegType::eax);
         s.set(RegType::ebx);
         s.set(RegType::ecx);
@@ -240,7 +251,7 @@ RegSet Util::allRegs() {
         s.set(RegType::ebp);
 		return s;
 	}
-	if(Arch::arch == Arch::AMD64) {
+	if(Config::getArch() == Config::Arch::AMD64) {
 		s.set(RegType::rax);
 		s.set(RegType::rbx);
 		s.set(RegType::rcx);
@@ -264,7 +275,7 @@ RegSet Util::allRegs() {
 
 std::string Util::pack(uint64_t v) {
 	std::string ret;
-	const size_t bytes = Arch::word();
+	const size_t bytes = Config::Arch::word();
 	for(int i=bytes-1; i>=0; i--) {
 		ret += (char)((v >> 8*i) & 0xff);
 	}

@@ -43,17 +43,40 @@ bool Insn::operator==(const Insn& insn) const {
     return mnem == insn.mnem;
 }
 
-std::optional<Operand> Insn::strToOperand(const std::string& s) {
-    if(2 < s.length() && s.substr(0, 2) == "0x") {
-        return std::stoul(s, 0, 16);
-    }
-    if(0 < s.length() && '0' <= s[0] && s[0] <= '9') {
-        return std::stoul(s);
-    }
-    if(s.front() == '[' && s.back() == ']') {
-        //TODO
-        ERR("Not implemented yet");
+std::optional<RegOffset> regOffsetFromString(const std::string& s) {
+    //expect [reg] or [reg+offset] or [reg-offset] (TODO: [reg+reg])
+    if(s.front() != '[' || s.back() != ']') {
         return {};
+    }
+    const auto rr = s.substr(1, s.size() - 1);
+    auto ss = Util::split(rr, "+-");
+    if(2 < ss.size()) {
+        ERR("unimplemented");
+        return {};
+    }
+    //[reg]
+    if(ss.size() == 1) {
+        if(auto r = RegType::fromString(ss[0])) {
+            return std::make_pair(r.value(), 0);
+        }
+    }
+    //[reg(+or-)offset]
+    if(ss.size() == 2) {
+        if(auto r = RegType::fromString(ss[0])) {
+            if(auto v = Util::toInt(ss[1])) {
+                return std::make_pair(r.value(), v.value());
+            }
+        }
+    }
+    return {};
+}
+
+std::optional<Operand> Insn::strToOperand(const std::string& s) {
+    if(auto v = Util::toInt(s)) {
+        return v.value();
+    }
+    if(auto r = regOffsetFromString(s)) {
+        return r;
     }
     return RegType::fromString(s);
 }
@@ -76,7 +99,7 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
     sscanf(opcode.c_str(), "%100s %100[^\n\t]", _mnem, _ops);
     Mnem mnem = _mnem;
     auto ops = std::vector<Operand>();
-    auto oplist = Util::split(_ops, ',');
+    auto oplist = Util::split(_ops, ",");
     for(auto& op : oplist) {
         Util::trim(op, " ");
         auto o = strToOperand(op);

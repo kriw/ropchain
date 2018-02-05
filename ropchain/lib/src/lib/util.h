@@ -26,7 +26,8 @@ void ERR(T&& x, S&& ...xs) {UNUSED(x);};
 namespace Util {
     RegSet allRegs();
     RegSet map2Regs(const std::map<RegType::Reg, uint64_t>& m);
-    std::vector<std::string> split(std::string s, const char delim);
+    std::vector<std::string> split(const std::string& s, const std::string& delims);
+    std::optional<uint64_t> toInt(const std::string& s);
     void trim(std::string& s, const std::string& delims);
     std::string join(const std::vector<std::string>& s, const std::string& separator);
     OptROP toOptROP(const std::optional<ROPElem>& gadget);

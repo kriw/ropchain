@@ -1,6 +1,6 @@
 #include <variant>
 #include "ropchain.h"
-#include "arch.h"
+#include "config.h"
 #include "util.h"
 
 ROPChain::ROPChain()
@@ -16,7 +16,7 @@ ROPChain::ROPChain(const ROPElem elem)
 			if constexpr(std::is_same_v<T, Gadget>) {
 				return ROPElems({std::string(e.useStack, 'A')});
 			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
-				auto s = std::string(e.first.useStack - Arch::word(), 'A');
+				auto s = std::string(e.first.useStack - Config::Arch::word(), 'A');
 				return ROPElems({e, s});
 			}
 			return ROPElems({e});
@@ -79,7 +79,7 @@ ROPElems ROPChain::getElems() const {
 
 //unit: byte
 size_t ROPChain::length() const {
-    return elems.size() * Arch::word();
+    return elems.size() * Config::Arch::word();
 }
 
 ROPChain ROPChain::operator+(const ROPChain& rop) const {

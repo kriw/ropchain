@@ -1,4 +1,6 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
 #include "frontend/r2/r2_loader.h"
 #include "frontend/rp++/rp_loader.h"
 #include "functional"
@@ -10,4 +12,16 @@ namespace Config {
     namespace _ {
         static Loader gadgetLoader;
     }
+
+    namespace Arch {
+        typedef int Arch;
+        enum _enum_arch {
+            X86, AMD64
+        };
+        size_t word();
+        uint32_t bits();
+        static Arch arch = AMD64;
+    };
+    Arch::Arch getArch();
+    void setArch(Arch::Arch _arch);
 }

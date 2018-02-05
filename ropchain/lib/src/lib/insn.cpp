@@ -146,8 +146,6 @@ bool Insn::operator!=(const Insn& insn) const {
     return !(*this == insn);
 }
 
-// typedef std::pair<RegType::Reg, uint64_t> RegOffset;
-// typedef const std::variant<uint64_t, RegOffset> MemOp;
 std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
     if(auto r = std::get_if<RegType::Reg>(&op)) {
         return std::make_pair(*r, offset);

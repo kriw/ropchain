@@ -54,6 +54,7 @@ OptROP fromLeaWithOffset(const Operand& op1, const Operand& op2, const Gadgets& 
     // }
     // const auto rop = Lea::find(op1, tmp.value(), gadgets, aval);
     // return rop;
+    ERR("unimplemented");
     return {};
 }
 

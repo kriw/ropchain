@@ -94,7 +94,6 @@ OptROP Solver::solveWithGadgets(const std::map<RegType::Reg, uint64_t>& dests, c
 OptROP Solver::solveWithFile(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
         uint64_t base, const std::set<char>& avoids) {
     auto gadgets = Config::getGadgetLoader()(file);
-    printf("%p\n", Config::getGadgetLoader());
     // for(auto g : gadgets.value()) {
     //     std::cout << g.toString() << std::endl;
     // }

@@ -33,6 +33,10 @@ bool Gadget::operator!=(const Gadget& gadget) const {
     return !(*this == gadget);
 }
 
+bool Gadget::operator<(const Gadget& gadget) const {
+    return useStack < gadget.useStack;
+}
+
 bool Gadget::isChanged(const RegType::Reg reg) const {
     return changedRegs.test(reg);
 }

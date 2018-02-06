@@ -37,11 +37,14 @@ Gadgets Frontend::R2::fromCmd(R2Pipe *r2, const std::string& cmd) {
 }
 
 std::optional<Gadgets> Frontend::R2::from(const std::string& fileName) {
-    R2Pipe *r2 = r2p_open("r2 -q0 /bin/ls");
+    auto cmd = std::string("r2 -q0 ") + fileName;
+    R2Pipe *r2 = r2p_open(cmd.c_str());
     if(r2 == NULL) {
         return {};
     }
     r2p_cmd(r2, "e rop.len = 2");
     //TODO more gadgets
-    return fromCmd(r2, "\"/R/j ret$\"");
+    auto gadgets = fromCmd(r2, "\"/R/j ret$\"");
+    std::sort(gadgets.begin(), gadgets.end());
+    return gadgets;
 }

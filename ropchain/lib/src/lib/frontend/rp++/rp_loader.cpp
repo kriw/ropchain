@@ -22,7 +22,6 @@ std::optional<std::string> _exec(const std::string& cmd) {
     return result;
 }
 std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
-    std::cout << "filename: " << fileName << std::endl;
     std::optional<std::string> gadgetsStr = _exec(scriptPath + " " + fileName);
     if(!gadgetsStr.has_value()) {
         return {};
@@ -38,5 +37,6 @@ std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
             gadgets.push_back(g.value());
         }
     }
+    std::sort(gadgets.begin(), gadgets.end());
     return gadgets;
 }

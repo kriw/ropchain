@@ -51,14 +51,21 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet& aval) {
     const auto bits = Util::toBits(aval);
     for(const auto r : *bits) {
-        aval.reset(r);
+        if(r == reg) {
+            continue;
+        }
+        aval.reset(reg);
         const auto pop = Pop::find(r, dest, gadgets, aval);
+        aval.set(reg);
+        aval.reset(r);
         const auto mov = Mov::find(reg, r, gadgets, aval);
         if(pop.has_value() && mov.has_value()) {
+            aval.set(r);
             return pop.value() + mov.value();
         }
         if(pop.has_value()) {
             if(const auto xchg = Xchg::find(reg, r, gadgets, aval)) {
+                aval.set(r);
                 return pop.value() + xchg.value();
             }
         }

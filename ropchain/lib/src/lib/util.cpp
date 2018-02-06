@@ -244,7 +244,7 @@ size_t _calcUseStack(const Insn& insn) {
 	} else if(mnem == "add") {
         if(const auto r = std::get_if<RegType::Reg>(&ops[0])) {
             if(*r == RegType::esp || *r == RegType::rsp) {
-                return Config::Arch::word() * std::get<uint64_t>(ops[1]);
+                return std::get<uint64_t>(ops[1]);
             }
         }
 	}

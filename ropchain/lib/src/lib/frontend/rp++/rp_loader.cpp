@@ -8,8 +8,7 @@
 #include "rp_loader.h"
 #include "../../util.h"
 
-//FIXME
-const std::string scriptPath = "./src/lib/frontend/rp++/rp_script.sh";
+const std::string scriptPath = RPP_PATH;
 
 std::optional<std::string> _exec(const std::string& cmd) {
     std::array<char, 128> buffer;

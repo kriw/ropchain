@@ -22,6 +22,9 @@ namespace Solver {
             const uint64_t base, const std::set<char>& avoids);
     OptROP solveWithFile(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
             uint64_t base, const std::set<char>& avoids);
+    OptROP solveWithMap(const std::map<RegType::Reg, uint64_t>& dests,
+            const std::map<uint64_t, std::string> insnStr,
+            uint64_t base, const std::set<char>& avoids);
     OptROP findROPChain(const RegType::Reg reg, const uint64_t dest,
             const Gadgets& gadgets, RegSet aval, Cond& cond, Proc& proc);
 }

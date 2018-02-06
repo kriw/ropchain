@@ -104,6 +104,18 @@ OptROP Solver::solveWithFile(const std::map<RegType::Reg, uint64_t>& dests, cons
     return solveWithGadgets(dests, gadgets.value(), base, avoids);
 }
 
+OptROP Solver::solveWithMap(const std::map<RegType::Reg, uint64_t>& dests,
+        const std::map<uint64_t, std::string> insnStr,
+        uint64_t base, const std::set<char>& avoids) {
+    Gadgets gadgets;
+    for(auto it : insnStr) {
+        if(auto g = Util::parseGadgetString(it.first, it.second)) {
+            gadgets.push_back(g.value());
+        }
+    }
+    return solveWithGadgets(dests, gadgets, base, avoids);
+}
+
 OptROP Solver::findROPChain(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet aval, Cond& cond, Proc& proc) {
     if(cond(dest)) {

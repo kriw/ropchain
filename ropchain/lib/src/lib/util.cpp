@@ -11,6 +11,31 @@ OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
     return {};
 }
 
+std::optional<Gadget> Util::parseGadgetString(const uint64_t addr, const std::string& gadgetStr) {
+    auto s = gadgetStr;
+    Gadgets gadgets;
+    std::vector<Insn> insns;
+    Util::trim(s, " ;\n");
+    auto opcodes = Util::split(s, ";");
+    bool canPush = true;
+    for(auto& opcode : opcodes) {
+        Util::trim(opcode, " \n");
+        if(opcode.empty()) {
+            continue;
+        }
+        const auto insn = Insn::fromString(opcode);
+        if(!insn.has_value()) {
+            canPush = false;
+            break;
+        }
+        insns.push_back(insn.value());
+    }
+    if(canPush) {
+        return Gadget(addr, insns);
+    }
+    return {};
+}
+
 std::vector<std::string> Util::split(const std::string& s, const std::string& delims) {
     std::vector<std::string> ret;
     char *buf = (char *)malloc(s.length() + 1);

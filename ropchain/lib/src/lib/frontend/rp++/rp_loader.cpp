@@ -22,7 +22,6 @@ std::optional<std::string> _exec(const std::string& cmd) {
     }
     return result;
 }
-
 std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
     std::cout << "filename: " << fileName << std::endl;
     std::optional<std::string> gadgetsStr = _exec(scriptPath + " " + fileName);
@@ -35,25 +34,9 @@ std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
     while(getline(ss, s)) {
         size_t sz = 2;
         const uint64_t addr = stoull(s.substr(0, s.find(':')), &sz, 16);
-        std::vector<Insn> insns;
         s = s.substr(s.find(' '));
-        Util::trim(s, " ;\n");
-        auto opcodes = Util::split(s, ";");
-        bool canPush = true;
-        for(auto& opcode : opcodes) {
-            Util::trim(opcode, " \n");
-            if(opcode.empty()) {
-                continue;
-            }
-            const auto insn = Insn::fromString(opcode);
-            if(!insn.has_value()) {
-                canPush = false;
-                break;
-            }
-            insns.push_back(insn.value());
-        }
-        if(canPush) {
-            gadgets.push_back(Gadget(addr, insns));
+        if(auto g = Util::parseGadgetString(addr, s)) {
+            gadgets.push_back(g.value());
         }
     }
     return gadgets;

@@ -26,6 +26,7 @@ void ERR(T&& x, S&& ...xs) {UNUSED(x);};
 namespace Util {
     RegSet allRegs();
     RegSet map2Regs(const std::map<RegType::Reg, uint64_t>& m);
+    std::optional<Gadget> parseGadgetString(const uint64_t addr, const std::string& gadgetStr);
     std::vector<std::string> split(const std::string& s, const std::string& delims);
     std::optional<uint64_t> toInt(const std::string& s);
     void trim(std::string& s, const std::string& delims);

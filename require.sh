@@ -5,7 +5,7 @@ if [ ! $(which rp++) ]
 then
     url=""
     dest="/usr/local/bin/rp++"
-    #if archtecture is 64bit
+    #XXX archtecture is 64bit
     if [[ $(grep lm /proc/cpuinfo) ]]
     then
         if [ $(which rp-lin-x64) ]
@@ -16,7 +16,7 @@ then
             sudo wget $url -O $dest
             sudo chmod 755 $dest
         fi
-    #if archtecture is 32bit
+    #XXX 32bit
     elif [[ $(grep tm /proc/cpuinfo) ]]
     then
         if [ $(which rp-lin-x86) ]
@@ -30,6 +30,6 @@ then
     fi
 fi
 
+#XXX
 cd $(dirname "$0")/ropchain
-sudo wget https://github.com/kriw/ropchain/releases/download/eyperiment/ropchain -O "/usr/local/bin/ropchain"
-sudo wget https://github.com/kriw/ropchain/releases/download/eyperiment/ropchain.so
+sudo wget https://github.com/kriw/ropchain/releases/download/experiment/ropchain.so

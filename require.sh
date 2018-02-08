@@ -1,4 +1,5 @@
 #!/bin/bash
+#Download rp++
 if [ ! $(which rp++) ]
 then
     url=""
@@ -27,3 +28,8 @@ then
         fi
     fi
 fi
+
+#Build libraries
+cd $(dirname "$0")/ropchain
+make clean
+make release

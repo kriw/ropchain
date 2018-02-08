@@ -1,2 +1,2 @@
 include require.sh
-include ropchain/frontend/ropgadget.sh
+recursive-include ropchain *.h *.cpp Makefile *.sh

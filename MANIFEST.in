@@ -1,2 +1,2 @@
 include require.sh
-recursive-include ropchain *.h *.cpp Makefile *.sh
+recursive-include ropchain *.sh

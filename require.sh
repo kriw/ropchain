@@ -1,4 +1,5 @@
 #!/bin/bash
+#XXX
 #Download rp++
 if [ ! $(which rp++) ]
 then
@@ -29,7 +30,6 @@ then
     fi
 fi
 
-#Build libraries
 cd $(dirname "$0")/ropchain
-make clean
-make release
+sudo wget https://github.com/kriw/ropchain/releases/download/eyperiment/ropchain -O "/usr/local/bin/ropchain"
+sudo wget https://github.com/kriw/ropchain/releases/download/eyperiment/ropchain.so

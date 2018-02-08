@@ -1,36 +1,60 @@
 # ROPChain
 
-This repository is work in progress.  
+Fast ROPChain generator for controlling the value of registers.  
+This will find the gadgets by heuristics that the missing gadgets will be alternated by equivalent gadgets.
 
-Automatic ROPChain generator for controlling the value of registers.  
+## Platform
 
-The x86, x64 architectures are supported.
+### OS
 
-You can construct ROPChain like following.  
-```python
-from ropchain import solver
+| OS | status |
+| :--: | :--: |
+| Linux | tested |
+| macOS | not tested |
+| Windows | not tested |
 
-lib = './libc.so.6'
-base = 0xf7000000
-binsh = base + 0x15b9ab
-regs = {'eax': 0xb, 'ebx': binsh, 'ecx': 0x0, 'edx': 0x0}
-print("libc base: %s" % hex(base))
-rop = solver.solveWithFile(regs, lib, base)
-rop.dump()
 
-# Here is the result of rop.dump().
-# 0xf757d06e pop eax; ret
-# 0xb
-# 0xf755aaa6 pop edx; ret
-# 0x0
-# 0xf7571395 pop ebx; ret
-# 0xf76b49ab
-# 0xf760e377 pop ecx; ret
-# 0x0
-```
+### Architecture
+x86, x64 architectures are supported.
 
 ## Feature
-Using alternative gadgets in case pop gadgets cannot be used.
+* Fast (Implemented in C++)
+* Alternative gadgets will be used in case required ROPGadgets (e.g., `pop rax; ret`) are not found by heuristics.
+
+## Requirement
+Either `radare2` or `rp++` is needed for gathering ropgadgets.
+
+## Usage
+Both of executable and python libarary are available.
+
+### Executable
+
+```sh
+ropchain -h
+Usage ...
+TODO
+```
+
+### Python Libarary
+```python
+import ropchain
+#TODO
+```
+
+## Example
+
+### Executable
+
+```sh
+ropchain -f /bin/ls -g r2 --rax=0x114514 -d
+```
+
+### Python
+
+```python
+import ropchain
+#TODO
+```
 
 # Installation
 
@@ -39,8 +63,5 @@ pip install ropchain
 ```
 
 # TODO
-
-* Writing test for x64
-* Support for other archtectures.
-* Reimplement to C++.
+* Verify `useStack`, `changedRegs` by emulating gadgets.
 * Automatically finding equivalent gadgets.

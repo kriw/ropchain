@@ -6,12 +6,14 @@
 #include "../common/frontend/r2/r2_loader.h"
 #include "../common/frontend/rp++/rp_loader.h"
 #include "../common/regs.h"
+#include "../common/config.h"
 
 using namespace boost::python;
 
 ROPChain solveWithFileWrapper(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
         uint64_t base, const std::vector<char>& avoids) {
     std::set<char> _avoids(avoids.begin(), avoids.end());
+    Config::setGadgetLoader(Frontend::RPP::from);
     return Solver::solveWithFile(dests, file, base, _avoids).value();
 }
 

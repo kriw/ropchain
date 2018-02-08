@@ -1,6 +1,6 @@
 CC = g++
 RM = rm
-RPP = $(shell pwd)/src/lib/frontend/rp++/rp_script.sh
+RPP = $(shell pwd)/src/common/frontend/rp++/rp_script.sh
 OPS  := -Wall -Wextra -fPIC -std=c++17 -DRPP_PATH=\"$(RPP)\"
 ifeq "$(findstring release, $(MAKECMDGOALS))" ""
 	OPS += -g -D_DEBUG
@@ -11,10 +11,10 @@ endif
 PYTHON = python2.7
 EXECUTABLE = ./bin/ropchain
 MODULE = ./lib/ropchain.so
-SRC_DIRS = ./src/lib/
+SRC_DIRS = ./src/common/
 
 MODULE_MAIN = ./src/python_module/main.cpp
-EXE_MAIN = ./src/main.cpp
+EXE_MAIN = ./src/executable/main.cpp
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(addsuffix .o,$(basename $(SRCS)))
 INCS := $(shell pkg-config --cflags r_socket)

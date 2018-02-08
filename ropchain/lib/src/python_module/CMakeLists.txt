@@ -5,3 +5,6 @@ find_package(PythonLibs 2.7 REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
 find_package(Boost COMPONET python REQUIERD)
+
+add_subdirectory(src/common)
+# target_include_directories()

@@ -1,11 +1,11 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "../lib/ropchain.h"
-#include "../lib/solver.h"
-#include "../lib/frontend/r2/r2_loader.h"
-#include "../lib/frontend/rp++/rp_loader.h"
-#include "../lib/regs.h"
+#include "../common/ropchain.h"
+#include "../common/solver.h"
+#include "../common/frontend/r2/r2_loader.h"
+#include "../common/frontend/rp++/rp_loader.h"
+#include "../common/regs.h"
 
 using namespace boost::python;
 

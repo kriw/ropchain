@@ -9,8 +9,11 @@
 
 typedef const std::function<bool(uint64_t)>& Cond;
 typedef const std::function<OptROP(const RegType::Reg, const uint64_t,
-        const Gadgets&, RegSet)> Proc;
+        const uint64_t, const Gadgets&, const std::set<char>& avoids, RegSet)> Proc;
 
+    (const RegType::Reg reg, const uint64_t dest,
+            const uint64_t base, const Gadgets& gadgets,
+            const std::set<char>& avoids, RegSet aval) {
 namespace Solver {
     OptROP findROPChain(const RegType::Reg reg, const uint64_t dest,
             const Gadgets& gadgets, RegSet aval, Cond& cond, Proc& proc);

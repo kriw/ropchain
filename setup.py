@@ -1,15 +1,38 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
-from subprocess import call
+import subprocess
 import os
 import sys
+import shutil
+
+if sys.platform == 'darwin':
+    libName = 'ropchain.dylib'
+elif sys.platform in ('win32', 'cygwin'):
+    libName = 'ropchain.dll'
+else:
+    libName = 'ropchain.so'
 
 class CustomInstallCommand(install):
+
+    def buildFFI(self):
+        libPath = 'ropchain/ffi/lib/' + libName
+        cmd1 = ['make', 'release', '-C',  'ropchain/ffi']
+        cmd2 = ['strip', libPath]
+        for cmd in (cmd1, cmd2):
+            subprocess.Popen(cmd).wait()
+        shutil.move(libPath, 'ropchain/' + libName)
+        #XXX
+        scriptDir = 'ropchain/ffi/src/common/frontend/rp++/'
+        script = 'rp_script.sh'
+        shutil.move(scriptDir + script, './')
+        shutil.rmtree('ropchain/ffi/')
+        os.makedirs(scriptDir)
+        shutil.move(script, scriptDir + script)
+
+
+
     def run(self):
-        currentModule = sys.modules[__name__]
-        dirName = os.path.dirname(os.path.abspath(currentModule.__file__))
-        scriptPath = "%s/require.sh" % dirName
-        call(['bash', scriptPath])
+        self.buildFFI()
         install.run(self)
  
 setup(

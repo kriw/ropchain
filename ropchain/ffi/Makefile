@@ -23,9 +23,6 @@ MODULE_INC = -I/usr/include -I/usr/include/$(PYTHON)
 MODULE_LIB = -lboost_python -l$(PYTHON)
 MODULE_OPS = -shared -Wl,-soname,$(MODULE)
 
-debug: all
-release: all
-
 .PHONY: all
 all: exe module
 

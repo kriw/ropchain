@@ -16,7 +16,7 @@ class CustomInstallCommand(install):
 
     def buildFFI(self):
         libPath = 'ropchain/ffi/lib/' + libName
-        cmd1 = ['make', 'release', '-C',  'ropchain/ffi']
+        cmd1 = ['make', 'module', 'release', '-C', 'ropchain/ffi']
         cmd2 = ['strip', libPath]
         for cmd in (cmd1, cmd2):
             subprocess.Popen(cmd).wait()

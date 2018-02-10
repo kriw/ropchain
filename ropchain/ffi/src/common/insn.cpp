@@ -6,9 +6,15 @@ Insn::Insn(Mnem _mnem, std::vector<Operand> _ops)
 :   mnem(_mnem),
     ops(_ops) {};
 
-Insn& Insn::operator=(const Insn& insn) const {
-    auto& a = std::move((const Insn)Insn(insn.mnem, insn.ops));
-    return (Insn &)a;
+Insn& Insn::operator=(const Insn& insn) {
+    if(this != &insn) {
+        (std::string&)mnem = insn.mnem;
+        auto *_ops = (std::vector<Operand> *)&ops;
+        _ops->clear();
+        std::copy(insn.ops.begin(), insn.ops.end(),
+                std::back_inserter(*_ops));
+    }
+    return *this;
 }
 
 bool Insn::operator==(const Insn& insn) const {

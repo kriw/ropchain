@@ -16,7 +16,7 @@ struct Insn {
     const Mnem mnem;
     const std::vector<Operand> ops;
     Insn(Mnem _mnem, std::vector<Operand> _ops);
-    Insn& operator=(const Insn&) const;
+    Insn& operator=(const Insn&);
     bool operator==(const Insn& insn) const;
     bool operator!=(const Insn& insn) const;
     std::string toString() const;

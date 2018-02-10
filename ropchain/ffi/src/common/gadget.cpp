@@ -1,7 +1,7 @@
 #include "gadget.h"
 #include "util.h"
 
-Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns)
+Gadget::Gadget(const uint64_t _addr, const std::vector<Insn> _insns)
 :   insns(_insns),
     addr(_addr),
     useStack(Util::calcUseStack(_insns)),
@@ -9,9 +9,14 @@ Gadget::Gadget(uint64_t _addr, std::vector<Insn> _insns)
 {
 }
 
-Gadget& Gadget::operator=(const Gadget& gadget) const {
-    auto& a = std::move((const Gadget)Gadget(gadget.addr, gadget.insns));
-    return (Gadget &)a;
+Gadget& Gadget::operator=(const Gadget& gadget) {
+    if(this != &gadget) {
+        (uint64_t&)addr = gadget.addr;
+        (std::vector<Insn>&)insns = gadget.insns;
+        (uint64_t&)useStack = gadget.useStack;
+        (RegSet&)changedRegs = gadget.changedRegs;
+    }
+    return *this;
 }
 
 std::string Gadget::toString() const {

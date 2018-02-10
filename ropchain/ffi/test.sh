@@ -1,2 +1,2 @@
 #!/bin/sh
-./bin/ropchain -f /bin/sh -a amd64 -g rpp -d --rdi=0x41424345 --rbx=0x1234
+./bin/ropchain -f /bin/ls -a amd64 -g rpp -d --rax=0x223344 --rdi=0x41424345 --rbx=0x1234

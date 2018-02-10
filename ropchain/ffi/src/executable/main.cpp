@@ -32,6 +32,19 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+void printUsage() {
+    std::cout <<
+        "Usage:\n"
+        "-a: Architecture, \"x86\" or \"amd64\"\n"
+        "-b: Base address of binary file\n"
+        "-d: Dump mode\n"
+        "-f: Filename\n"
+        "-g: ROPGadget loader, \"r2\" or \"rpp\"\n"
+        "-i: Characters which should be excluded (e.g., -iabc\n"
+        "--[reg]: Register value (e.g. --rax=0x1234 --rbx=11\n"
+        << std::endl;
+}
+
 uint64_t fromStr(char *s) {
     int base = 10;
     if(!strncmp(s, "0x", 2)) {
@@ -66,7 +79,18 @@ void parseArgs(int argc, char **argv) {
     };
     int ops_index;
     while(true) {
-        int c = getopt_long(argc, argv, "a:b:df:g:i:", ops, &ops_index);
+        int c = getopt_long(argc, argv, "a:b:df:g:hi:", ops, &ops_index);
+        if(c == EOF) {
+            break;
+        }
+        if(c == 'h') {
+            printUsage();
+            exit(0);
+        }
+    }
+    optind = 0;
+    while(true) {
+        int c = getopt_long(argc, argv, "a:b:df:g:hi:", ops, &ops_index);
         if(c == EOF) {
             break;
         }
@@ -81,7 +105,7 @@ void parseArgs(int argc, char **argv) {
         }
     }
     optind = 0;
-    while((c = getopt_long(argc, argv, "a:b:df:g:i:", ops, &ops_index)) != EOF) {
+    while((c = getopt_long(argc, argv, "a:b:df:g:hi:", ops, &ops_index)) != EOF) {
         switch(c) {
             case 'b':
                 baseAddr = fromStr(optarg);

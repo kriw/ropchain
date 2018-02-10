@@ -20,26 +20,11 @@ x86, x64 architectures are supported.
 ## Feature
 * Fast (Implemented in C++)
 * Alternative gadgets will be used in case required ROPGadgets (e.g., `pop rax; ret`) are not found by heuristics.
+* Able to exclude specific characters if needed.
 
 ## Requirement
-Either `radare2` or `rp++` is needed for gathering ropgadgets.
-
-## Usage
-Both of executable and python libarary are available.
-
-### Executable
-
-```sh
-ropchain -h
-Usage ...
-TODO
-```
-
-### Python Libarary
-```python
-import ropchain
-#TODO
-```
+* `radare2`
+* `rp++`
 
 ## Example
 
@@ -52,8 +37,19 @@ ropchain -f /bin/ls -g r2 --rax=0x114514 -d
 ### Python
 
 ```python
+#!/usr/bin/python2
 import ropchain
-#TODO
+
+fileName = "/bin/ls"
+base = 0
+dests = ropchain.RegValue()
+dests[ropchain.Regs.rdi] = 1
+avoids = ropchain.CharVec()
+avoids.append('a')
+
+rop = ropchain.solve(dests, fileName, base, avoids)
+rop.dump()
+print rop.payload()
 ```
 
 # Installation

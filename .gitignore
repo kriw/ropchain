@@ -10,5 +10,5 @@ core
 cscope.out
 .lvimrc
 ropchain/ffi/bin/ropchain
-ropchain/ffi/bin/ropchain.so
+ropchain/ffi/lib/ropchain.so
 ropchain.egg-info

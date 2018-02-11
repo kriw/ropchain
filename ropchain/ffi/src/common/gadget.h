@@ -22,6 +22,8 @@ struct Gadget {
     const uint32_t useStack;
     //registers which will be changed its value
     const RegSet changedRegs;
+    const size_t hash;
+    static size_t calcHash(const std::vector<Insn> insns);
 };
 
 typedef std::optional<Gadget> OptGadget;

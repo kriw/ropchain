@@ -4,11 +4,14 @@
 
 Insn::Insn(Mnem _mnem, std::vector<Operand> _ops)
 :   mnem(_mnem),
-    ops(_ops) {};
+    ops(_ops),
+    hash(calcHash(_mnem, _ops))
+{};
 
 Insn& Insn::operator=(const Insn& insn) {
     if(this != &insn) {
         (std::string&)mnem = insn.mnem;
+        (size_t&)hash = insn.hash;
         auto *_ops = (std::vector<Operand> *)&ops;
         _ops->clear();
         std::copy(insn.ops.begin(), insn.ops.end(),
@@ -18,6 +21,9 @@ Insn& Insn::operator=(const Insn& insn) {
 }
 
 bool Insn::operator==(const Insn& insn) const {
+    if(hash != insn.hash) {
+        return false;
+    }
     if(ops.size() != insn.ops.size()) {
         return false;
     }
@@ -160,4 +166,8 @@ std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
         return *r;
     }
     return {};
+}
+
+size_t Insn::calcHash(const Mnem mnem, const std::vector<Operand> ops) {
+    return std::hash<std::string>{}(mnem) + std::hash<std::vector<Operand>>{}(ops);
 }

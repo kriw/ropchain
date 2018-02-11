@@ -5,7 +5,8 @@ Gadget::Gadget(const uint64_t _addr, const std::vector<Insn> _insns)
 :   insns(_insns),
     addr(_addr),
     useStack(Util::calcUseStack(_insns)),
-    changedRegs(Util::listChangedRegs(insns))
+    changedRegs(Util::listChangedRegs(insns)),
+    hash(calcHash(_insns))
 {
 }
 
@@ -28,6 +29,9 @@ std::string Gadget::toString() const {
 
 bool Gadget::operator==(const Gadget& gadget) const {
     const auto _insns = gadget.insns;
+    if(hash != gadget.hash) {
+        return false;
+    }
     if(insns.size() != _insns.size()) {
         return false;
     }
@@ -48,4 +52,13 @@ bool Gadget::isChanged(const RegType::Reg reg) const {
 
 bool Gadget::isAvailable(const RegSet& rs) const {
     return (changedRegs & rs) == rs;
+}
+
+size_t Gadget::calcHash(const std::vector<Insn> insns) {
+    //TODO
+    size_t h = 0;
+    for(const auto& insn : insns) {
+        h += insn.hash;
+    }
+    return h;
 }

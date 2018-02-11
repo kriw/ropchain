@@ -2,24 +2,58 @@
 #include "insn.h"
 #include "config.h"
 #include <string>
+#include <fstream>
 
 struct State {
     //Register State
     uint64_t hoge;
 };
 
-uc_engine* initEmulator(std::string binPath) {
-    //TODO load binary
+size_t loadFile(std::string fileName, char **buf) {
+    std::ifstream is(fileName, std::ios::binary);
+    is.seekg (0, is.end);
+    size_t size = is.tellg();
+    is.seekg (0, is.beg);
+    if(*buf == NULL) {
+        *buf = new char [size+1];
+    }
+    is.read(*buf, size);
+    is.close();
+    return size;
+}
+
+uc_engine* initEmulator(std::string binPath, uint64_t baseAddr) {
     uc_engine *uc;
     uc_err err;
-    if(Config::Arch::X86) {
+    if(Config::getArch() == Config::Arch::X86) {
         err = uc_open(UC_ARCH_X86, UC_MODE_32, &uc);
-    } else if(Config::Arch::AMD64) {
+    } else if(Config::getArch() == Config::Arch::AMD64) {
         err = uc_open(UC_ARCH_X86, UC_MODE_64, &uc);
     }
     if(err) {
         printf("Failed on uc_open() with error returned: %u\n", err);
         //TODO throw exception
+    }
+
+    //init stack
+    uint64_t stackAddress = 0;
+    size_t stackSize = 0x1000;
+    if(Config::getArch() == Config::Arch::X86) {
+        stackAddress = 0xbf000000;
+    } else if(Config::getArch() == Config::Arch::AMD64) {
+        stackAddress = 0xf70000000000;
+    }
+    uc_mem_map(uc, stackAddress, stackSize, UC_PROT_ALL);
+
+    //init binary
+    uint64_t binAddress = baseAddr;
+    char *buf = NULL;
+    const size_t binSize = loadFile(binPath, &buf);
+    uc_mem_map(uc, binAddress, binSize, UC_PROT_ALL);
+    // write machine code to be emulated to memory
+    if (uc_mem_write(uc, binAddress, buf, binSize)) {
+      printf("Failed to write emulation code to memory, quit!\n");
+      //TODO throw exception
     }
     return uc;
 }

@@ -11,8 +11,8 @@ This will find the gadgets by heuristics that the missing gadgets will be altern
 | OS | status |
 | :--: | :--: |
 | Linux | tested |
-| macOS | not tested |
-| Windows | not tested |
+| macOS | TODO |
+| Windows | TODO |
 
 
 ### Architecture

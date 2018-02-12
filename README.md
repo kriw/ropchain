@@ -1,3 +1,4 @@
+This project is a work in progress.
 # ROPChain
 
 Fast ROPChain generator for controlling the value of registers.  
@@ -19,7 +20,7 @@ x86, x64 architectures are supported.
 
 ## Feature
 * Fast (Implemented in C++)
-* Alternative gadgets will be used in case required ROPGadgets (e.g., `pop rax; ret`) are not found by heuristics.
+* Alternative gadgets will be used  by heuristics in case required ROPGadgets (e.g., `pop rax; ret`) are not found.
 * Able to exclude specific characters if needed.
 
 ## Requirement

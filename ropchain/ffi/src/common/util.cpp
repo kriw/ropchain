@@ -303,7 +303,8 @@ std::string Util::pack(uint64_t v) {
 	std::string ret;
 	const size_t bytes = Config::Arch::word();
 	for(int i=bytes-1; i>=0; i--) {
-		ret += (char)((v >> 8*i) & 0xff);
+		ret += (char)(v & 0xff);
+        v >>= 8;
 	}
 	return ret;
 }

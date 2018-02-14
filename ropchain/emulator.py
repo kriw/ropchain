@@ -1,5 +1,6 @@
 from unicorn import *
 from unicorn.x86_const import *
+from register import *
 from pwn import asm
 from struct import unpack
 import sys
@@ -66,13 +67,12 @@ def execROPChain(payload, lib, output=False):
         print(">>> EFLAGS = 0x%x" % r_eflags)
 
     return {
-        'eax': r_eax,
-        'ebx': r_ebx,
-        'ecx': r_ecx,
-        'edx': r_edx,
-        'ebp': r_ebp,
-        'esp': r_esp,
-        'edi': r_edi,
-        'esi': r_esi,
-        'eflags': r_eflags,
+        eax: r_eax,
+        ebx: r_ebx,
+        ecx: r_ecx,
+        edx: r_edx,
+        ebp: r_ebp,
+        esp: r_esp,
+        edi: r_edi,
+        esi: r_esi,
     }

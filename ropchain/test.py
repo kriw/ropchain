@@ -1,5 +1,5 @@
 from wrapper import solveFromDict
-from gadgets import gadget
+from register import *
 from pwn import asm
 import emulator
 import unittest
@@ -7,12 +7,12 @@ import unittest
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict):
         lib = buildFromGadgets(gadgetsDict)
-        payload = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE).payload()
+        payload = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE, set()).payload()
         testResult = emulator.execROPChain(payload, lib)
         self.assertTrue(isCorrect(dests, testResult))
 
     def testPop(self):
-        dests = {'eax': 0x0, 'ebx': 0x602030, 'ecx': 0x1000}
+        dests = {eax: 0x0, ebx: 0x602030, ecx: 0x1000}
         gadgetsDict = {
                 0x10000: 'pop eax; ret',
                 0x20000: 'pop ebx; ret',
@@ -21,7 +21,7 @@ class TestROPChain(unittest.TestCase):
         self.do(dests, gadgetsDict)
 
     def testIncAdd(self):
-        dests = {'eax': 0x12345678}
+        dests = {eax: 0x12345678}
         gadgets = {
                 0x10000: 'xor eax, eax; ret',
                 0x20000: 'inc eax; ret',
@@ -30,7 +30,7 @@ class TestROPChain(unittest.TestCase):
         self.do(dests, gadgets)
 
     def testPopMov(self):
-        dests = {'eax': 0x12345678, 'esi': 0x41414141}
+        dests = {eax: 0x12345678, esi: 0x41414141}
         gadgets = {
                 0x1000: 'pop esi; ret',
                 0x2000: 'mov eax, esi; ret'
@@ -39,12 +39,12 @@ class TestROPChain(unittest.TestCase):
 
     def testPopMov6Regs(self):
         dests = {
-            'eax': 0x12345678,
-            'ebx': 0x87654321,
-            'ecx': 0x22222222,
-            'edx': 0x7fffffff,
-            'esi': 0x41414141,
-            'edi': 0x42424242
+            eax: 0x12345678,
+            ebx: 0x87654321,
+            ecx: 0x22222222,
+            edx: 0x7fffffff,
+            esi: 0x41414141,
+            edi: 0x42424242
         }
         gadgets = {
             0x1000: 'pop esi; ret',
@@ -57,7 +57,7 @@ class TestROPChain(unittest.TestCase):
         self.do(dests, gadgets)
 
     def testMovWithoutPop(self):
-        dests = {'eax':  0x12345678, 'esi':  0x41414141}
+        dests = {eax:  0x12345678, esi:  0x41414141}
         gadgets = {
             0x1000: 'xor esi, esi; ret',
             0x2000: 'inc esi; ret',
@@ -68,12 +68,12 @@ class TestROPChain(unittest.TestCase):
 
     def testMovWithoutPop6Regs(self):
         dests = {
-            'eax':  0x12345678,
-            'ebx':  0x22222222,
-            'ecx':  0x33333333,
-            'edx':  0x87654321,
-            'esi':  0x41414141,
-            'edi':  0x42424242,
+            eax:  0x12345678,
+            ebx:  0x22222222,
+            ecx:  0x33333333,
+            edx:  0x87654321,
+            esi:  0x41414141,
+            edi:  0x42424242,
         }
         gadgets = {
             0x1000: 'xor esi, esi; ret',
@@ -88,7 +88,7 @@ class TestROPChain(unittest.TestCase):
         self.do(dests, gadgets)
 
     def testPopXor(self):
-        dests = {'eax': 0x12345678, 'esi': 0x41414141}
+        dests = {eax: 0x12345678, esi: 0x41414141}
         gadgets = {
                 0x1000: 'pop esi; ret',
                 0x2000: 'xor eax, eax; ret',

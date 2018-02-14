@@ -1,7 +1,6 @@
 from unicorn import *
 from unicorn.x86_const import *
 from pwn import asm
-import solver
 from struct import unpack
 import sys
 # memory address where emulation starts

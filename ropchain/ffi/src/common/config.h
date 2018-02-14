@@ -20,7 +20,7 @@ namespace Config {
         };
         size_t word();
         uint32_t bits();
-        static Arch arch = AMD64;
+        static Arch arch;
     };
     Arch::Arch getArch();
     void setArch(Arch::Arch _arch);

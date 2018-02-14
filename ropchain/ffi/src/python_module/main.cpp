@@ -12,17 +12,17 @@ using namespace boost::python;
 
 ROPChain solveWithFileWrapper(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
         uint64_t base, const std::vector<char>& _avoids) {
-    std::set<char> avoids(avoids.begin(), avoids.end());
+    std::set<char> avoids(_avoids.begin(), _avoids.end());
     Config::setGadgetLoader(Frontend::RPP::from);
-    return Solver::solveWithFile(dests, file, base, _avoids).value();
+    return Solver::solveWithFile(dests, file, base, avoids).value();
 }
 
 ROPChain solveWithMapWrapper(const std::map<RegType::Reg, uint64_t>& dests,
         const std::map<uint64_t, std::string> insnStr,
         uint64_t base, const std::vector<char>& _avoids) {
-    std::set<char> avoids(avoids.begin(), avoids.end());
+    std::set<char> avoids(_avoids.begin(), _avoids.end());
     Config::setGadgetLoader(Frontend::RPP::from);
-    return Solver::solveWithMap(dests, insnStr, base, _avoids).value();
+    return Solver::solveWithMap(dests, insnStr, base, avoids).value();
 }
 
 BOOST_PYTHON_MODULE(ropchain) {

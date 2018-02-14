@@ -285,14 +285,15 @@ RegSet Util::allRegs() {
 		s.set(RegType::rsi);
 		s.set(RegType::rbp);
 		s.set(RegType::rsp);
-		s.set(RegType::r8);
-		s.set(RegType::r9);
-		s.set(RegType::r10);
-		s.set(RegType::r11);
-		s.set(RegType::r12);
-		s.set(RegType::r13);
-		s.set(RegType::r14);
-		s.set(RegType::r15);
+        //TODO Toggle use of r8 ~ r15 by option
+		// s.set(RegType::r8);
+		// s.set(RegType::r9);
+		// s.set(RegType::r10);
+		// s.set(RegType::r11);
+		// s.set(RegType::r12);
+		// s.set(RegType::r13);
+		// s.set(RegType::r14);
+		// s.set(RegType::r15);
 		return s;
 	}
 	return RegSet();

@@ -11,19 +11,30 @@
 using namespace boost::python;
 
 ROPChain solveWithFileWrapper(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
-        uint64_t base, const std::vector<char>& avoids) {
-    std::set<char> _avoids(avoids.begin(), avoids.end());
+        uint64_t base, const std::vector<char>& _avoids) {
+    std::set<char> avoids(avoids.begin(), avoids.end());
     Config::setGadgetLoader(Frontend::RPP::from);
     return Solver::solveWithFile(dests, file, base, _avoids).value();
 }
 
+ROPChain solveWithMapWrapper(const std::map<RegType::Reg, uint64_t>& dests,
+        const std::map<uint64_t, std::string> insnStr,
+        uint64_t base, const std::vector<char>& _avoids) {
+    std::set<char> avoids(avoids.begin(), avoids.end());
+    Config::setGadgetLoader(Frontend::RPP::from);
+    return Solver::solveWithMap(dests, insnStr, base, _avoids).value();
+}
+
 BOOST_PYTHON_MODULE(ropchain) {
     def("solve", solveWithFileWrapper);
+    def("solveWithMap", solveWithMapWrapper);
     class_<ROPChain>("ROPChain")
         .def("dump", &ROPChain::dump)
         .def("setBaseAddr", &ROPChain::dump)
         .def("payload", &ROPChain::payload)
         ;
+    class_<std::map<uint64_t, std::string>>("InsnStr")
+        .def(map_indexing_suite<std::map<uint64_t, std::string>>());
     class_<std::map<RegType::Reg, uint64_t>>("RegValue")
         .def(map_indexing_suite<std::map<RegType::Reg, uint64_t>>());
     class_<std::vector<char>>("CharVec")

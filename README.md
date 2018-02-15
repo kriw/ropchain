@@ -26,6 +26,7 @@ x86, x64 architectures are supported.
 * Able to exclude specific characters if needed.
 
 ## Requirement
+*  gcc (C++17)
 * `radare2`
 * `rp++`
 

@@ -1,6 +1,8 @@
 This project is a work in progress.
 # ROPChain
 
+[![Build Status](https://api.travis-ci.org/kriw/ropchain.svg?branch=master)](https://travis-ci.org/kriw/ropchain)
+
 Fast ROPChain generator for controlling the value of registers.  
 This will find the gadgets by heuristics that the missing gadgets will be alternated by equivalent gadgets.
 

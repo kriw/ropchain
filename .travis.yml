@@ -16,8 +16,8 @@ script:
     - cd /tmp/
     - sudo git clone https://github.com/kriw/radare2
     - cd /tmp/radare2
-    - ./configure > /dev/null
-    - make -j2 > /dev/null
+    - sudo ./configure > /dev/null
+    - sudo make -j2 > /dev/null
     - sudo make install > /dev/null
     - cd /tmp/
     - git clone https://github.com/kriw/ropchain

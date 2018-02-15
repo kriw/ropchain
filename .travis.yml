@@ -10,9 +10,7 @@ before_script:
 script:
     - cd /tmp/
     - git clone https://github.com/kriw/ropchain
-    - cd /tmp/ropchain/ffi/
-    - make clean
     - cd /tmp/ropchain
-    - sudo python2 setup.py install --upgrade
+    - sudo python2 setup.py install
     - cd /tmp
     - sudo rm -rf /tmp/ropchain

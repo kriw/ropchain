@@ -302,7 +302,7 @@ RegSet Util::allRegs() {
 std::string Util::pack(uint64_t v) {
 	std::string ret;
 	const size_t bytes = Config::Arch::word();
-	for(int i=bytes-1; i>=0; i--) {
+	for(size_t i=bytes; i > 0; i--) {
 		ret += (char)(v & 0xff);
         v >>= 8;
 	}

@@ -27,8 +27,23 @@ OptROP Pop::find(RegType::Reg op1, const uint64_t dest,
 OptROP fromIncAdd(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet& aval) {
     const auto zero = Xor::find(reg, reg, gadgets, aval);
+    if(zero.has_value()) {
+        std::cout << "zero has value" << std::endl;
+    } else {
+        std::cout << "zero has not value" << std::endl;
+    }
     const auto inc = Inc::find(reg, gadgets, aval);
+    if(inc.has_value()) {
+        std::cout << "inc has value" << std::endl;
+    } else {
+        std::cout << "inc has not value" << std::endl;
+    }
     const auto _double = Add::find(reg, reg, gadgets, aval);
+    if(_double.has_value()) {
+        std::cout << "double has value" << std::endl;
+    } else {
+        std::cout << "double has not value " << std::endl;
+    }
     if(!zero.has_value() || !inc.has_value() || !_double.has_value()) {
         return {};
     }

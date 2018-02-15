@@ -7,7 +7,11 @@ import unittest
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict):
         lib = buildFromGadgets(gadgetsDict)
-        payload = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE, set()).payload()
+        # payload = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE, set()).payload()
+        rop = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE, set())
+        rop.dump()
+        print(rop.payload())
+        payload = rop.payload()
         testResult = emulator.execROPChain(payload, lib)
         self.assertTrue(isCorrect(dests, testResult))
 
@@ -29,72 +33,72 @@ class TestROPChain(unittest.TestCase):
             }
         self.do(dests, gadgets)
 
-    def testPopMov(self):
-        dests = {eax: 0x12345678, esi: 0x41414141}
-        gadgets = {
-                0x1000: 'pop esi; ret',
-                0x2000: 'mov eax, esi; ret'
-            }
-        self.do(dests, gadgets)
-
-    def testPopMov6Regs(self):
-        dests = {
-            eax: 0x12345678,
-            ebx: 0x87654321,
-            ecx: 0x22222222,
-            edx: 0x7fffffff,
-            esi: 0x41414141,
-            edi: 0x42424242
-        }
-        gadgets = {
-            0x1000: 'pop esi; ret',
-            0x2000: 'mov ebx, esi; ret',
-            0x3000: 'mov eax, ecx; ret',
-            0x4000: 'mov ecx, ebx; ret',
-            0x5000: 'mov edx, esi; ret',
-            0x6000: 'mov edi, eax; ret',
-        }
-        self.do(dests, gadgets)
-
-    def testMovWithoutPop(self):
-        dests = {eax:  0x12345678, esi:  0x41414141}
-        gadgets = {
-            0x1000: 'xor esi, esi; ret',
-            0x2000: 'inc esi; ret',
-            0x3000: 'add esi, esi; ret',
-            0x4000: 'mov eax, esi; ret',
-        }
-        self.do(dests, gadgets)
-
-    def testMovWithoutPop6Regs(self):
-        dests = {
-            eax:  0x12345678,
-            ebx:  0x22222222,
-            ecx:  0x33333333,
-            edx:  0x87654321,
-            esi:  0x41414141,
-            edi:  0x42424242,
-        }
-        gadgets = {
-            0x1000: 'xor esi, esi; ret',
-            0x2000: 'inc esi; ret',
-            0x3000: 'add esi, esi; ret',
-            0x4000: 'mov eax, esi; ret',
-            0x5000: 'mov ebx, eax; ret',
-            0x6000: 'mov edx, ecx; ret',
-            0x7000: 'mov edi, edx; ret',
-            0x8000: 'mov ecx, ebx; ret',
-        }
-        self.do(dests, gadgets)
-
-    def testPopXor(self):
-        dests = {eax: 0x12345678, esi: 0x41414141}
-        gadgets = {
-                0x1000: 'pop esi; ret',
-                0x2000: 'xor eax, eax; ret',
-                0x3000: 'xor eax, esi; ret'
-            }
-        self.do(dests, gadgets)
+    # def testPopMov(self):
+    #     dests = {eax: 0x12345678, esi: 0x41414141}
+    #     gadgets = {
+    #             0x1000: 'pop esi; ret',
+    #             0x2000: 'mov eax, esi; ret'
+    #         }
+    #     self.do(dests, gadgets)
+    #
+    # def testPopMov6Regs(self):
+    #     dests = {
+    #         eax: 0x12345678,
+    #         ebx: 0x87654321,
+    #         ecx: 0x22222222,
+    #         edx: 0x7fffffff,
+    #         esi: 0x41414141,
+    #         edi: 0x42424242
+    #     }
+    #     gadgets = {
+    #         0x1000: 'pop esi; ret',
+    #         0x2000: 'mov ebx, esi; ret',
+    #         0x3000: 'mov eax, ecx; ret',
+    #         0x4000: 'mov ecx, ebx; ret',
+    #         0x5000: 'mov edx, esi; ret',
+    #         0x6000: 'mov edi, eax; ret',
+    #     }
+    #     self.do(dests, gadgets)
+    #
+    # def testMovWithoutPop(self):
+    #     dests = {eax:  0x12345678, esi:  0x41414141}
+    #     gadgets = {
+    #         0x1000: 'xor esi, esi; ret',
+    #         0x2000: 'inc esi; ret',
+    #         0x3000: 'add esi, esi; ret',
+    #         0x4000: 'mov eax, esi; ret',
+    #     }
+    #     self.do(dests, gadgets)
+    #
+    # def testMovWithoutPop6Regs(self):
+    #     dests = {
+    #         eax:  0x12345678,
+    #         ebx:  0x22222222,
+    #         ecx:  0x33333333,
+    #         edx:  0x87654321,
+    #         esi:  0x41414141,
+    #         edi:  0x42424242,
+    #     }
+    #     gadgets = {
+    #         0x1000: 'xor esi, esi; ret',
+    #         0x2000: 'inc esi; ret',
+    #         0x3000: 'add esi, esi; ret',
+    #         0x4000: 'mov eax, esi; ret',
+    #         0x5000: 'mov ebx, eax; ret',
+    #         0x6000: 'mov edx, ecx; ret',
+    #         0x7000: 'mov edi, edx; ret',
+    #         0x8000: 'mov ecx, ebx; ret',
+    #     }
+    #     self.do(dests, gadgets)
+    #
+    # def testPopXor(self):
+    #     dests = {eax: 0x12345678, esi: 0x41414141}
+    #     gadgets = {
+    #             0x1000: 'pop esi; ret',
+    #             0x2000: 'xor eax, eax; ret',
+    #             0x3000: 'xor eax, esi; ret'
+    #         }
+    #     self.do(dests, gadgets)
 
 def buildFromGadgets(gadgets):
     addrs = gadgets.keys()

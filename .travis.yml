@@ -4,6 +4,11 @@ compiler:
     - gcc
 
 before_script:
+      # C++17
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq g++-6
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
     - sudo apt-get install -y pkg-config python libboost-python-dev radare2
     - sudo wget https://github.com/downloads/0vercl0k/rp/rp-lin-x64 -O /usr/local/bin/rp++
 

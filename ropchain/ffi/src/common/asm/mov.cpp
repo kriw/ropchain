@@ -39,8 +39,10 @@ OptROP fromLea(const Operand& op1, const Operand& op2, const Gadgets& gadgets, R
 //xor r1, r1; ret; or r1, r2; ret
 OptROP fromXorOr(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval) {
     const auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
-    const auto orR1R2 = Or::find(op1, op2, gadgets, aval);
-    if(xorR1R2.has_value() && orR1R2.has_value()) {
+    if(!xorR1R2.has_value()) {
+        return {};
+    }
+    if(const auto orR1R2 = Or::find(op1, op2, gadgets, aval)) {
         return xorR1R2.value() + orR1R2.value();
     }
     return {};
@@ -61,8 +63,10 @@ OptROP fromLeaWithOffset(const Operand& op1, const Operand& op2, const Gadgets& 
 //xor r1, r1; ret; xor r1, r2; ret
 OptROP fromXorXor(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval) {
     const auto xorR1R1 = Xor::find(op1, op1, gadgets, aval);
-    const auto xorR1R2 = Xor::find(op1, op2, gadgets, aval);
-    if(xorR1R1.has_value() && xorR1R2.has_value()) {
+    if(!xorR1R1.has_value()) {
+        return {};
+    }
+    if(const auto xorR1R2 = Xor::find(op1, op2, gadgets, aval)) {
         return xorR1R1.value() + xorR1R2.value();
     }
     return {};
@@ -71,8 +75,10 @@ OptROP fromXorXor(const Operand& op1, const Operand& op2, const Gadgets& gadgets
 //xchg r1, r2; ret mov r2, r1; ret; xchg r1, r2; ret
 OptROP fromXchg(const Operand& op1, const Operand& op2, const Gadgets& gadgets, RegSet& aval) {
     const auto xchg = Xchg::find(op1, op2, gadgets, aval);
-    const auto mov = findWithoutXchg(op2, op1, gadgets, aval);
-    if(xchg.has_value() && mov.has_value()) {
+    if(!xchg.has_value()) {
+        return {};
+    }
+    if(const auto mov = findWithoutXchg(op2, op1, gadgets, aval)) {
         return xchg.value() + mov.value() + xchg.value();
     }
     return {};

@@ -12,3 +12,4 @@ cscope.out
 ropchain/ffi/bin/ropchain
 ropchain/ffi/lib/ropchain.so
 ropchain.egg-info
+localtest.sh

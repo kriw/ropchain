@@ -1,0 +1,18 @@
+sudo: true
+language: c++
+compiler:
+    - gcc
+
+before_script:
+    - sudo apt-get install -y pkg-config python libboost-python-dev radare2
+    - sudo wget https://github.com/downloads/0vercl0k/rp/rp-lin-x64 -O /usr/local/bin/rp++
+
+script:
+    - cd /tmp/
+    - git clone https://github.com/kriw/ropchain
+    - cd /tmp/ropchain/ffi/
+    - make clean
+    - cd /tmp/ropchain
+    - sudo python2 setup.py install --upgrade
+    - cd /tmp
+    - sudo rm -rf /tmp/ropchain

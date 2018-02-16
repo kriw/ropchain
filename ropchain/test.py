@@ -6,11 +6,13 @@ import unittest
 
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict, base=emulator.LIB_BASE, avoids=[]):
+        verify = lambda xs, p: all([x not in p for x in xs])
         lib = buildFromGadgets(gadgetsDict)
-        # payload = solveFromDict(dests, gadgetsDict, base, avoids).payload()
-        rop = solveFromDict(dests, gadgetsDict, base, avoids)
-        rop.dump()
-        payload = rop.payload()
+        payload = solveFromDict(dests, gadgetsDict, base, avoids).payload()
+        # rop = solveFromDict(dests, gadgetsDict, base, avoids)
+        # rop.dump()
+        # payload = rop.payload()
+        verify(avoids, payload)
         testResult = emulator.execROPChain(payload, lib, base)
         self.assertTrue(isCorrect(dests, testResult))
 

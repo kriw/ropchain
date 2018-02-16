@@ -67,7 +67,7 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
             if rop is not None:
                 ans = util.optMin(ans, rop)
 
-        print reg, canUse
+        # print reg, canUse
         #use xor r1, r2
         chars = set(range(0xff)) - avoids
         xorTable = [None] * 0x100
@@ -119,7 +119,7 @@ def solveAvoidChars(dests, gadgets, base=0, avoids=[]):
                 break
 
         if canConstruct:
-            print hex(dest), hex(tmpDest)
+            # print hex(dest), hex(tmpDest)
             _pop = setVal.find(reg, tmpDest, gadgets, canUse)
             _inc = asm.inc.find(reg, gadgets, canUse)
             if _pop is not None and _inc is not None:

@@ -14,7 +14,6 @@ alt pop reg
 def find(reg, dest, gadgets, canUse):
     rop, canUse = gadget.find(gadgets, canUse, 'pop', reg)
     if rop is not None:
-        print reg, 'dest: %s' % hex(dest)
         rop = ropchain.ROPChain(rop, dest)
         return rop
 

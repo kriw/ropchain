@@ -23,5 +23,6 @@ script:
     - git clone https://github.com/kriw/ropchain
     - cd /tmp/ropchain
     - sudo python2 setup.py install
-    - cd /tmp
+    - cd /tmp/ropchain/ropchain
+    - python2 test.py
     - sudo rm -rf /tmp/ropchain

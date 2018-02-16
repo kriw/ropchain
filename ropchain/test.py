@@ -5,10 +5,13 @@ import emulator
 import unittest
 
 class TestROPChain(unittest.TestCase):
-    def do(self, dests, gadgetsDict):
+    def do(self, dests, gadgetsDict, base=emulator.LIB_BASE, avoids=[]):
         lib = buildFromGadgets(gadgetsDict)
-        payload = solveFromDict(dests, gadgetsDict, emulator.LIB_BASE, set()).payload()
-        testResult = emulator.execROPChain(payload, lib)
+        # payload = solveFromDict(dests, gadgetsDict, base, avoids).payload()
+        rop = solveFromDict(dests, gadgetsDict, base, avoids)
+        rop.dump()
+        payload = rop.payload()
+        testResult = emulator.execROPChain(payload, lib, base)
         self.assertTrue(isCorrect(dests, testResult))
 
     def testPop(self):
@@ -95,6 +98,28 @@ class TestROPChain(unittest.TestCase):
                 0x3000: 'xor eax, esi; ret'
             }
         self.do(dests, gadgets)
+
+    def testAscii(self):
+        libBase = 0x55550000
+        avoids = set([chr(i) for i in range(0x100) if not 0x20 <= i <= 0x7e])
+        dests = {eax: 0x41414141, ebx: 0x41424344}
+        gadgets = {
+                0x5455: 'pop eax; ret',
+                0x5555: 'pop ebx; ret',
+                }
+        self.do(dests, gadgets, libBase, avoids)
+
+    def testAsciiXor(self):
+        libBase = 0x55550000
+        avoids = set([chr(i) for i in range(0x100) if not 0x20 <= i <= 0x7e])
+        dests = {eax: 0xb, ebx: 0x55554444}
+        gadgets = {
+                0x5455: 'mov eax, ebx; ret',
+                0x5555: 'xor eax, ebx; ret',
+                0x5655: 'pop ebx; ret',
+                }
+        self.do(dests, gadgets, libBase, avoids)
+
 
 def buildFromGadgets(gadgets):
     addrs = gadgets.keys()

@@ -21,24 +21,24 @@ def align(n):
         ret += 0x1000
     return ret
 
-def init(payload, lib):
+def init(payload, lib, base):
     LIB_SIZE = align(len(lib))
 
     # initialize unicorn emulator
     mu = Uc(UC_ARCH_X86, UC_MODE_32)
     mu.mem_map(ADDRESS, 0x1000)
-    mu.mem_map(LIB_BASE, LIB_SIZE)
+    mu.mem_map(base, LIB_SIZE)
     mu.mem_map(STACK_BASE, STACK_SIZE)
     mu.mem_map(DEST, 0x1000)
 
     mu.reg_write(UC_X86_REG_ESP, STACK_BASE + STACK_SIZE / 2)
     mu.mem_write(ADDRESS, asm('ret'))
-    mu.mem_write(LIB_BASE, lib)
+    mu.mem_write(base, lib)
     mu.mem_write(mu.reg_read(UC_X86_REG_ESP), payload)
     return mu
 
-def execROPChain(payload, lib, output=False):
-    mu = init(payload, lib)
+def execROPChain(payload, lib, base, output=False):
+    mu = init(payload, lib, base)
     # emulate code in infinite time & unlimited instructions
     mu.emu_start(ADDRESS, DEST)
 

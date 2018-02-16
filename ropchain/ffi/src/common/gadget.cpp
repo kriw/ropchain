@@ -51,7 +51,7 @@ bool Gadget::isChanged(const RegType::Reg reg) const {
 }
 
 bool Gadget::isAvailable(const RegSet& rs) const {
-    return (changedRegs & rs) == rs;
+    return (changedRegs & rs) == changedRegs;
 }
 
 size_t Gadget::calcHash(const std::vector<Insn> insns) {

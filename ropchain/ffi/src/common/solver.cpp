@@ -6,10 +6,7 @@
 
 OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,
         uint64_t base, Cond& cond, Proc& proc, const std::set<char>& avoids) {
-    auto regs = Util::allRegs();
-
     auto ropChains = std::map<RegType::Reg, ROPChain>();
-    auto solvables = RegSet();
     auto remains = RegSet();
 	//Construct ROPChain by itself
 	{
@@ -18,7 +15,6 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
             const auto tmp = findROPChain(reg, dests.at(reg), gadgets,
                     RegSet(reg), cond, proc, avoids);
 			if(tmp.has_value()) {
-				solvables.set(reg);
 				ropChains[reg] = tmp.value();
 			} else {
                 remains.set(reg);
@@ -39,7 +35,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
         std::sort(bits->begin(), bits->end());
         do {
 			auto rop = ROPChain();
-			auto aval = regs;
+			auto aval = Util::allRegs();
 			bool isDone = true;
 			//Construct ROPChain with set of registers 'remain'
 			for(RegType::Reg reg : *bits) {
@@ -49,7 +45,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 					break;
 				}
 				aval.reset(reg);
-				rop = rop + tmp.value();
+				rop += tmp.value();
 			}
 			if(isDone) {
 				ans = Util::optMin(ans, (OptROP)rop);
@@ -245,11 +241,8 @@ OptROP Solver::solveWithMap(const std::map<RegType::Reg, uint64_t>& dests,
     for(auto it : insnStr) {
         if(auto g = Util::parseGadgetString(it.first, it.second)) {
             gadgets.push_back(g.value());
-            std::cout << "mnem: " << g.value().insns[0].mnem << std::endl;
-            std::cout << g.value().toString() << std::endl;
         }
     }
-    std::cout << "gadgets.len: " << gadgets.size() << std::endl;
     return solveWithGadgets(dests, gadgets, base, avoids);
 }
 

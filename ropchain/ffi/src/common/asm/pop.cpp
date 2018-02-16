@@ -56,6 +56,7 @@ OptROP fromIncAdd(const RegType::Reg reg, const uint64_t dest,
 OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet& aval) {
     const auto bits = Util::toBits(aval);
+    OptROP ret = {};
     for(const auto r : *bits) {
         if(r == reg) {
             continue;
@@ -63,20 +64,18 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
         aval.reset(reg);
         const auto pop = Pop::find(r, dest, gadgets, aval);
         aval.set(reg);
-        aval.reset(r);
         if(!pop.has_value()) {
-            return {};
+            continue;
         }
         if(const auto mov = Mov::find(reg, r, gadgets, aval)) {
-            aval.set(r);
-            return pop.value() + mov.value();
+            ret = pop.value() + mov.value();
+            break;
         }
         if(const auto xchg = Xchg::find(reg, r, gadgets, aval)) {
-            aval.set(r);
-            return pop.value() + xchg.value();
+            ret = pop.value() + xchg.value();
+            break;
         }
-        aval.set(r);
     }
     delete bits;
-    return {};
+    return ret;
 }

@@ -284,8 +284,8 @@ RegSet Util::allRegs() {
 		s.set(RegType::rdi);
 		s.set(RegType::rsi);
 		s.set(RegType::rbp);
-		s.set(RegType::rsp);
-        //TODO Toggle use of r8 ~ r15 by option
+        //TODO Toggle use of rsp, r8 ~ r15 by option
+		// s.set(RegType::rsp);
 		// s.set(RegType::r8);
 		// s.set(RegType::r9);
 		// s.set(RegType::r10);

@@ -14,8 +14,10 @@ ROPChain::ROPChain(const ROPElem elem)
 	ROPElems es = std::visit([](const auto& e) {
 			using T = std::decay_t<decltype(e)>;
 			if constexpr(std::is_same_v<T, Gadget>) {
-				return ROPElems({std::string(e.useStack, 'A')});
+                //In case of not pop gadgets
+				return ROPElems({e, std::string(e.useStack, 'A')});
 			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
+                //In case of pop gadgets
 				auto s = std::string(e.first.useStack - Config::Arch::word(), 'A');
 				return ROPElems({e, s});
 			}
@@ -50,7 +52,7 @@ void ROPChain::dump() const {
 
 std::string ROPChain::payload() const {
 	std::string payload;
-	for(auto& elem : elems) {
+	for(auto& e : elems) {
 		std::string s = std::visit([&](auto&& e){
 			using T = std::decay_t<decltype(e)>;
 			if constexpr(std::is_same_v<T, Gadget>) {
@@ -62,7 +64,7 @@ std::string ROPChain::payload() const {
 			} else if constexpr(std::is_same_v<T, uint64_t>) {
 				return Util::pack(e);
 			}
-			}, elem);
+			}, e);
 		payload += s;
 	}
     return payload;
@@ -70,7 +72,7 @@ std::string ROPChain::payload() const {
 
 void ROPChain::chain(const ROPChain& ropchain) {
     auto es = ropchain.getElems();
-    es.insert(std::end(elems), std::begin(es), std::end(es));
+    std::copy(es.begin(), es.end(), std::back_inserter(elems));
 }
 
 ROPElems ROPChain::getElems() const {
@@ -89,8 +91,7 @@ ROPChain ROPChain::operator+(const ROPChain& rop) const {
 }
 
 ROPChain ROPChain::operator+=(const ROPChain& rop) {
-    const auto e = rop.getElems();
-    std::copy(e.begin(), e.end(), std::back_inserter(elems));
+    this->chain(rop);
     return *this;
 }
 

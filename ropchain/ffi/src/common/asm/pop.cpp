@@ -57,7 +57,7 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet& aval) {
     const auto bits = Util::toBits(aval);
     OptROP ret = {};
-    for(const auto r : *bits) {
+    for(const auto r : bits) {
         if(r == reg) {
             continue;
         }
@@ -76,6 +76,5 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
             break;
         }
     }
-    delete bits;
     return ret;
 }

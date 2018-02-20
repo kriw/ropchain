@@ -11,7 +11,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 	//Construct ROPChain by itself
 	{
 		const auto allBits = Util::toBits(Util::map2Regs(dests));
-		for(const auto reg : *allBits) {
+		for(const auto reg : allBits) {
             const auto tmp = findROPChain(reg, dests.at(reg), gadgets,
                     RegSet(reg), cond, proc, avoids);
 			if(tmp.has_value()) {
@@ -20,7 +20,6 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
                 remains.set(reg);
             }
 		}
-		delete allBits;
 	}
     if(remains.none()) {
         auto rop = std::accumulate(ropChains.begin(), ropChains.end(), ROPChain(),
@@ -32,13 +31,13 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 	//Brute force remains
 	{
 		auto bits = Util::toBits(remains);
-        std::sort(bits->begin(), bits->end());
+        std::sort(bits.begin(), bits.end());
         do {
 			auto rop = ROPChain();
 			auto aval = Util::allRegs();
 			bool isDone = true;
 			//Construct ROPChain with set of registers 'remain'
-			for(RegType::Reg reg : *bits) {
+			for(RegType::Reg reg : bits) {
 				const auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc, avoids);
 				if(!tmp.has_value()) {
 					isDone = false;
@@ -50,8 +49,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 			if(isDone) {
 				ans = Util::optMin(ans, (OptROP)rop);
 			}
-        } while (next_permutation(bits->begin(), bits->end()));
-		delete bits;
+        } while (next_permutation(bits.begin(), bits.end()));
 	}
 	if(!ans.has_value()) {
 		return {};
@@ -117,7 +115,7 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
                 aval.reset(reg);
                 {
                     const auto allBits = Util::toBits(aval);
-                    for(auto r : *allBits) {
+                    for(auto r : allBits) {
                         aval.reset(r);
                         if(auto _xor = Xor::find(reg, r, gadgets, aval)) {
                             ropRight = findROPChain(reg, left, gadgets, aval, {}, {}, avoids);
@@ -133,7 +131,6 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
                         }
                         aval.set(r);
                     }
-                    delete allBits;
                 }
             }
         }

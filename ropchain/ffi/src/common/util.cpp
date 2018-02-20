@@ -90,11 +90,11 @@ void Util::trim(std::string& s, const std::string& delims) {
     rtrim(s, delims);
 }
 
-std::vector<RegType::Reg> *Util::toBits(const RegSet& s) {
-	auto bits = new std::vector<RegType::Reg>();
+std::vector<RegType::Reg> Util::toBits(const RegSet& s) {
+	auto bits = std::vector<RegType::Reg>();
 	for(size_t i=0; i < s.size(); i++) {
 		if(s.test(i)) {
-			bits->push_back(i);
+			bits.push_back(i);
 		}
 	}
 	return bits;

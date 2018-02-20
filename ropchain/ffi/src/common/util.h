@@ -32,7 +32,7 @@ namespace Util {
     void trim(std::string& s, const std::string& delims);
     std::string join(const std::vector<std::string>& s, const std::string& separator);
     OptROP toOptROP(const std::optional<ROPElem>& gadget);
-    std::vector<RegType::Reg> *toBits(const RegSet& s);
+    std::vector<RegType::Reg> toBits(const RegSet& s);
     template <typename T>
         T optMin(T t1, T t2) {
             if(!t1.has_value()) {

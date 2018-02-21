@@ -140,8 +140,7 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
             continue;
         }
         if(check(gadget)) {
-            findMemo[insn.hash] = gadget;
-            return gadget;
+            return findMemo[insn.hash] = gadget;
         }
     }
     return {};

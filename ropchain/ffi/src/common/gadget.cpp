@@ -1,7 +1,7 @@
 #include "gadget.h"
 #include "util.h"
 
-Gadget::Gadget(const uint64_t _addr, const std::vector<Insn> _insns)
+Gadget::Gadget(const uint64_t _addr, const std::vector<Insn>& _insns)
 :   insns(_insns),
     addr(_addr),
     useStack(Util::calcUseStack(_insns)),
@@ -55,10 +55,9 @@ bool Gadget::isAvailable(const RegSet& rs) const {
 }
 
 size_t Gadget::calcHash(const std::vector<Insn> insns) {
-    //TODO
     size_t h = 0;
     for(const auto& insn : insns) {
-        h += insn.hash;
+        h = (h << 1) ^ insn.hash;
     }
     return h;
 }

@@ -131,26 +131,9 @@ std::optional<Insn> Insn::fromString(const std::string& opcode) {
 }
 
 std::string Insn::toString() const {
-    auto toStr = [](Operand op) {
-        return std::visit([](auto&& x) {
-                using T = std::decay_t<decltype(x)>;
-                if constexpr (std::is_same_v<T, uint64_t>) {
-                    return std::to_string(x);
-                }
-                if constexpr (std::is_same_v<T, RegType::Reg>) {
-                    auto retOpt = RegType::toString(x);
-                    if(retOpt.has_value()) {
-                        return retOpt.value();
-                    }
-                }
-                //TODO MemOp
-                ERR("Failed to convert to String");
-                return std::string();
-            }, op);
-        };
     std::string ret = mnem.c_str();
     for(size_t i = 0; i < ops.size(); i++) {
-        ret += ", " + toStr(ops[i]);
+        ret += ", " + opToStr(ops[i]);
     }
     return ret;
 }
@@ -171,4 +154,25 @@ std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
 
 size_t Insn::calcHash(const Mnem& mnem, const std::vector<Operand>& ops) {
     return std::hash<std::string>{}(mnem) + std::hash<std::vector<Operand>>{}(ops);
+}
+
+std::string Insn::opToStr(const Operand& op) {
+    return std::visit([](auto&& x) {
+            using T = std::decay_t<decltype(x)>;
+            if constexpr (std::is_same_v<T, uint64_t>) {
+                return std::to_string(x);
+            }
+            if constexpr (std::is_same_v<T, RegType::Reg>) {
+                auto retOpt = RegType::toString(x);
+                if(retOpt.has_value()) {
+                    return retOpt.value();
+                }
+            }
+            //TODO MemOp
+            if constexpr (std::is_same_v<T, MemOp>) {
+                return std::string("TODO");
+            }
+            ERR("Failed to convert to String");
+            return std::string();
+            }, op);
 }

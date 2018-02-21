@@ -23,6 +23,7 @@ struct Insn {
     std::string toString() const;
     static size_t calcHash(const Mnem& mnem, const std::vector<Operand>& ops);
     static std::optional<Operand> strToOperand(const std::string& s);
+    static std::string opToStr(const Operand& op);
     static std::optional<Insn> fromString(const std::string& opcode);
     static std::optional<MemOp> memRef(const Operand& op, uint64_t offset);
 };
@@ -32,19 +33,14 @@ typedef std::vector<Insn> Insns;
 namespace std {
     template <> struct hash<Operand> {
         size_t operator()(const Operand& x) const {
-            //TODO
-            if(const auto _x = get_if<uint64_t>(&x)) {
-                return *_x;
-            }
-            return 1;
+            return hash<string>{}(Insn::opToStr(x));
         }
     };
     template <> struct hash<std::vector<Operand>> {
         size_t operator()(const std::vector<Operand>& xs) const {
-            //TODO
             size_t h = 0;
             for(auto& x : xs) {
-                h += hash<Operand>{}(x);
+                h = (h << 1) ^ hash<Operand>{}(x);
             }
             return h;
         }

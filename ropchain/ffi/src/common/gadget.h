@@ -8,7 +8,7 @@
 #include "insn.h"
 
 struct Gadget {
-    Gadget(const uint64_t _addr, const std::vector<Insn> _insns);
+    Gadget(const uint64_t _addr, const std::vector<Insn>& _insns);
     bool isChanged(const RegType::Reg reg) const;
     bool isAvailable(const RegSet& reg) const;
     std::string toString() const;

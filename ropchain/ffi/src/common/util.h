@@ -64,4 +64,5 @@ namespace Util {
             }
             return a.value() > b.value() ? b : a;
         }
+    Gadgets uniqGadgets(Gadgets gadgets);
 };

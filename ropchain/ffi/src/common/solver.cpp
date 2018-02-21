@@ -214,7 +214,10 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
         }
         return ROPChain(Gadget(0, std::vector<Insn>()));
     };
-    return _solve(dests, gadgets, base, cond, proc, avoids);
+    auto _gadgets = Gadgets();
+    std::copy_if(gadgets.begin(), gadgets.end(), std::back_inserter(_gadgets),
+            [&cond](auto &g) {return cond(g.addr);});
+    return _solve(dests, Util::uniqGadgets(_gadgets), base, cond, proc, avoids);
 }
 
 OptROP Solver::solveWithGadgets(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,

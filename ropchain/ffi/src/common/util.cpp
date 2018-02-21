@@ -12,7 +12,7 @@ OptROP Util::toOptROP(const std::optional<ROPElem>& gadget) {
 }
 
 std::optional<Gadget> Util::parseGadgetString(const uint64_t addr, const std::string& gadgetStr) {
-    auto s = gadgetStr;
+    std::string s = gadgetStr;
     Gadgets gadgets;
     std::vector<Insn> insns;
     Util::trim(s, " ;\n");
@@ -307,4 +307,27 @@ std::string Util::pack(uint64_t v) {
         v >>= 8;
 	}
 	return ret;
+}
+
+Gadgets Util::uniqGadgets(Gadgets gadgets) {
+    sort(gadgets.begin(), gadgets.end());
+    auto ret = Gadgets();
+    for(const auto& g1 : gadgets) {
+        const size_t s1 = g1.insns.size();
+        bool found = false;
+        for(const auto& g2 : ret) {
+            const size_t s2 = g2.insns.size();
+            if(s1 > s2) {
+                continue;
+            }
+            if(s1 < s2) {
+                break;
+            }
+            found = found || (s1 == s2 && g1 == g2);
+        }
+        if(!found) {
+            ret.push_back(g1);
+        }
+    }
+    return ret;
 }

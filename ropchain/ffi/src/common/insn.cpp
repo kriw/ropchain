@@ -3,9 +3,9 @@
 #include "util.h"
 
 Insn::Insn(Mnem _mnem, std::vector<Operand> _ops)
-:   mnem(_mnem),
-    ops(_ops),
-    hash(calcHash(_mnem, _ops))
+:   hash(calcHash(_mnem, _ops)),
+    mnem(std::move(_mnem)),
+    ops(std::move(_ops))
 {};
 
 Insn& Insn::operator=(const Insn& insn) {
@@ -143,6 +143,7 @@ std::string Insn::toString() const {
                         return retOpt.value();
                     }
                 }
+                //TODO MemOp
                 ERR("Failed to convert to String");
                 return std::string();
             }, op);
@@ -168,6 +169,6 @@ std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
     return {};
 }
 
-size_t Insn::calcHash(const Mnem mnem, const std::vector<Operand> ops) {
+size_t Insn::calcHash(const Mnem& mnem, const std::vector<Operand>& ops) {
     return std::hash<std::string>{}(mnem) + std::hash<std::vector<Operand>>{}(ops);
 }

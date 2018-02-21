@@ -13,15 +13,15 @@ typedef const std::string Mnem;
 typedef std::variant<uint64_t, RegType::Reg, MemOp> Operand;
 
 struct Insn {
+    const size_t hash;
     const Mnem mnem;
     const std::vector<Operand> ops;
-    const size_t hash;
     Insn(Mnem _mnem, std::vector<Operand> _ops);
     Insn& operator=(const Insn&);
     bool operator==(const Insn& insn) const;
     bool operator!=(const Insn& insn) const;
     std::string toString() const;
-    static size_t calcHash(const Mnem mnem, const std::vector<Operand> ops);
+    static size_t calcHash(const Mnem& mnem, const std::vector<Operand>& ops);
     static std::optional<Operand> strToOperand(const std::string& s);
     static std::optional<Insn> fromString(const std::string& opcode);
     static std::optional<MemOp> memRef(const Operand& op, uint64_t offset);

@@ -1,4 +1,5 @@
 #include "gadget.h"
+#include <sstream>
 #include "util.h"
 
 //XXX
@@ -8,7 +9,8 @@ Gadget::Gadget()
     useStack(0),
     changedRegs(RegSet()),
     hash(0)
-{}
+{
+}
 
 Gadget::Gadget(const uint64_t _addr, const std::vector<Insn>& _insns)
 :   insns(_insns),
@@ -25,6 +27,7 @@ Gadget& Gadget::operator=(const Gadget& gadget) {
         (std::vector<Insn>&)insns = gadget.insns;
         (uint64_t&)useStack = gadget.useStack;
         (RegSet&)changedRegs = gadget.changedRegs;
+        (size_t&)hash = gadget.hash;
     }
     return *this;
 }
@@ -33,7 +36,7 @@ std::string Gadget::toString() const {
     auto ss = std::vector<std::string>(insns.size());
     std::transform(insns.begin(), insns.end(), ss.begin(),
             [](const auto& x){return x.toString();});
-    return Util::join(ss, "\n");
+    return Util::intToHex(addr) + ":\t " + Util::join(ss, "; ");
 }
 
 bool Gadget::operator==(const Gadget& gadget) const {

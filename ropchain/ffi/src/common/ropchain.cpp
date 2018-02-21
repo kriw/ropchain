@@ -40,11 +40,11 @@ void ROPChain::dump() const {
 				std::cout << e.toString() << std::endl;
 			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
 				std::cout << e.first.toString() << std::endl;
-				std::cout << e.second << std::endl;
+				std::cout << Util::intToHex(e.second) << std::endl;
 			} else if constexpr(std::is_same_v<T, std::string>) {
 				std::cout << e << std::endl;
 			} else if constexpr(std::is_same_v<T, uint64_t>) {
-				std::cout << e << std::endl;
+				std::cout << Util::intToHex(e) << std::endl;
 			}
         }, elem);
 	}

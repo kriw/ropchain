@@ -27,6 +27,7 @@ ROPChain solveWithMapWrapper(const std::map<RegType::Reg, uint64_t>& dests,
 
 BOOST_PYTHON_MODULE(ropchain) {
     def("solve", solveWithFileWrapper);
+    def("reset", Util::resetMemo);
     def("solveWithMap", solveWithMapWrapper);
     class_<ROPChain>("ROPChain")
         .def("dump", &ROPChain::dump)

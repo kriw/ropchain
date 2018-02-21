@@ -1,4 +1,5 @@
 from wrapper import solveFromDict
+from ropchain import reset
 from register import *
 from pwn import asm
 import emulator
@@ -6,11 +7,12 @@ import unittest
 
 class TestROPChain(unittest.TestCase):
     def do(self, dests, gadgetsDict, base=emulator.LIB_BASE, avoids=[]):
+        reset()
         verify = lambda xs, p: all([x not in p for x in xs])
         lib = buildFromGadgets(gadgetsDict)
         # payload = solveFromDict(dests, gadgetsDict, base, avoids).payload()
         rop = solveFromDict(dests, gadgetsDict, base, avoids)
-        rop.dump()
+        # rop.dump()
         payload = rop.payload()
         verify(avoids, payload)
         testResult = emulator.execROPChain(payload, lib, base)
@@ -18,12 +20,12 @@ class TestROPChain(unittest.TestCase):
 
     def testPop(self):
         dests = {eax: 0x0, ebx: 0x602030, ecx: 0x1000}
-        gadgetsDict = {
+        gadgets = {
                 0x10000: 'pop eax; ret',
                 0x20000: 'pop ebx; ret',
                 0x30000: 'pop ecx; ret'
                 }
-        self.do(dests, gadgetsDict)
+        self.do(dests, gadgets)
 
     def testIncAdd(self):
         dests = {eax: 0x12345678}

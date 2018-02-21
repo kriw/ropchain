@@ -53,6 +53,7 @@ namespace Util {
     RegType::Reg findRegType(RegType::Reg reg);
     RegSet listChangedRegs(const Insns& insns);
     size_t calcUseStack(const Insns& insns);
+    std::string intToHex(uint64_t v);
     std::string pack(uint64_t v);
     template<typename T>
     std::optional<T> minOpt(std::optional<T> a, std::optional<T> b) {
@@ -65,4 +66,5 @@ namespace Util {
             return a.value() > b.value() ? b : a;
         }
     Gadgets uniqGadgets(Gadgets gadgets);
+    void resetMemo();
 };

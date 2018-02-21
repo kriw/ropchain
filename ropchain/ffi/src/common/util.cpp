@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <memory>
 #include <sstream>
 #include <numeric>
 #include "util.h"
@@ -110,7 +111,8 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     return find(gadgets, avl, mnem, op1, op2, {});
 }
 
-std::map<size_t, Gadget> memo;
+//XXX
+static std::map<size_t, Gadget> findMemo;
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const std::optional<Operand> op1,
         const std::optional<Operand> op2,
@@ -127,21 +129,19 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     }
     const Insn insn(mnem, ops);
     auto check = [&insn, &avl](auto& gadget) {
-        if(!gadget.insns.size()) {
-            return false;
-        }
-        if(insn == gadget.insns[0] && gadget.isAvailable(avl)) {
-            return true;
-        }
-        return false;
+        return gadget.isAvailable(avl) && insn == gadget.insns[0];
     };
-    if(memo.find(insn.hash) != memo.end()
-            && check(memo[insn.hash])) {
-        return memo[insn.hash];
+    if(findMemo.find(insn.hash) != findMemo.end()
+            && check(findMemo[insn.hash])) {
+        return findMemo[insn.hash];
     }
     for(const auto& gadget : gadgets) {
+        if(!gadget.insns.size()) {
+            continue;
+        }
         if(check(gadget)) {
-            return memo[insn.hash] = gadget;
+            findMemo[insn.hash] = gadget;
+            return gadget;
         }
     }
     return {};
@@ -309,6 +309,13 @@ RegSet Util::allRegs() {
 	return RegSet();
 }
 
+std::string Util::intToHex(uint64_t v) {
+    std::stringstream st;
+    st << "0x";
+    st << std::hex << v;
+    return st.str();
+}
+
 std::string Util::pack(uint64_t v) {
 	std::string ret;
 	const size_t bytes = Config::Arch::word();
@@ -317,6 +324,10 @@ std::string Util::pack(uint64_t v) {
         v >>= 8;
 	}
 	return ret;
+}
+
+void Util::resetMemo() {
+    findMemo.clear();
 }
 
 Gadgets Util::uniqGadgets(Gadgets gadgets) {

@@ -1,4 +1,5 @@
 #include "config.h"
+#include "util.h"
 
 Config::Loader Config::getGadgetLoader() {
     if(_::gadgetLoader == nullptr) {

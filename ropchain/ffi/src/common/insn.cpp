@@ -153,7 +153,7 @@ std::optional<MemOp> Insn::memRef(const Operand& op, uint64_t offset) {
 }
 
 size_t Insn::calcHash(const Mnem& mnem, const std::vector<Operand>& ops) {
-    return std::hash<std::string>{}(mnem) + std::hash<std::vector<Operand>>{}(ops);
+    return (std::hash<std::string>{}(mnem) << 1) ^ std::hash<std::vector<Operand>>{}(ops);
 }
 
 std::string Insn::opToStr(const Operand& op) {

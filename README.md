@@ -27,6 +27,7 @@ x86, x64 architectures are supported.
 
 ## Requirement
 * `C++17`
+* `Boost.Python`
 * `radare2`
 * `rp++`
 

@@ -110,6 +110,7 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     return find(gadgets, avl, mnem, op1, op2, {});
 }
 
+std::map<size_t, Gadget> memo;
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const std::optional<Operand> op1,
         const std::optional<Operand> op2,
@@ -125,13 +126,22 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         ops.push_back(op3.value());
     }
     const Insn insn(mnem, ops);
-    for(const auto& gadget : gadgets) {
-        const auto insns_g = gadget.insns;
-        if(!insns_g.size()) {
-            continue;
+    auto check = [&insn, &avl](auto& gadget) {
+        if(!gadget.insns.size()) {
+            return false;
         }
-        if(insn == insns_g[0] && gadget.isAvailable(avl)) {
-            return gadget;
+        if(insn == gadget.insns[0] && gadget.isAvailable(avl)) {
+            return true;
+        }
+        return false;
+    };
+    if(memo.find(insn.hash) != memo.end()
+            && check(memo[insn.hash])) {
+        return memo[insn.hash];
+    }
+    for(const auto& gadget : gadgets) {
+        if(check(gadget)) {
+            return memo[insn.hash] = gadget;
         }
     }
     return {};

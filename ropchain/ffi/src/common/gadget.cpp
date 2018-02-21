@@ -1,6 +1,15 @@
 #include "gadget.h"
 #include "util.h"
 
+//XXX
+Gadget::Gadget()
+:   insns(std::vector<Insn>()),
+    addr(0),
+    useStack(0),
+    changedRegs(RegSet()),
+    hash(0)
+{}
+
 Gadget::Gadget(const uint64_t _addr, const std::vector<Insn>& _insns)
 :   insns(_insns),
     addr(_addr),

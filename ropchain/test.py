@@ -103,16 +103,16 @@ class TestROPChain(unittest.TestCase):
             }
         self.do(dests, gadgets)
 
-    # def testAscii(self):
-    #     libBase = 0x55550000
-    #     avoids = set([chr(i) for i in range(0x100) if not 0x20 <= i <= 0x7e])
-    #     dests = {eax: 0x41414141, ebx: 0x41424344}
-    #     gadgets = {
-    #             0x5455: 'pop eax; ret',
-    #             0x5555: 'pop ebx; ret',
-    #             }
-    #     self.do(dests, gadgets, libBase, avoids)
-    #
+    def testAscii(self):
+        libBase = 0x55550000
+        avoids = set([chr(i) for i in range(0x100) if not 0x20 <= i <= 0x7e])
+        dests = {eax: 0x41414141, ebx: 0x41424344}
+        gadgets = {
+                0x5455: 'pop eax; ret',
+                0x5555: 'pop ebx; ret',
+                }
+        self.do(dests, gadgets, libBase, avoids)
+
     # def testAsciiXor(self):
     #     libBase = 0x55550000
     #     avoids = set([chr(i) for i in range(0x100) if not 0x20 <= i <= 0x7e])

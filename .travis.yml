@@ -25,5 +25,5 @@ script:
     - cd /tmp/ropchain
     - sudo python2 setup.py install
     - cd /tmp/ropchain/ropchain
-    - python2 test.py -v
+    - travis_wait 30 python2 test.py -v
     - sudo rm -rf /tmp/ropchain

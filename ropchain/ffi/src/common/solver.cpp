@@ -9,18 +9,16 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
     auto ropChains = std::map<RegType::Reg, ROPChain>();
     auto remains = RegSet();
 	//Construct ROPChain by itself
-	{
-		const auto allBits = Util::toBits(Util::map2Regs(dests));
-		for(const auto reg : allBits) {
-            const auto tmp = findROPChain(reg, dests.at(reg), gadgets,
-                    RegSet(reg), cond, proc, avoids);
-			if(tmp.has_value()) {
-				ropChains[reg] = tmp.value();
-			} else {
-                remains.set(reg);
-            }
-		}
-	}
+    const auto allBits = Util::toBits(Util::map2Regs(dests));
+    for(const auto reg : allBits) {
+        const auto tmp = findROPChain(reg, dests.at(reg), gadgets,
+                RegSet(reg), cond, proc, avoids);
+        if(tmp.has_value()) {
+            ropChains[reg] = tmp.value();
+        } else {
+            remains.set(reg);
+        }
+    }
     if(remains.none()) {
         auto rop = std::accumulate(ropChains.begin(), ropChains.end(), ROPChain(),
 			[](const ROPChain& a, const auto& b){return a + b.second;});
@@ -29,28 +27,26 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
     }
 	OptROP ans = {};
 	//Brute force remains
-	{
-		auto bits = Util::toBits(remains);
-        std::sort(bits.begin(), bits.end());
-        do {
-			auto rop = ROPChain();
-			auto aval = Util::allRegs();
-			bool isDone = true;
-			//Construct ROPChain with set of registers 'remain'
-			for(RegType::Reg reg : bits) {
-				const auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc, avoids);
-				if(!tmp.has_value()) {
-					isDone = false;
-					break;
-				}
-				aval.reset(reg);
-				rop += tmp.value();
-			}
-			if(isDone) {
-				ans = Util::optMin(ans, (OptROP)rop);
-			}
-        } while (next_permutation(bits.begin(), bits.end()));
-	}
+    auto bits = Util::toBits(remains);
+    std::sort(bits.begin(), bits.end());
+    do {
+        auto rop = ROPChain();
+        auto aval = Util::allRegs();
+        bool isDone = true;
+        //Construct ROPChain with set of registers 'remain'
+        for(RegType::Reg reg : bits) {
+            const auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc, avoids);
+            if(!tmp.has_value()) {
+                isDone = false;
+                break;
+            }
+            aval.reset(reg);
+            rop += tmp.value();
+        }
+        if(isDone) {
+            ans = Util::optMin(ans, (OptROP)rop);
+        }
+    } while (next_permutation(bits.begin(), bits.end()));
 	if(!ans.has_value()) {
 		return {};
 	}
@@ -61,9 +57,9 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
     return (OptROP)rop;
 }
 
+//TODO move to asm/pop.cpp
 //use reg <- 0; ret; (inc reg)*value
 OptROP solveByInc(const RegType::Reg reg, const uint64_t dest, const Gadgets& gadgets, RegSet aval) {
-    OptROP rop = {};
     auto zero = Middle::setVal(reg, 0, gadgets, aval);
     auto inc = Inc::find(reg, gadgets, aval);
     if(dest < 0x1000 && zero.has_value() && inc.has_value()) {
@@ -72,15 +68,14 @@ OptROP solveByInc(const RegType::Reg reg, const uint64_t dest, const Gadgets& ga
         for(uint64_t i=0; i<dest; i++) {
             tmp += inc.value();
         }
-        rop = std::min(rop.value(), tmp);
+        return tmp;
     }
-    return rop;
+    return {};
 }
 
 //use reg <- somevalue; ret; (inc reg)*(value-someValue)
 OptROP solveByPopInc(const RegType::Reg reg, const uint64_t dest, const Gadgets& gadgets,
         const std::set<char>& avoids, const std::vector<uint8_t>& chars, RegSet aval) {
-    OptROP rop = {};
     uint64_t tmpDest = 0;
     const size_t word = Config::Arch::word();
     const uint32_t bits = Config::Arch::bits();
@@ -130,17 +125,13 @@ OptROP solveByPopInc(const RegType::Reg reg, const uint64_t dest, const Gadgets&
     const auto inc = Inc::find(reg, gadgets, aval);
     if(pop.has_value() && inc.has_value()) {
         //pop + inc * (dest - tmpDest)
-        auto tmp = pop.value();
-        for(int i=0; i<dest-tmpDest; i++) {
-            tmp += inc.value();
+        auto ret = pop.value();
+        for(int i = 0; i < dest-tmpDest; i++) {
+            ret += inc.value();
         }
-        if(rop.has_value()) {
-            rop = std::min(rop.value(), tmp);
-        } else {
-            rop = tmp;
-        }
+        return ret;
     }
-    return rop;
+    return {};
 }
 
 //use xor r1, r2

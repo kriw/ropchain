@@ -132,6 +132,27 @@ class TestROPChain(unittest.TestCase):
                 }
         self.do(dests, gadgets, libBase, avoids)
 
+    def testScanfInc(self):
+        avoids = set(['\x09', '\x0a', '\x0b', '\x20'])
+        dests = {eax: 0xb}
+        gadgets = {
+                0x5355: 'pop eax; ret',
+                0x5455: 'inc eax; ret',
+                0x5555: 'xor eax, eax; ret',
+                }
+        self.do(dests, gadgets, avoids=avoids)
+
+
+    def testScanf(self):
+        avoids = set(['\x09', '\x0a', '\x0b', '\x20'])
+        dests = {eax: 0xb, ebx: 0x55554444}
+        gadgets = {
+                0x5455: 'mov eax, ebx; ret',
+                0x5555: 'xor eax, ebx; ret',
+                0x5655: 'pop ebx; ret',
+                }
+        self.do(dests, gadgets, avoids=avoids)
+
 
 def buildFromGadgets(gadgets):
     addrs = gadgets.keys()

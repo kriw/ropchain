@@ -13,17 +13,10 @@ std::string script(const std::string& fileName) {
             "rp++ --file=" + fileName + " --rop=6 > $tmpFile;"
             "sed -i -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' $tmpFile;"
             "grep '0x' $tmpFile |"
-            "grep -v 'push' |"
-            "grep -v 'retn' |"
-            "grep -v 'rep' |"
-            "grep -v 'xmm' |"
-            "grep -v 'set' |"
-            "grep -v 'div' |"
-            "egrep -v '[ge]s[^i]' |"
-            "grep -v 'hlt' |"
+            "egrep -v 'push|retn|rep|xmm|set|div|hlt|[ge]s[^i]|enter' |"
             "grep 'ret' |"
-            "sed 's/(.* found)//';";
-            // "rm $tmpFile";
+            "sed 's/(.* found)//';"
+            "rm $tmpFile";
 };
 
 std::optional<std::string> _exec(const std::string& cmd) {

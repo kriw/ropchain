@@ -21,13 +21,7 @@ class CustomInstallCommand(install):
         for cmd in (cmd1, cmd2):
             subprocess.Popen(cmd).wait()
         shutil.move(libPath, 'ropchain/' + libName)
-        #XXX
-        scriptDir = 'ropchain/ffi/src/common/frontend/rp++/'
-        script = 'rp_script.sh'
-        shutil.move(scriptDir + script, './')
         shutil.rmtree('ropchain/ffi/')
-        os.makedirs(scriptDir)
-        shutil.move(script, scriptDir + script)
 
 
 

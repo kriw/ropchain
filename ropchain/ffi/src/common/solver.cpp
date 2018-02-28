@@ -52,7 +52,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
 	}
 	auto rop = std::accumulate(ropChains.begin(), ropChains.end(), ROPChain(),
 			[](const ROPChain& a, const auto& b){return a + b.second;});
-	rop = rop + ans.value();
+	rop = ans.value() + rop;
 	rop.setBaseAddr(base);
     return (OptROP)rop;
 }

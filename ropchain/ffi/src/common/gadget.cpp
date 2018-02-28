@@ -63,7 +63,17 @@ bool Gadget::isChanged(const RegType::Reg reg) const {
 }
 
 bool Gadget::isAvailable(const RegSet& rs) const {
-    return (changedRegs & rs) == changedRegs;
+    //XXX
+    return !isUseless() && (changedRegs & rs) == changedRegs;
+}
+
+//XXX
+bool Gadget::isUseless() const {
+    if(insns.size() == 0) {
+        return false;
+    }
+    auto changed = Util::listChangedRegs(insns[0]);
+    return (changed & changedRegs) != RegSet();
 }
 
 size_t Gadget::calcHash(const std::vector<Insn> insns) {

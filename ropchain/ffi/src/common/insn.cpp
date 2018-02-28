@@ -174,5 +174,5 @@ std::string Insn::opToStr(const Operand& op) {
             }
             ERR("Failed to convert to String");
             return std::string();
-            }, op);
+        }, op);
 }

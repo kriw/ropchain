@@ -53,19 +53,20 @@ void ROPChain::dump() const {
 std::string ROPChain::payload() const {
 	std::string payload;
 	for(auto& e : elems) {
-		std::string s = std::visit([&](auto&& e){
-			using T = std::decay_t<decltype(e)>;
-			if constexpr(std::is_same_v<T, Gadget>) {
-				return Util::pack(e.addr + baseAddr);
-			} else if constexpr(std::is_same_v<T, GadgetWithValue>) {
-				return Util::pack(e.first.addr + baseAddr) + Util::pack(e.second);
-			} else if constexpr(std::is_same_v<T, std::string>) {
-				return e;
-			} else if constexpr(std::is_same_v<T, uint64_t>) {
-				return Util::pack(e);
-			}
-			}, e);
-		payload += s;
+		payload += std::visit([&](auto&& e){
+                using T = std::decay_t<decltype(e)>;
+                if constexpr(std::is_same_v<T, Gadget>) {
+                    return Util::pack(e.addr + baseAddr);
+                } else if constexpr(std::is_same_v<T, GadgetWithValue>) {
+                    return Util::pack(e.first.addr + baseAddr) + Util::pack(e.second);
+                } else if constexpr(std::is_same_v<T, std::string>) {
+                    return e;
+                } else if constexpr(std::is_same_v<T, uint64_t>) {
+                    return Util::pack(e);
+                } else {
+                    return std::string();
+                }
+            }, e);
 	}
     return payload;
 }

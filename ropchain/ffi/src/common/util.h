@@ -51,6 +51,7 @@ namespace Util {
             const std::optional<Operand> op1, const std::optional<Operand> op2,
             const std::optional<Operand> op3);
     RegType::Reg findRegType(RegType::Reg reg);
+    RegSet listChangedRegs(const Insn& insn);
     RegSet listChangedRegs(const Insns& insns);
     size_t calcUseStack(const Insns& insns);
     std::string intToHex(uint64_t v);

@@ -217,9 +217,38 @@ RegType::Reg Util::findRegType(RegType::Reg reg) {
 	}
 }
 
+RegSet Util::listChangedRegs(const Insn& insn) {
+    RegSet regs;
+    if(insn.ops.size() > 0) {
+        if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+            regs.set(*r);
+        } else {
+            ERR("Error: Unknown Register");
+        }
+    }
+    if(insn.mnem == "xchg") {
+        if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+            regs.set(*r);
+        } else {
+            ERR("Error: Unknown Register");
+        }
+        if(const auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
+            regs.set(*r);
+        } else {
+            ERR("Error: Unknown Register");
+        }
+    }
+    return regs;
+}
+
 RegSet Util::listChangedRegs(const Insns& insns) {
 	RegSet regs;
+    bool isFirst = true;
 	for(const auto& insn : insns) {
+        if(isFirst) {
+            isFirst = false;
+            continue;
+        }
 		if(insn.ops.size() > 0) {
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);

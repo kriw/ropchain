@@ -1,7 +1,6 @@
 CC = g++
 RM = rm
-RPP = $(shell pwd)/src/common/frontend/rp++/rp_script.sh
-OPS  := -Wall -Wextra -fPIC -std=c++17 -DRPP_PATH=\"$(RPP)\"
+OPS  := -Wall -Wextra -fPIC -std=c++17
 ifeq "$(findstring release, $(MAKECMDGOALS))" ""
 	OPS += -g -D_DEBUG
 else

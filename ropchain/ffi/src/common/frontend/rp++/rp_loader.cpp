@@ -8,7 +8,23 @@
 #include "rp_loader.h"
 #include "../../util.h"
 
-const std::string scriptPath = RPP_PATH;
+std::string script(const std::string& fileName) {
+    return "tmpFile=/tmp/tmpGadget.txt;"
+            "rp++ --file=" + fileName + " --rop=6 > $tmpFile;"
+            "sed -i -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' $tmpFile;"
+            "grep '0x' $tmpFile |"
+            "grep -v 'push' |"
+            "grep -v 'retn' |"
+            "grep -v 'rep' |"
+            "grep -v 'xmm' |"
+            "grep -v 'set' |"
+            "grep -v 'div' |"
+            "egrep -v '[ge]s[^i]' |"
+            "grep -v 'hlt' |"
+            "grep 'ret' |"
+            "sed 's/(.* found)//';";
+            // "rm $tmpFile";
+};
 
 std::optional<std::string> _exec(const std::string& cmd) {
     std::array<char, 128> buffer;
@@ -22,7 +38,7 @@ std::optional<std::string> _exec(const std::string& cmd) {
     return result;
 }
 std::optional<Gadgets> Frontend::RPP::from(const std::string& fileName) {
-    std::optional<std::string> gadgetsStr = _exec(scriptPath + " " + fileName);
+    std::optional<std::string> gadgetsStr = _exec(script(fileName));
     if(!gadgetsStr.has_value()) {
         return {};
     }

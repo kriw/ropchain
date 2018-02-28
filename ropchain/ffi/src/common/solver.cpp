@@ -61,6 +61,133 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
     return (OptROP)rop;
 }
 
+//use reg <- 0; ret; (inc reg)*value
+OptROP solveByInc(const RegType::Reg reg, const uint64_t dest, const Gadgets& gadgets, RegSet aval) {
+    OptROP rop = {};
+    auto zero = Middle::setVal(reg, 0, gadgets, aval);
+    auto inc = Inc::find(reg, gadgets, aval);
+    if(dest < 0x1000 && zero.has_value() && inc.has_value()) {
+        //zero + inc * dest
+        auto tmp = zero.value();
+        for(uint64_t i=0; i<dest; i++) {
+            tmp += inc.value();
+        }
+        rop = std::min(rop.value(), tmp);
+    }
+    return rop;
+}
+
+//use reg <- somevalue; ret; (inc reg)*(value-someValue)
+OptROP solveByPopInc(const RegType::Reg reg, const uint64_t dest, const Gadgets& gadgets,
+        const std::set<char>& avoids, const std::vector<uint8_t>& chars, RegSet aval) {
+    OptROP rop = {};
+    uint64_t tmpDest = 0;
+    const size_t word = Config::Arch::word();
+    const uint32_t bits = Config::Arch::bits();
+    for(size_t i=0; i<word; i++) {
+        const uint8_t byte = (dest >> (bits - (i + 1) * 8)) & 0xff;
+        std::vector<uint8_t> filtered;
+        std::copy_if(chars.begin(), chars.end(),
+                std::back_inserter(filtered),
+                [byte](uint8_t x){return x <= byte;});
+        if(filtered.size()
+                && *std::max_element(filtered.begin(), filtered.end()) == byte) {
+            tmpDest = (tmpDest << 8) + byte;
+        } else if(filtered.size()) {
+            const uint8_t a = *std::max_element(filtered.begin(), filtered.end());
+            tmpDest = tmpDest << (bits - i * 8);
+            for(size_t j=0; j<word-i; j++) {
+                tmpDest += a << j * 8;
+            }
+            break;
+        } else {
+            tmpDest--;
+            const auto p = [&i, &avoids](uint64_t t){
+                for(size_t j = 0; j < i; j++) {
+                    const uint8_t x = (t >> j) & 0xff;
+                    if(avoids.find(x) != avoids.end()) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+            while(!p(tmpDest) && tmpDest > 0) {
+                tmpDest --;
+                if(tmpDest <= 0) {
+                    return {};
+                } else {
+                    const uint8_t a = *std::max_element(chars.begin(), chars.end());
+                    tmpDest = (tmpDest << (bits - i * 8));
+                    for(int j = 0; j < word - i; j++) {
+                        tmpDest += a << j * 8;
+                    }
+                }
+            }
+            break;
+        }
+    }
+    const auto pop = Middle::setVal(reg, tmpDest, gadgets, aval);
+    const auto inc = Inc::find(reg, gadgets, aval);
+    if(pop.has_value() && inc.has_value()) {
+        //pop + inc * (dest - tmpDest)
+        auto tmp = pop.value();
+        for(int i=0; i<dest-tmpDest; i++) {
+            tmp += inc.value();
+        }
+        if(rop.has_value()) {
+            rop = std::min(rop.value(), tmp);
+        } else {
+            rop = tmp;
+        }
+    }
+    return rop;
+}
+
+//use xor r1, r2
+OptROP solveByXor(const RegType::Reg reg, const uint64_t dest, const Gadgets& gadgets,
+        const std::set<char>& avoids, const std::vector<uint8_t>& chars, RegSet aval) {
+    OptROP rop = {};
+    std::array<std::optional<std::pair<uint8_t, uint8_t>>, 0x100> xorTable;
+    const std::optional<std::pair<uint8_t, uint8_t>> dummy = {};
+    std::fill(xorTable.begin(), xorTable.end(), dummy);
+    for(uint8_t a : chars) {
+        for(uint8_t b : chars) {
+            xorTable[a^b] = std::make_pair(a, b);
+        }
+    }
+    //left ^ right == dest
+    uint64_t left, right;
+    left = right = 0;
+    for(uint32_t i = 0; i < Config::Arch::word(); i++) {
+        if(const auto ab = xorTable[(dest >> (i * 8)) & 0xff]) {
+            const uint8_t l = ab.value().first;
+            const uint8_t r = ab.value().second;
+            left = left | l << (i * 8);
+            right = right | r << (i * 8);
+        } else {
+            return {};
+        }
+    }
+    const auto ropLeft = Solver::findROPChain(reg, left, gadgets, aval, {}, {}, avoids);
+    if(!ropLeft.has_value()) {
+        return {};
+    }
+    const auto allBits = Util::toBits(aval);
+    for(const auto r : allBits) {
+        if(const auto _xor = Xor::find(reg, r, gadgets, aval)) {
+            aval.reset(reg);
+            const auto ropRight =  Middle::setVal(r, right, gadgets, aval);
+            aval.set(reg);
+            if(ropLeft.has_value() && ropRight.has_value()) {
+                const OptROP _rop = ropLeft.value() + ropRight.value() + _xor.value();
+                rop = Util::optMin(rop, _rop);
+                break;
+            }
+        }
+    }
+    return rop;
+}
+
 OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, const Gadgets& gadgets,
         const uint64_t base, const std::set<char>& avoids) {
     auto cond = [&avoids](uint64_t value) {
@@ -81,138 +208,20 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
         }
         //available characters
         std::vector<uint8_t> chars;
-        for(uint32_t i=0; i <= 0xff; i++) {
+        for(uint32_t i = 0; i <= 0xff; i++) {
             if(avoids.find((uint8_t)i) == avoids.end()) {
                 chars.push_back((uint8_t)i);
             }
         }
-        //use xor r1, r2
-        {
-            std::array<std::optional<std::pair<uint8_t, uint8_t>>, 0x100> xorTable;
-            std::optional<std::pair<uint8_t, uint8_t>> dummy = {};
-            std::fill(xorTable.begin(), xorTable.end(), dummy);
-            for(uint8_t a : chars) {
-                for(uint8_t b : chars) {
-                    xorTable[a^b] = std::make_pair(a, b);
-                }
-            }
-            //left ^ right == dest
-            uint64_t left, right;
-            left = right = 0;
-            bool canConstruct = true;
-            for(uint32_t i=0; i<Config::Arch::word(); i++) {
-                if(auto ab = xorTable[(dest >> (i * 8)) & 0xff]) {
-                    left = left | ab.value().first << (i * 8);
-                    right = right | ab.value().second << (i * 8);
-                } else {
-                    canConstruct = false;
-                    break;
-                }
-            }
-            if(canConstruct) {
-                auto ropLeft = findROPChain(reg, left, gadgets, aval, {}, {}, avoids);
-                OptROP ropRight = {};
-                aval.reset(reg);
-                {
-                    const auto allBits = Util::toBits(aval);
-                    for(auto r : allBits) {
-                        aval.reset(r);
-                        if(auto _xor = Xor::find(reg, r, gadgets, aval)) {
-                            ropRight = findROPChain(reg, left, gadgets, aval, {}, {}, avoids);
-                            if(ropLeft.has_value() && ropRight.has_value()) {
-                                auto _rop = ropLeft.value() + ropRight.value();
-                                if(rop.has_value()) {
-                                    rop = std::min(rop.value(), _rop);
-                                } else {
-                                    rop = _rop;
-                                }
-                                break;
-                            }
-                        }
-                        aval.set(r);
-                    }
-                }
-            }
-        }
-        //use reg <- somevalue; ret; (inc reg)*(value-someValue)
-        {
-            uint64_t tmpDest = 0;
-            bool canConstruct = true;
-            const size_t word = Config::Arch::word();
-            const uint32_t bits = Config::Arch::bits();
-            for(size_t i=0; i<word; i++) {
-                uint8_t byte = (dest >> (bits - (i + 1) * 8)) & 0xff;
-                std::vector<uint8_t> filtered;
-                std::copy_if(chars.begin(), chars.end(),
-                        std::back_inserter(filtered),
-                        [byte](uint8_t x){return x <= byte;});
-                if(filtered.size()
-                        && *std::max_element(filtered.begin(), filtered.end()) == byte) {
-                    tmpDest = (tmpDest << 8) + byte;
-                } else if(filtered.size()) {
-                    uint8_t a = *std::max_element(filtered.begin(), filtered.end());
-                    tmpDest = (tmpDest << (bits - i * 8));
-                    for(size_t j=0; j<word-i; j++) {
-                        tmpDest += a << (j * 8);
-                    }
-                    break;
-                } else {
-                    tmpDest--;
-                    auto p = [&i, &avoids](uint64_t t){
-                        for(size_t j=0; j < i; j++) {
-                            const uint8_t x = (t >> j) & 0xff;
-                            if(avoids.find(x) != avoids.end()) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    };
-                    while(!p(tmpDest) && tmpDest > 0) {
-                        tmpDest --;
-                        if(tmpDest <= 0) {
-                            canConstruct = false;
-                        } else {
-                            uint8_t a = *std::max_element(chars.begin(), chars.end());
-                            tmpDest = (tmpDest << (bits - i * 8));
-                            for(int j=0; j<word-i; j++) {
-                                tmpDest += a << (j * 8);
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-            if(canConstruct) {
-                auto pop = Middle::setVal(reg, tmpDest, gadgets, aval);
-                auto inc = Inc::find(reg, gadgets, aval);
-                if(pop.has_value() && inc.has_value()) {
-                    //pop + inc * (dest - tmpDest)
-                    auto tmp = pop.value();
-                    for(int i=0; i<dest-tmpDest; i++) {
-                        tmp += inc.value();
-                    }
-                    if(rop.has_value()) {
-                        rop = std::min(rop.value(), tmp);
-                    } else {
-                        rop = tmp;
-                    }
-                }
-            }
-        }
-        //use reg <- 0; ret; (inc reg)*value
-        {
-            auto zero = Middle::setVal(reg, 0, gadgets, aval);
-            auto inc = Inc::find(reg, gadgets, aval);
-            if(dest < 0x1000 && zero.has_value() && inc.has_value()) {
-                //zero + inc * dest
-                auto tmp = zero.value();
-                for(uint64_t i=0; i<dest; i++) {
-                    tmp += inc.value();
-                }
-                rop = std::min(rop.value(), tmp);
-            }
-        }
-        return ROPChain(Gadget(0, std::vector<Insn>()));
+        rop = Util::optMin(rop,
+                solveByXor(reg, dest, gadgets,
+                    avoids, chars, aval));
+        rop = Util::optMin(rop,
+                solveByPopInc(reg, dest, gadgets,
+                    avoids, chars, aval));
+        rop = Util::optMin(rop,
+            solveByInc(reg, dest, gadgets, aval));
+        return rop;
     };
     auto _gadgets = Gadgets();
     std::copy_if(gadgets.begin(), gadgets.end(), std::back_inserter(_gadgets),
@@ -249,7 +258,7 @@ OptROP Solver::solveWithMap(const std::map<RegType::Reg, uint64_t>& dests,
 OptROP Solver::findROPChain(const RegType::Reg reg, const uint64_t dest,
         const Gadgets& gadgets, RegSet aval, std::optional<Cond> cond,
         std::optional<Proc> proc, const std::set<char>& avoids) {
-    if(cond.has_value() && cond.value()(dest)) {
+    if(!cond.has_value() || cond.value()(dest)) {
         return Middle::setVal(reg, dest, gadgets, aval);
     }
     if(proc.has_value()) {

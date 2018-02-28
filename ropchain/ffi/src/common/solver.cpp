@@ -12,7 +12,7 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
     const auto allBits = Util::toBits(Util::map2Regs(dests));
     for(const auto reg : allBits) {
         const auto tmp = findROPChain(reg, dests.at(reg), gadgets,
-                RegSet(reg), cond, proc, avoids);
+                RegSet(), cond, proc, avoids);
         if(tmp.has_value()) {
             ropChains[reg] = tmp.value();
         } else {
@@ -35,12 +35,12 @@ OptROP Solver::_solve(const std::map<RegType::Reg, uint64_t>& dests, const Gadge
         bool isDone = true;
         //Construct ROPChain with set of registers 'remain'
         for(RegType::Reg reg : bits) {
+            aval.reset(reg);
             const auto tmp = findROPChain(reg, dests.at(reg), gadgets, aval, cond, proc, avoids);
             if(!tmp.has_value()) {
                 isDone = false;
                 break;
             }
-            aval.reset(reg);
             rop += tmp.value();
         }
         if(isDone) {

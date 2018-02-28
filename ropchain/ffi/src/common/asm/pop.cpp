@@ -61,9 +61,7 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
         if(r == reg) {
             continue;
         }
-        aval.reset(reg);
         const auto pop = Pop::find(r, dest, gadgets, aval);
-        aval.set(reg);
         if(!pop.has_value()) {
             continue;
         }

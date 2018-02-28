@@ -44,6 +44,14 @@ class TestROPChain(unittest.TestCase):
             }
         self.do(dests, gadgets)
 
+    def testPopXchg(self):
+        dests = {eax: 0x12345678, esi: 0x41414141}
+        gadgets = {
+                0x1000: 'pop esi; ret',
+                0x2000: 'xchg eax, esi; ret'
+            }
+        self.do(dests, gadgets)
+
     def testPopMov6Regs(self):
         dests = {
             eax: 0x12345678,

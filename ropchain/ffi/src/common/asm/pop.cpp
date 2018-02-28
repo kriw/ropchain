@@ -68,12 +68,10 @@ OptROP fromOtherReg(const RegType::Reg reg, const uint64_t dest,
             continue;
         }
         if(const auto mov = Mov::find(reg, r, gadgets, aval)) {
-            ret = pop.value() + mov.value();
-            break;
+            ret = Util::optMin(ret, (OptROP)(pop.value() + mov.value()));
         }
         if(const auto xchg = Xchg::find(reg, r, gadgets, aval)) {
-            ret = pop.value() + xchg.value();
-            break;
+            ret = Util::optMin(ret, (OptROP)(pop.value() + xchg.value()));
         }
     }
     return ret;

@@ -243,12 +243,7 @@ RegSet Util::listChangedRegs(const Insn& insn) {
 
 RegSet Util::listChangedRegs(const Insns& insns) {
 	RegSet regs;
-    bool isFirst = true;
 	for(const auto& insn : insns) {
-        if(isFirst) {
-            isFirst = false;
-            continue;
-        }
 		if(insn.ops.size() > 0) {
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);

@@ -72,8 +72,15 @@ bool Gadget::isUseless() const {
     if(insns.size() == 0) {
         return false;
     }
-    auto changed = Util::listChangedRegs(insns[0]);
-    return (changed & changedRegs) != RegSet();
+    const auto changed = Util::listChangedRegs(insns[0]);
+    const auto dummy = RegSet();
+    //XXX Very slow
+    for(int i = 1; i < insns.size(); i++) {
+        if((changed & Util::listChangedRegs(insns[i])) != dummy) {
+            return true;
+        }
+    }
+    return false;
 }
 
 size_t Gadget::calcHash(const std::vector<Insn> insns) {

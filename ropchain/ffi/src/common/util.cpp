@@ -102,6 +102,11 @@ std::vector<RegType::Reg> Util::toBits(const RegSet& s) {
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
+        const Mnem& mnem) {
+    return find(gadgets, avl, mnem, {}, {}, {});
+}
+
+OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
         const Mnem& mnem, const Operand op1) {
     return find(gadgets, avl, mnem, op1, {}, {});
 }

@@ -17,7 +17,6 @@ struct Gadget {
     bool operator==(const Gadget& gadget) const;
     bool operator!=(const Gadget& gadget) const;
     bool operator<(const Gadget& gadget) const;
-    bool isUseless() const;
     const std::vector<Insn> insns;
     const uint64_t addr;
     //how many byte will be added to esp/rsp
@@ -25,7 +24,9 @@ struct Gadget {
     //registers which will be changed its value
     const RegSet changedRegs;
     const size_t hash;
+    const bool isUseless;
     static size_t calcHash(const std::vector<Insn> insns);
+    static bool calcIsUseless(std::vector<Insn> insns);
 };
 
 typedef std::optional<Gadget> OptGadget;

@@ -8,7 +8,8 @@ Gadget::Gadget()
     addr(0),
     useStack(0),
     changedRegs(RegSet()),
-    hash(0)
+    hash(0),
+    isUseless(calcIsUseless(insns))
 {
 }
 
@@ -17,7 +18,8 @@ Gadget::Gadget(const uint64_t _addr, const std::vector<Insn>& _insns)
     addr(_addr),
     useStack(Util::calcUseStack(_insns)),
     changedRegs(Util::listChangedRegs(insns)),
-    hash(calcHash(_insns))
+    hash(calcHash(_insns)),
+    isUseless(calcIsUseless(_insns))
 {
 }
 
@@ -28,6 +30,7 @@ Gadget& Gadget::operator=(const Gadget& gadget) {
         (uint64_t&)useStack = gadget.useStack;
         (RegSet&)changedRegs = gadget.changedRegs;
         (size_t&)hash = gadget.hash;
+        (bool&)isUseless = gadget.isUseless;
     }
     return *this;
 }
@@ -64,11 +67,11 @@ bool Gadget::isChanged(const RegType::Reg reg) const {
 
 bool Gadget::isAvailable(const RegSet& rs) const {
     //XXX
-    return !isUseless() && (changedRegs & rs) == changedRegs;
+    return !isUseless && (changedRegs & rs) == changedRegs;
 }
 
 //XXX
-bool Gadget::isUseless() const {
+bool Gadget::calcIsUseless(std::vector<Insn> insns) {
     if(insns.size() == 0) {
         return false;
     }

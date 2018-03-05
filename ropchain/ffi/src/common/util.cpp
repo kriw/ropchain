@@ -92,13 +92,13 @@ void Util::trim(std::string& s, const std::string& delims) {
 }
 
 std::vector<RegType::Reg> Util::toBits(const RegSet& s) {
-	auto bits = std::vector<RegType::Reg>();
-	for(size_t i=0; i < s.size(); i++) {
-		if(s.test(i)) {
-			bits.push_back(i);
-		}
-	}
-	return bits;
+    auto bits = std::vector<RegType::Reg>();
+    for(size_t i=0; i < s.size(); i++) {
+        if(s.test(i)) {
+            bits.push_back(i);
+        }
+    }
+    return bits;
 }
 
 OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
@@ -152,74 +152,74 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
 }
 
 RegType::Reg Util::findRegType(RegType::Reg reg) {
-	switch(reg) {
-	case RegType::rax: case RegType::eax:
-	case RegType::ax: case RegType::ah: case RegType::al:
-		return Config::getArch() == Config::Arch::X86 ? RegType::eax : RegType::rax;
+    switch(reg) {
+        case RegType::rax: case RegType::eax:
+        case RegType::ax: case RegType::ah: case RegType::al:
+            return Config::getArch() == Config::Arch::X86 ? RegType::eax : RegType::rax;
 
-	case RegType::rbx: case RegType::ebx:
-	case RegType::bx: case RegType::bh: case RegType::bl:
-		return Config::getArch() == Config::Arch::X86 ? RegType::ebx : RegType::rbx;
+        case RegType::rbx: case RegType::ebx:
+        case RegType::bx: case RegType::bh: case RegType::bl:
+            return Config::getArch() == Config::Arch::X86 ? RegType::ebx : RegType::rbx;
 
-	case RegType::rcx: case RegType::ecx:
-	case RegType::cx: case RegType::ch: case RegType::cl:
-		return Config::getArch() == Config::Arch::X86 ? RegType::ecx : RegType::rcx;
+        case RegType::rcx: case RegType::ecx:
+        case RegType::cx: case RegType::ch: case RegType::cl:
+            return Config::getArch() == Config::Arch::X86 ? RegType::ecx : RegType::rcx;
 
-	case RegType::rdx: case RegType::edx:
-	case RegType::dx: case RegType::dh: case RegType::dl:
-		return Config::getArch() == Config::Arch::X86 ? RegType::edx : RegType::rdx;
+        case RegType::rdx: case RegType::edx:
+        case RegType::dx: case RegType::dh: case RegType::dl:
+            return Config::getArch() == Config::Arch::X86 ? RegType::edx : RegType::rdx;
 
-	case RegType::rdi: case RegType::edi:
-	case RegType::di: case RegType::dil:
-		return Config::getArch() == Config::Arch::X86 ? RegType::edi : RegType::rdi;
+        case RegType::rdi: case RegType::edi:
+        case RegType::di: case RegType::dil:
+            return Config::getArch() == Config::Arch::X86 ? RegType::edi : RegType::rdi;
 
-	case RegType::rsi: case RegType::esi:
-	case RegType::si: case RegType::sil:
-		return Config::getArch() == Config::Arch::X86 ? RegType::esi : RegType::rsi;
+        case RegType::rsi: case RegType::esi:
+        case RegType::si: case RegType::sil:
+            return Config::getArch() == Config::Arch::X86 ? RegType::esi : RegType::rsi;
 
-	case RegType::rbp: case RegType::ebp:
-	case RegType::bp: case RegType::bpl:
-		return Config::getArch() == Config::Arch::X86 ? RegType::ebp : RegType::rbp;
+        case RegType::rbp: case RegType::ebp:
+        case RegType::bp: case RegType::bpl:
+            return Config::getArch() == Config::Arch::X86 ? RegType::ebp : RegType::rbp;
 
-	case RegType::rsp: case RegType::esp:
-	case RegType::sp: case RegType::spl:
-		return Config::getArch() == Config::Arch::X86 ? RegType::esp : RegType::rsp;
+        case RegType::rsp: case RegType::esp:
+        case RegType::sp: case RegType::spl:
+            return Config::getArch() == Config::Arch::X86 ? RegType::esp : RegType::rsp;
 
-	case RegType::r8: case RegType::r8d:
-	case RegType::r8w: case RegType::r8b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r8;
+        case RegType::r8: case RegType::r8d:
+        case RegType::r8w: case RegType::r8b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r8;
 
-	case RegType::r9: case RegType::r9d:
-	case RegType::r9w: case RegType::r9b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r9;
+        case RegType::r9: case RegType::r9d:
+        case RegType::r9w: case RegType::r9b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r9;
 
-	case RegType::r10: case RegType::r10d:
-	case RegType::r10w: case RegType::r10b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r10;
+        case RegType::r10: case RegType::r10d:
+        case RegType::r10w: case RegType::r10b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r10;
 
-	case RegType::r11: case RegType::r11d:
-	case RegType::r11w: case RegType::r11b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r11;
+        case RegType::r11: case RegType::r11d:
+        case RegType::r11w: case RegType::r11b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r11;
 
-	case RegType::r12: case RegType::r12d:
-	case RegType::r12w: case RegType::r12b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r12;
+        case RegType::r12: case RegType::r12d:
+        case RegType::r12w: case RegType::r12b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r12;
 
-	case RegType::r13: case RegType::r13d:
-	case RegType::r13w: case RegType::r13b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r13;
+        case RegType::r13: case RegType::r13d:
+        case RegType::r13w: case RegType::r13b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r13;
 
-	case RegType::r14: case RegType::r14d:
-	case RegType::r14w: case RegType::r14b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r14;
+        case RegType::r14: case RegType::r14d:
+        case RegType::r14w: case RegType::r14b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r14;
 
-	case RegType::r15: case RegType::r15d:
-	case RegType::r15w: case RegType::r15b:
-		return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r15;
+        case RegType::r15: case RegType::r15d:
+        case RegType::r15w: case RegType::r15b:
+            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r15;
 
-	default:
-		return RegType::none;
-	}
+        default:
+            return RegType::none;
+    }
 }
 
 RegSet Util::listChangedRegs(const Insn& insn) {
@@ -247,46 +247,50 @@ RegSet Util::listChangedRegs(const Insn& insn) {
 }
 
 RegSet Util::listChangedRegs(const Insns& insns) {
-	RegSet regs;
-	for(const auto& insn : insns) {
-		if(insn.ops.size() > 0) {
+    RegSet regs;
+    bool isFirst = true;
+    for(const auto& insn : insns) {
+        if(!isFirst && insn.ops.size() > 0) {
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
                 regs.set(*r);
             } else {
                 ERR("Error: Unknown Register");
             }
-		}
-		if(insn.mnem == "xchg") {
-            if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
-                regs.set(*r);
-            } else {
-                ERR("Error: Unknown Register");
+        }
+        if(insn.mnem == "xchg") {
+            if(!isFirst) {
+                if(const auto r = std::get_if<RegType::Reg>(&insn.ops[0])) {
+                    regs.set(*r);
+                } else {
+                    ERR("Error: Unknown Register");
+                }
             }
             if(const auto r = std::get_if<RegType::Reg>(&insn.ops[1])) {
                 regs.set(*r);
             } else {
                 ERR("Error: Unknown Register");
             }
-		}
-	}
-	return regs;
+        }
+        isFirst = false;
+    }
+    return regs;
 }
 
 size_t _calcUseStack(const Insn& insn) {
-	const auto mnem = insn.mnem;
-	const auto ops = insn.ops;
-	if(mnem == "pop") {
-		return Config::Arch::word();
-	} else if(mnem == "popad") {
-		return Config::Arch::word() * 7;
-	} else if(mnem == "add") {
+    const auto mnem = insn.mnem;
+    const auto ops = insn.ops;
+    if(mnem == "pop") {
+        return Config::Arch::word();
+    } else if(mnem == "popad") {
+        return Config::Arch::word() * 7;
+    } else if(mnem == "add") {
         if(const auto r = std::get_if<RegType::Reg>(&ops[0])) {
             if(*r == RegType::esp || *r == RegType::rsp) {
                 return std::get<uint64_t>(ops[1]);
             }
         }
-	}
-	return 0;
+    }
+    return 0;
 }
 
 size_t Util::calcUseStack(const Insns& insns) {
@@ -303,8 +307,8 @@ RegSet Util::map2Regs(const std::map<RegType::Reg, uint64_t>& m) {
 }
 
 RegSet Util::allRegs() {
-	RegSet s;
-	if(Config::getArch() == Config::Arch::X86) {
+    RegSet s;
+    if(Config::getArch() == Config::Arch::X86) {
         s.set(RegType::eax);
         s.set(RegType::ebx);
         s.set(RegType::ecx);
@@ -312,29 +316,29 @@ RegSet Util::allRegs() {
         s.set(RegType::esi);
         s.set(RegType::edi);
         s.set(RegType::ebp);
-		return s;
-	}
-	if(Config::getArch() == Config::Arch::AMD64) {
-		s.set(RegType::rax);
-		s.set(RegType::rbx);
-		s.set(RegType::rcx);
-		s.set(RegType::rdx);
-		s.set(RegType::rdi);
-		s.set(RegType::rsi);
-		s.set(RegType::rbp);
+        return s;
+    }
+    if(Config::getArch() == Config::Arch::AMD64) {
+        s.set(RegType::rax);
+        s.set(RegType::rbx);
+        s.set(RegType::rcx);
+        s.set(RegType::rdx);
+        s.set(RegType::rdi);
+        s.set(RegType::rsi);
+        s.set(RegType::rbp);
         //TODO Toggle use of rsp, r8 ~ r15 by option
-		// s.set(RegType::rsp);
-		// s.set(RegType::r8);
-		// s.set(RegType::r9);
-		// s.set(RegType::r10);
-		// s.set(RegType::r11);
-		// s.set(RegType::r12);
-		// s.set(RegType::r13);
-		// s.set(RegType::r14);
-		// s.set(RegType::r15);
-		return s;
-	}
-	return RegSet();
+        // s.set(RegType::rsp);
+        // s.set(RegType::r8);
+        // s.set(RegType::r9);
+        // s.set(RegType::r10);
+        // s.set(RegType::r11);
+        // s.set(RegType::r12);
+        // s.set(RegType::r13);
+        // s.set(RegType::r14);
+        // s.set(RegType::r15);
+        return s;
+    }
+    return RegSet();
 }
 
 std::string Util::intToHex(uint64_t v) {
@@ -345,13 +349,13 @@ std::string Util::intToHex(uint64_t v) {
 }
 
 std::string Util::pack(uint64_t v) {
-	std::string ret;
-	const size_t bytes = Config::Arch::word();
-	for(size_t i=bytes; i > 0; i--) {
-		ret += (char)(v & 0xff);
+    std::string ret;
+    const size_t bytes = Config::Arch::word();
+    for(size_t i=bytes; i > 0; i--) {
+        ret += (char)(v & 0xff);
         v >>= 8;
-	}
-	return ret;
+    }
+    return ret;
 }
 
 void Util::resetMemo() {

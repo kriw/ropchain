@@ -29,6 +29,12 @@ BOOST_PYTHON_MODULE(ropchain) {
     def("solve", solveWithFileWrapper);
     def("reset", Util::resetMemo);
     def("solveWithMap", solveWithMapWrapper);
+    def("setArch", Config::setArch);
+    def("getArch", Config::getArch);
+    enum_<Config::Arch::_enum_arch>("Arch")
+        .value("X86", Config::Arch::X86)
+        .value("AMD64", Config::Arch::AMD64)
+        ;
     class_<ROPChain>("ROPChain")
         .def("dump", &ROPChain::dump)
         .def("setBaseAddr", &ROPChain::dump)

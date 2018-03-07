@@ -4,7 +4,7 @@
 #include "solver.h"
 
 //TODO
-OptROP cdeclCall(uint64_t funcAddr, std::vector<uint64_t> args,
+OptROP Builder::cdecl(uint64_t funcAddr, const std::vector<uint64_t>& args,
         const Gadgets& gadgets, uint64_t base, const std::set<char>& avoids) {
     auto rop = ROPChain(funcAddr);
     const size_t remainNum = args.size();
@@ -17,7 +17,7 @@ OptROP cdeclCall(uint64_t funcAddr, std::vector<uint64_t> args,
             [](ROPChain a, uint64_t b) {return a + ROPChain(b);});
 }
 
-OptROP fastCall(uint64_t funcAddr, std::vector<uint64_t> args,
+OptROP Builder::fastcall(uint64_t funcAddr, const std::vector<uint64_t>& args,
         const Gadgets& gadgets, uint64_t base, const std::set<char>& avoids) {
     std::vector<RegType::Reg> argRegs;
     if(Config::getArch() == Config::Arch::X86) {
@@ -53,8 +53,8 @@ OptROP fastCall(uint64_t funcAddr, std::vector<uint64_t> args,
     return rop.value() + ROPChain(funcAddr) + ROPChain(popN.value()) + remainArgs;
 }
 
-OptROP syscall(const std::map<RegType::Reg, uint64_t>& dests,
-        const Gadgets gadgets, uint64_t base, const std::set<char>& avoids) {
+OptROP Builder::syscall(const std::map<RegType::Reg, uint64_t>& dests,
+        const Gadgets& gadgets, uint64_t base, const std::set<char>& avoids) {
     auto rop = Solver::solveWithGadgets(dests, gadgets, base, avoids);
     OptGadget syscall = {};
     if(Config::getArch() == Config::Arch::X86) {

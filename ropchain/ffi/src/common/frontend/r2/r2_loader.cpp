@@ -43,8 +43,11 @@ std::optional<Gadgets> Frontend::R2::from(const std::string& fileName) {
         return {};
     }
     r2p_cmd(r2, "e rop.len = 2");
-    //TODO more gadgets
     auto gadgets = fromCmd(r2, "\"/R/j ret$\"");
+    r2p_cmd(r2, "e rop.len = 3");
+    for(auto&& g : fromCmd(r2, "\"/R/j ret$\"")) {
+        gadgets.push_back(g);
+    }
     std::sort(gadgets.begin(), gadgets.end());
     return gadgets;
 }

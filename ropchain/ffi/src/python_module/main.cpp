@@ -14,7 +14,6 @@ using namespace boost::python;
 ROPChain solveWithFileWrapper(const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
         uint64_t base, const std::vector<char>& _avoids) {
     std::set<char> avoids(_avoids.begin(), _avoids.end());
-    Config::setGadgetLoader(Frontend::RPP::from);
     return Solver::solveWithFile(dests, file, base, avoids).value();
 }
 
@@ -22,8 +21,19 @@ ROPChain solveWithMapWrapper(const std::map<RegType::Reg, uint64_t>& dests,
         const std::map<uint64_t, std::string> insnStr,
         uint64_t base, const std::vector<char>& _avoids) {
     std::set<char> avoids(_avoids.begin(), _avoids.end());
-    Config::setGadgetLoader(Frontend::RPP::from);
     return Solver::solveWithMap(dests, insnStr, base, avoids).value();
+}
+
+enum loader {
+    RPP, R2
+};
+
+void setGadgetLoader(loader l) {
+    if(l == R2) {
+        Config::setGadgetLoader(Frontend::R2::from);
+    } else {
+        Config::setGadgetLoader(Frontend::RPP::from);
+    }
 }
 
 BOOST_PYTHON_MODULE(ropchain) {
@@ -34,6 +44,11 @@ BOOST_PYTHON_MODULE(ropchain) {
     def("getArch", Config::getArch);
     def("cdecl", Builder::cdecl);
     def("fastcall", Builder::fastcall);
+    def("setLoader", setGadgetLoader);
+    enum_<loader>("Loader")
+        .value("R2", R2)
+        .value("RPP", RPP)
+        ;
     enum_<Config::Arch::_enum_arch>("Arch")
         .value("X86", Config::Arch::X86)
         .value("AMD64", Config::Arch::AMD64)

@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 import ropchain
-
+ropchain.setLoader(ropchain.Loader.R2)
 fileName = "/bin/ls"
 base = 0
 dests = ropchain.RegValue()

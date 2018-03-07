@@ -151,6 +151,16 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     return {};
 }
 
+//Find pop N gadget or equivalent one
+OptGadget Util::findByUseStack(const Gadgets& gadgets, const size_t useStack) {
+    for(const auto& gadget : gadgets) {
+        if(gadget.useStack == useStack) {
+            return gadget;
+        }
+    }
+    return {};
+}
+
 RegType::Reg Util::findRegType(RegType::Reg reg) {
     switch(reg) {
         case RegType::rax: case RegType::eax:

@@ -51,6 +51,7 @@ namespace Util {
     OptGadget find(const Gadgets& gadgets, const RegSet& avl, const Mnem& mnem, 
             const std::optional<Operand> op1, const std::optional<Operand> op2,
             const std::optional<Operand> op3);
+    OptGadget findByUseStack(const Gadgets& gadgets, const size_t useStack);
     RegType::Reg findRegType(RegType::Reg reg);
     RegSet listChangedRegs(const Insn& insn);
     RegSet listChangedRegs(const Insns& insns);

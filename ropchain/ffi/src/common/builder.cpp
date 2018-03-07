@@ -17,7 +17,9 @@ OptROP fastCall(uint64_t funcAddr, std::vector<uint64_t> args,
         const Gadgets gadgets, uint64_t base, const std::set<char>& avoids) {
     std::vector<RegType::Reg> argRegs;
     if(Config::getArch() == Config::Arch::X86) {
-        //TODO
+        argRegs = std::vector<RegType::Reg>({
+                RegType::ecx, RegType::edx
+                });
     } else if(Config::getArch() == Config::Arch::AMD64) {
         argRegs = std::vector<RegType::Reg>({
                 RegType::rdi, RegType::rsi, RegType::rdx,
@@ -25,15 +27,20 @@ OptROP fastCall(uint64_t funcAddr, std::vector<uint64_t> args,
                 });
     }
     std::map<RegType::Reg, uint64_t> dests;
-    for(uint32_t i = 0; i < args.size(); i++) {
+    for(uint32_t i = 0; i < args.size() && i < argRegs.size(); i++) {
         dests[argRegs[i]] = args[i];
     }
-    //TODO remain args push to stack
+    auto remainArgs = ROPChain();
+    for(uint32_t i = argRegs.size(); i < args.size(); i++) {
+        remainArgs += ROPChain(args[i]);
+    }
     auto rop = Solver::solveWithGadgets(dests, gadgets, base, avoids);
     if(!rop.has_value()) {
         return {};
     }
-    return rop.value() + ROPChain(funcAddr);
+    //TODO Impl popN gadgets
+    auto popN = ROPChain(0x41414141);
+    return rop.value() + ROPChain(funcAddr) + popN + remainArgs;
 }
 
 OptROP syscall(const std::map<RegType::Reg, uint64_t>& dests,

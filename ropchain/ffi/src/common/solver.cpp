@@ -216,7 +216,7 @@ OptROP Solver::solveAvoidChars(const std::map<RegType::Reg, uint64_t>& dests, co
     };
     auto _gadgets = Gadgets();
     std::copy_if(gadgets.begin(), gadgets.end(), std::back_inserter(_gadgets),
-            [&cond, &base](auto &g) {return cond(g.addr + base);});
+            [&cond, &base](auto &g) {return !g.isUseless && cond(g.addr + base);});
     return _solve(dests, Util::uniqGadgets(_gadgets), base, cond, proc, avoids);
 }
 

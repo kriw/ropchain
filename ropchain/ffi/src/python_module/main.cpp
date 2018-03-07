@@ -7,6 +7,7 @@
 #include "../common/frontend/rp++/rp_loader.h"
 #include "../common/regs.h"
 #include "../common/config.h"
+#include "../common/builder.h"
 
 using namespace boost::python;
 
@@ -31,6 +32,8 @@ BOOST_PYTHON_MODULE(ropchain) {
     def("solveWithMap", solveWithMapWrapper);
     def("setArch", Config::setArch);
     def("getArch", Config::getArch);
+    def("cdecl", Builder::cdecl);
+    def("fastcall", Builder::fastcall);
     enum_<Config::Arch::_enum_arch>("Arch")
         .value("X86", Config::Arch::X86)
         .value("AMD64", Config::Arch::AMD64)

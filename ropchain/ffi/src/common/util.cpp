@@ -151,75 +151,25 @@ OptGadget Util::find(const Gadgets& gadgets, const RegSet& avl,
     return {};
 }
 
-RegType::Reg Util::findRegType(RegType::Reg reg) {
-    switch(reg) {
-        case RegType::rax: case RegType::eax:
-        case RegType::ax: case RegType::ah: case RegType::al:
-            return Config::getArch() == Config::Arch::X86 ? RegType::eax : RegType::rax;
-
-        case RegType::rbx: case RegType::ebx:
-        case RegType::bx: case RegType::bh: case RegType::bl:
-            return Config::getArch() == Config::Arch::X86 ? RegType::ebx : RegType::rbx;
-
-        case RegType::rcx: case RegType::ecx:
-        case RegType::cx: case RegType::ch: case RegType::cl:
-            return Config::getArch() == Config::Arch::X86 ? RegType::ecx : RegType::rcx;
-
-        case RegType::rdx: case RegType::edx:
-        case RegType::dx: case RegType::dh: case RegType::dl:
-            return Config::getArch() == Config::Arch::X86 ? RegType::edx : RegType::rdx;
-
-        case RegType::rdi: case RegType::edi:
-        case RegType::di: case RegType::dil:
-            return Config::getArch() == Config::Arch::X86 ? RegType::edi : RegType::rdi;
-
-        case RegType::rsi: case RegType::esi:
-        case RegType::si: case RegType::sil:
-            return Config::getArch() == Config::Arch::X86 ? RegType::esi : RegType::rsi;
-
-        case RegType::rbp: case RegType::ebp:
-        case RegType::bp: case RegType::bpl:
-            return Config::getArch() == Config::Arch::X86 ? RegType::ebp : RegType::rbp;
-
-        case RegType::rsp: case RegType::esp:
-        case RegType::sp: case RegType::spl:
-            return Config::getArch() == Config::Arch::X86 ? RegType::esp : RegType::rsp;
-
-        case RegType::r8: case RegType::r8d:
-        case RegType::r8w: case RegType::r8b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r8;
-
-        case RegType::r9: case RegType::r9d:
-        case RegType::r9w: case RegType::r9b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r9;
-
-        case RegType::r10: case RegType::r10d:
-        case RegType::r10w: case RegType::r10b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r10;
-
-        case RegType::r11: case RegType::r11d:
-        case RegType::r11w: case RegType::r11b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r11;
-
-        case RegType::r12: case RegType::r12d:
-        case RegType::r12w: case RegType::r12b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r12;
-
-        case RegType::r13: case RegType::r13d:
-        case RegType::r13w: case RegType::r13b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r13;
-
-        case RegType::r14: case RegType::r14d:
-        case RegType::r14w: case RegType::r14b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r14;
-
-        case RegType::r15: case RegType::r15d:
-        case RegType::r15w: case RegType::r15b:
-            return Config::getArch() == Config::Arch::X86 ? RegType::none : RegType::r15;
-
-        default:
-            return RegType::none;
+//Find pop N gadget or equivalent one
+OptGadget Util::findByUseStack(const Gadgets& gadgets, const size_t useStack) {
+    for(const auto& gadget : gadgets) {
+        if(gadget.useStack == useStack) {
+            return gadget;
+        }
     }
+    return {};
+}
+
+RegType::Reg Util::findRegType(const RegType::Reg reg) {
+    if(Config::getArch() == Config::Arch::X86
+            && RegType::x86RegMap.find(reg) != RegType::x86RegMap.end()) {
+        return RegType::x86RegMap.at(reg);
+    } else if(Config::getArch() == Config::Arch::AMD64
+            && RegType::x64RegMap.find(reg) != RegType::x64RegMap.end()) {
+        return RegType::x64RegMap.at(reg);
+    }
+    return RegType::none;
 }
 
 RegSet Util::listChangedRegs(const Insn& insn) {

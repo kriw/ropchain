@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include "../common/regs.h"
 #include "../common/solver.h"
+#include "../common/builder.h"
 #include "../common/config.h"
 #include "../common/frontend/r2/r2_loader.h"
 #include "../common/frontend/rp++/rp_loader.h"
@@ -14,12 +15,13 @@ uint64_t baseAddr = 0;
 bool isDump = false;
 std::map<RegType::Reg, uint64_t> dests;
 std::set<char> avoids;
+auto solver = Solver::solveWithFile;
 
 void parseArgs(int argc, char **argv);
 
 int main(int argc, char **argv) {
     parseArgs(argc, argv);
-    auto rop = Solver::solveWithFile(dests, filename, baseAddr, {});
+    auto rop = solver(dests, filename, baseAddr, {});
     if(!rop.has_value()) {
         std::cerr << "Error" << std::endl;
         exit(1);
@@ -42,6 +44,8 @@ void printUsage() {
         "-g: ROPGadget loader, \"r2\" or \"rpp\"\n"
         "-i: Characters which should be excluded (e.g., -iabc\n"
         "--[reg]: Register value (e.g. --rax=0x1234 --rbx=11\n"
+        "--fast: call function by fastcall\n"
+        "--cdecl: call function by cdeclcall\n"
         << std::endl;
 }
 
@@ -75,7 +79,9 @@ void parseArgs(int argc, char **argv) {
         {"r12", 1, NULL, 'K'},
         {"r13", 1, NULL, 'L'},
         {"r14", 1, NULL, 'M'},
-        {"r15", 1, NULL, 'N'}
+        {"r15", 1, NULL, 'N'},
+        {"fastcall", 1, NULL, 'X'},
+        {"cdecl", 1, NULL, 'Y'},
     };
     int ops_index;
     while(true) {
@@ -209,6 +215,23 @@ void parseArgs(int argc, char **argv) {
                 if(Config::getArch() == Config::Arch::AMD64) {
                     dests[RegType::r15] = fromStr(optarg);
                 }
+                break;
+            case 'X':
+                //fastcall
+                //TODO args
+                // const uint64_t funcAddr = fromStr(optarg);
+                // solver = [&funcAddr](const std::map<RegType::Reg, uint64_t>& dests, const std::string& file,
+                //         uint64_t base, const std::set<char>& avoids) {
+                //     return Builder::fastCall(funcAddr, std::vector<uint64_t>(), dests, file, base, avoids);
+                // };
+                break;
+            case 'Y':
+                //cdecl
+                //TODO args
+                // const uint64_t funcAddr = fromStr(optarg);
+                // solver = [&funcAddr](auto dests, auto file, auto base, auto avoids) {
+                //     return Builder::cdeclCall(funcAddr, std::vector<uint64_t>(), dests, file, base, avoids);
+                // };
                 break;
         }
     }

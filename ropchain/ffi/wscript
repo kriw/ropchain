@@ -51,9 +51,9 @@ def setCommon(ctx):
         print('Building in release mode')
         ctx.env.CXXFLAGS = ['-O3']
     ctx.env.CXXFLAGS += ['-Wall', '-Wextra', '-fPIC', '-std=c++17']
-    ctx.env.headers = map(str, ctx.path.ant_glob('src/common/**/*.h'))
-    ctx.env.headers = list(set(map(lambda x: x[:x.rfind('/')], ctx.env.headers)))
-    ctx.env.common = map(str, ctx.path.ant_glob('src/common/**/*.cpp'))
+    tmp = map(str, ctx.path.ant_glob('src/common/**/*.h'))
+    ctx.env.headers = list(set(map(lambda x: x[:x.rfind('/')], tmp)))
+    ctx.env.common = list(map(str, ctx.path.ant_glob('src/common/**/*.cpp')))
 
 def configure(ctx):
     ctx.load('compiler_cxx boost')

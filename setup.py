@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 import shutil
+import multiprocessing
 
 if sys.platform == 'darwin':
     libName = 'ropchain.dylib'
@@ -15,13 +16,16 @@ else:
 class CustomInstallCommand(install):
 
     def buildFFI(self):
-        libPath = 'ropchain/ffi/build/src/python_module/libropchain*'
-        cmd1 = ['cd', 'ropchain/ffi']
-        cmd2 = ['waf', 'configure', 'build' '--r2', '--rpp', '--exe', '--mod']
+        os.chdir('ropchain/ffi')
+        libPath = 'build/src/python_module/lib%s' % libName
+        cores = multiprocessing.cpu_count()
+        cmd1 = ['pwd']
+        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--r2', '--rpp', '--exe', '--mod']
         cmd3 = ['strip', libPath]
         for cmd in (cmd1, cmd2, cmd3):
             subprocess.Popen(cmd).wait()
-        shutil.move(libPath, 'ropchain/' + libName)
+        os.chdir('../..')
+        shutil.move('ropchain/ffi/%s' % libPath, 'ropchain/%s' % libName)
         shutil.rmtree('ropchain/ffi/')
 
     def run(self):

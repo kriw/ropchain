@@ -1,5 +1,5 @@
 def build(ctx):
-    src = map(ctx.root.find_node, ctx.env.common) + ['main.cpp']
+    src = list(map(ctx.root.find_node, ctx.env.common)) + ['main.cpp']
     ctx.program(
         source=src,
         target='./ropchain',

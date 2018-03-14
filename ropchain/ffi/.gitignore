@@ -1,5 +1,3 @@
-bin/ropchain
-lib/ropchain*
 .waf-*
 .lock-waf*
 cscope.out

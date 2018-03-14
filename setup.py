@@ -15,15 +15,14 @@ else:
 class CustomInstallCommand(install):
 
     def buildFFI(self):
-        libPath = 'ropchain/ffi/lib/' + libName
-        cmd1 = ['make', 'module', 'release', '-C', 'ropchain/ffi']
-        cmd2 = ['strip', libPath]
-        for cmd in (cmd1, cmd2):
+        libPath = 'ropchain/ffi/build/src/python_module/libropchain*'
+        cmd1 = ['cd', 'ropchain/ffi']
+        cmd2 = ['waf', 'configure', 'build' '--r2', '--rpp', '--exe', '--mod']
+        cmd3 = ['strip', libPath]
+        for cmd in (cmd1, cmd2, cmd3):
             subprocess.Popen(cmd).wait()
         shutil.move(libPath, 'ropchain/' + libName)
         shutil.rmtree('ropchain/ffi/')
-
-
 
     def run(self):
         self.buildFFI()
@@ -31,7 +30,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.4',
+        version          = '0.1.5',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

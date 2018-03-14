@@ -31,12 +31,14 @@ def options(ctx):
 def setR2(ctx):
     ctx.check_cfg(package='r_socket')
     ctx.check_cxx(lib='r_socket')
+    #XXX
     ctx.env.CXXFLAGS += ['-I/usr/include/libr']
     ctx.env.LIBS += ['r_socket']
 
 def setPython(ctx):
     ctx.check_cxx(lib=PYTHON)
     ctx.check_boost('python')
+    #XXX
     ctx.env.CXXFLAGS += ['-I/usr/include',
             '-I/usr/include/%s' % PYTHON]
     ctx.env.LIBS += ['boost_python', PYTHON]

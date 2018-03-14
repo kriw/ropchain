@@ -2,7 +2,7 @@ def build(ctx):
     src = map(ctx.root.find_node, ctx.env.common) + ['main.cpp']
     ctx.program(
         source=src,
-        target='./bin/ropchain',
+        target='./ropchain',
         includes=' '.join(ctx.env.headers),
         lib=ctx.env.LIBS
         )

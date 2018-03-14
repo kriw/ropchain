@@ -36,7 +36,7 @@ void setGadgetLoader(loader l) {
     }
 }
 
-BOOST_PYTHON_MODULE(ropchain) {
+BOOST_PYTHON_MODULE(libropchain) {
     def("solve", solveWithFileWrapper);
     def("reset", Util::resetMemo);
     def("solveWithMap", solveWithMapWrapper);

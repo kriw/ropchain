@@ -7,17 +7,17 @@ import shutil
 import multiprocessing
 
 if sys.platform == 'darwin':
-    libName = 'ropchain.dylib'
+    libName = 'libropchain.dylib'
 elif sys.platform in ('win32', 'cygwin'):
-    libName = 'ropchain.dll'
+    libName = 'libropchain.dll'
 else:
-    libName = 'ropchain.so'
+    libName = 'libropchain.so'
 
 class CustomInstallCommand(install):
 
     def buildFFI(self):
         os.chdir('ropchain/ffi')
-        libPath = 'build/src/python_module/lib%s' % libName
+        libPath = 'build/src/python_module/%s' % libName
         cores = multiprocessing.cpu_count()
         cmd1 = ['pwd']
         cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--r2', '--rpp', '--mod']
@@ -33,7 +33,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.6',
+        version          = '0.1.8',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

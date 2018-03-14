@@ -1,28 +1,28 @@
-import ropchain
-rax = ropchain.Regs.rax
-rbx = ropchain.Regs.rbx
-rcx = ropchain.Regs.rcx
-rdx = ropchain.Regs.rdx
-rdi = ropchain.Regs.rdi
-rsi = ropchain.Regs.rsi
-rbp = ropchain.Regs.rbp
-rsp = ropchain.Regs.rsp
-r8 = ropchain.Regs.r8
-r9 = ropchain.Regs.r9
-r10 = ropchain.Regs.r10
-r11 = ropchain.Regs.r11
-r12 = ropchain.Regs.r12
-r13 = ropchain.Regs.r13
-r14 = ropchain.Regs.r14
-r15 = ropchain.Regs.r15
-eax = ropchain.Regs.eax
-ebx = ropchain.Regs.ebx
-ecx = ropchain.Regs.ecx
-edx = ropchain.Regs.edx
-edi = ropchain.Regs.edi
-esi = ropchain.Regs.esi
-ebp = ropchain.Regs.ebp
-esp = ropchain.Regs.esp
+import libropchain
+rax = libropchain.Regs.rax
+rbx = libropchain.Regs.rbx
+rcx = libropchain.Regs.rcx
+rdx = libropchain.Regs.rdx
+rdi = libropchain.Regs.rdi
+rsi = libropchain.Regs.rsi
+rbp = libropchain.Regs.rbp
+rsp = libropchain.Regs.rsp
+r8 = libropchain.Regs.r8
+r9 = libropchain.Regs.r9
+r10 = libropchain.Regs.r10
+r11 = libropchain.Regs.r11
+r12 = libropchain.Regs.r12
+r13 = libropchain.Regs.r13
+r14 = libropchain.Regs.r14
+r15 = libropchain.Regs.r15
+eax = libropchain.Regs.eax
+ebx = libropchain.Regs.ebx
+ecx = libropchain.Regs.ecx
+edx = libropchain.Regs.edx
+edi = libropchain.Regs.edi
+esi = libropchain.Regs.esi
+ebp = libropchain.Regs.ebp
+esp = libropchain.Regs.esp
 
 regDict = {
         'rax': rax,

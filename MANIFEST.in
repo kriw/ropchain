@@ -1,3 +1,4 @@
+include ropchain/libropchain.so
 include ropchain/ffi/waf
 include ropchain/ffi/wscript
 include ropchain/ffi/src/executable/wscript

@@ -33,7 +33,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.9',
+        version          = '0.1.9.1',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

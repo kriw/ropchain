@@ -1,5 +1,5 @@
 from wrapper import solveFromDict
-from ropchain import reset
+from libropchain import reset
 from register import *
 from pwn import asm
 import emulator

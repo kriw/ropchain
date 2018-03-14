@@ -49,7 +49,7 @@ def setCommon(ctx):
         ctx.env.CXXFLAGS = ['-g', '-D_DEBUG']
     else:
         print('Building in release mode')
-        ctx.env.CXXFLAGS = ['-O3']
+        ctx.env.CXXFLAGS = ['-O2']
     ctx.env.CXXFLAGS += ['-Wall', '-Wextra', '-fPIC', '-std=c++17']
     tmp = map(str, ctx.path.ant_glob('src/common/**/*.h'))
     ctx.env.headers = list(set(map(lambda x: x[:x.rfind('/')], tmp)))

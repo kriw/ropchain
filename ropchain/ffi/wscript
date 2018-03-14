@@ -47,7 +47,7 @@ def setCommon(ctx):
     if ctx.options.MODE == 'debug':
         print('Building in debug mode')
         ctx.env.CXXFLAGS = ['-g', '-D_DEBUG']
-    elif ctx.options.MODE == 'release':
+    else ctx.options.MODE == 'release':
         print('Building in release mode')
         ctx.env.CXXFLAGS = ['-O3']
     ctx.env.CXXFLAGS += ['-Wall', '-Wextra', '-fPIC', '-std=c++17']

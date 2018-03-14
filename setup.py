@@ -20,9 +20,8 @@ class CustomInstallCommand(install):
         libPath = 'build/src/python_module/lib%s' % libName
         cores = multiprocessing.cpu_count()
         cmd1 = ['pwd']
-        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--r2', '--rpp', '--exe', '--mod']
-        cmd3 = ['strip', libPath]
-        for cmd in (cmd1, cmd2, cmd3):
+        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--r2', '--rpp', '--mod']
+        for cmd in (cmd1, cmd2):
             subprocess.Popen(cmd).wait()
         os.chdir('../..')
         shutil.move('ropchain/ffi/%s' % libPath, 'ropchain/%s' % libName)
@@ -34,7 +33,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.5',
+        version          = '0.1.6',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

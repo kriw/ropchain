@@ -1,0 +1,68 @@
+import sys
+
+APPNAME = 'ropchain'
+VERSION = '0.1.5'
+srcdir = '.'
+blddir = 'build'
+PYTHON = 'python2.7'
+
+def options(ctx):
+    ctx.load('compiler_cxx boost')
+    ctx.add_option('--mode', action='store',
+            dest='MODE', default="release",
+            help='debug or release')
+
+    ctx.add_option('--mod', action='store_true',
+            dest='MODULE', default=False,
+            help='Build a python library')
+
+    ctx.add_option('--exe', action='store_true',
+            dest='EXE', default=False,
+            help='Build a executable')
+
+    ctx.add_option('--r2', action='store_true',
+            dest='R2', default=False,
+            help='Use radare2 to gather ROPGadget')
+
+    ctx.add_option('--rpp', action='store_true',
+            dest='RPP', default=False,
+            help='Use rp++ to gather ROPGadget')
+
+def setR2(ctx):
+    ctx.check_cfg(package='r_socket')
+    ctx.check_cxx(lib='r_socket')
+    ctx.env.CXXFLAGS += ['-I/usr/include/libr']
+    ctx.env.LIBS += ['r_socket']
+
+def setPython(ctx):
+    ctx.check_cxx(lib=PYTHON)
+    ctx.check_boost('python')
+    ctx.env.CXXFLAGS += ['-I/usr/include',
+            '-I/usr/include/%s' % PYTHON]
+    ctx.env.LIBS += ['boost_python', PYTHON]
+
+def setCommon(ctx):
+    if ctx.options.MODE == 'debug':
+        print('Building in debug mode')
+        ctx.env.CXXFLAGS = ['-g', '-D_DEBUG']
+    elif ctx.options.MODE == 'release':
+        print('Building in release mode')
+        ctx.env.CXXFLAGS = ['-O3']
+    ctx.env.CXXFLAGS += ['-Wall', '-Wextra', '-fPIC', '-std=c++17']
+    ctx.env.headers = map(str, ctx.path.ant_glob('src/common/**/*.h'))
+    ctx.env.headers = list(set(map(lambda x: x[:x.rfind('/')], ctx.env.headers)))
+    ctx.env.common = map(str, ctx.path.ant_glob('src/common/**/*.cpp'))
+
+def configure(ctx):
+    ctx.load('compiler_cxx boost')
+    setCommon(ctx)
+    if ctx.options.MODULE:
+        setPython(ctx)
+    if ctx.options.R2:
+        setR2(ctx)
+
+def build(ctx):
+    if ctx.options.MODULE:
+        ctx.recurse('src/python_module')
+    if ctx.options.EXE:
+        ctx.recurse('src/executable')

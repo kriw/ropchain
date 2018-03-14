@@ -1,0 +1,8 @@
+def build(ctx):
+    src = map(ctx.root.find_node, ctx.env.common) + ['main.cpp']
+    ctx.shlib(
+            source=src,
+            target='./lib/ropchain',
+            includes=' '.join(ctx.env.headers),
+            lib=ctx.env.LIBS
+            )

@@ -6,10 +6,5 @@
 build
 dist
 core
-.syntastic_cpp_config
-cscope.out
 .lvimrc
-ropchain/ffi/bin/ropchain
-ropchain/ffi/lib/ropchain.so
 ropchain.egg-info
-localtest.sh

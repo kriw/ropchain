@@ -42,7 +42,7 @@ ropchain -f /bin/ls -g r2 --rax=0x114514 -d
 
 ```python
 >>> from ropchain import *
->>> ropchain.setArch(ropchain.Arch.AMD64)
+>>> libropchain.setArch(libropchain.Arch.AMD64)
 >>> rop = solve({rax: 0x3b, rbx: 0x4242424242424242}, '/bin/ls', 0, {})
 >>> rop.dump()
 0x413072:        pop, rdi; ret

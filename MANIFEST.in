@@ -1,3 +1,3 @@
 include ropchain/__init__.py
 include ropchain/ropchain.so
-include ropchain/ffi/src/common/frontend/rp++/rp_script.sh
+recursive-include ropchain/ *

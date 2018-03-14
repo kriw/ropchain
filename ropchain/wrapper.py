@@ -1,4 +1,4 @@
-import ropchain
+import libropchain
 from register import *
 
 def toCharVec(s):

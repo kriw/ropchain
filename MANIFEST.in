@@ -1,3 +1,6 @@
-include ropchain/__init__.py
-include ropchain/ropchain.so
-recursive-include ropchain/ *
+include ropchain/ffi/waf
+include ropchain/ffi/wscript
+include ropchain/ffi/src/executable/wscript
+include ropchain/ffi/src/python_module/wscript
+recursive-include ropchain/ *.cpp
+recursive-include ropchain/ *.h

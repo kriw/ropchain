@@ -24,7 +24,7 @@ def options(ctx):
             dest='R2', default=False,
             help='Use radare2 to gather ROPGadget')
 
-    ctx.add_option('--rpp', action='store_true',
+    ctx.add_option('--rp', action='store_true',
             dest='RPP', default=False,
             help='Use rp++ to gather ROPGadget')
 

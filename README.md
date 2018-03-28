@@ -35,7 +35,7 @@ x86, x64 architectures are supported.
 ### Executable
 
 ```sh
-ropchain -f /bin/ls -g r2 --rax=0x114514 -d
+ropchain -f /bin/ls -g r2 --rax=0x114514 -d -a amd64
 ```
 
 ### Python

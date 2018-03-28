@@ -15,13 +15,13 @@ uint64_t baseAddr = 0;
 bool isDump = false;
 std::map<RegType::Reg, uint64_t> dests;
 std::set<char> avoids;
-auto solver = Solver::solveWithFile;
+auto solve = Solver::solveWithFile;
 
 void parseArgs(int argc, char **argv);
 
 int main(int argc, char **argv) {
     parseArgs(argc, argv);
-    auto rop = solver(dests, filename, baseAddr, {});
+    auto rop = solve(dests, filename, baseAddr, avoids);
     if(!rop.has_value()) {
         std::cerr << "Error" << std::endl;
         exit(1);
@@ -41,7 +41,7 @@ void printUsage() {
         "-b: Base address of binary file\n"
         "-d: Dump mode\n"
         "-f: Filename\n"
-        "-g: ROPGadget loader, \"r2\" or \"rpp\"\n"
+        "-g: ROPGadget loader, \"r2\" or \"rp\"\n"
         "-i: Characters which should be excluded (e.g., -iabc\n"
         "--[reg]: Register value (e.g. --rax=0x1234 --rbx=11\n"
         "--fast: call function by fastcall\n"
@@ -125,7 +125,7 @@ void parseArgs(int argc, char **argv) {
             case 'g':
                 if(!strcmp("r2", optarg)) {
                     Config::setGadgetLoader(Frontend::R2::from);
-                } else if(!strcmp("rpp", optarg)) {
+                } else if(!strcmp("rp", optarg)) {
                     Config::setGadgetLoader(Frontend::RPP::from);
                 }
                 break;

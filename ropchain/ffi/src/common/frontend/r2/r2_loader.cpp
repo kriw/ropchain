@@ -56,6 +56,7 @@ std::optional<Gadgets> Frontend::R2::from(const std::string& fileName) {
     return gadgets;
 #else
     UNUSED(fileName);
+    std::cerr << "r2 is not available." << std::endl;
     return {};
 #endif
 }

@@ -6,6 +6,7 @@
 #include "ropchain.h"
 #include "regs.h"
 
+#define UNUSED(x) (void)(x)
 #ifdef _DEBUG
 template<typename T>
 void ERR(T&& x) {
@@ -18,7 +19,6 @@ void ERR(T&& x, S&& ...xs) {
         ERR(std::forward<S>(xs)...);
 }
 #else
-#define UNUSED(x) (void)(x)
 template<typename T, typename ...S>
 void ERR(T&& x, S&& ...xs) {UNUSED(x);};
 #endif

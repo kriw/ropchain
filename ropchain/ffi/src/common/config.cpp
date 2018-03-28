@@ -3,7 +3,11 @@
 
 Config::Loader Config::getGadgetLoader() {
     if(_::gadgetLoader == nullptr) {
+#ifdef _R2
         return Frontend::R2::from;
+#else
+        return Frontend::RPP::from;
+#endif
     }
     return _::gadgetLoader;
 }

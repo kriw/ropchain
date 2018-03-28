@@ -28,11 +28,15 @@ def options(ctx):
             dest='RPP', default=False,
             help='Use rp++ to gather ROPGadget')
 
+#TODO
+# def setRP(ctx):
+#     ctx.env.CXXFLAGS += ['-D_RP']
+
 def setR2(ctx):
     ctx.check_cfg(package='r_socket')
     ctx.check_cxx(lib='r_socket')
     #XXX
-    ctx.env.CXXFLAGS += ['-I/usr/include/libr']
+    ctx.env.CXXFLAGS += ['-I/usr/include/libr', '-D_R2']
     ctx.env.LIBS += ['r_socket']
 
 def setPython(ctx):
@@ -62,6 +66,9 @@ def configure(ctx):
         setPython(ctx)
     if ctx.options.R2:
         setR2(ctx)
+    #TODO
+    # if ctx.options.RP:
+    #     setRP(ctx);
 
 def build(ctx):
     if ctx.options.MODULE:

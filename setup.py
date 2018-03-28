@@ -20,7 +20,7 @@ class CustomInstallCommand(install):
         libPath = 'build/src/python_module/%s' % libName
         cores = multiprocessing.cpu_count()
         cmd1 = ['pwd']
-        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--r2', '--rpp', '--mod']
+        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--rpp', '--mod']
         for cmd in (cmd1, cmd2):
             subprocess.Popen(cmd).wait()
         os.chdir('../..')
@@ -33,7 +33,7 @@ class CustomInstallCommand(install):
  
 setup(
         name             = 'ropchain',
-        version          = '0.1.9.3',
+        version          = '0.1.9.4',
         description      = 'ROPChain generator',
         license          = 'GPL3.0',
         author           = 'kriw',

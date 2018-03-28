@@ -1,9 +1,11 @@
+#include "r2_loader.h"
 #include <cstdio>
 #include <iostream>
 #include <vector>
-#include "r2_loader.h"
+#include "../../util.h"
 #include "../../misc/json.hpp"
 
+#ifdef _R2
 using nlohmann::json;
 
 json r2cmdj(R2Pipe *r2, const std::string& cmd) {
@@ -35,8 +37,10 @@ Gadgets Frontend::R2::fromCmd(R2Pipe *r2, const std::string& cmd) {
     }
     return gadgets;
 }
+#endif
 
 std::optional<Gadgets> Frontend::R2::from(const std::string& fileName) {
+#ifdef _R2
     auto cmd = std::string("r2 -q0 ") + fileName;
     R2Pipe *r2 = r2p_open(cmd.c_str());
     if(r2 == NULL) {
@@ -50,4 +54,8 @@ std::optional<Gadgets> Frontend::R2::from(const std::string& fileName) {
     }
     std::sort(gadgets.begin(), gadgets.end());
     return gadgets;
+#else
+    UNUSED(fileName);
+    return {};
+#endif
 }

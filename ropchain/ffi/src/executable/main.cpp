@@ -236,7 +236,7 @@ void parseArgs(int argc, char **argv) {
         }
     }
     if(filename == "") {
-        eprintf("Usage %s -f filename\n", argv[0]);
+        fprintf(stderr, "Usage %s -f filename\n", argv[0]);
         exit(1);
     }
 }

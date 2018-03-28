@@ -20,7 +20,7 @@ class CustomInstallCommand(install):
         libPath = 'build/src/python_module/%s' % libName
         cores = multiprocessing.cpu_count()
         cmd1 = ['pwd']
-        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--rpp', '--mod']
+        cmd2 = ['./waf', 'configure', 'build', '-j%d' % (2 * cores), '--rp', '--mod']
         for cmd in (cmd1, cmd2):
             subprocess.Popen(cmd).wait()
         os.chdir('../..')

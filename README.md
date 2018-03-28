@@ -30,16 +30,28 @@ x86, x64 architectures are supported.
 * `radare2` (Optional)
 * `rp++`
 
-## Example
+## Usage
+### Executable
 
+```sh
+Usage: ropchain -f <filename> --[reg]=<value>
+-a: Architecture, "x86" or "amd64"
+-b: Base address of binary file
+-d: Dump mode
+-f: Filename
+-g: ROPGadget loader, "r2" or "rpp"
+-i: Characters which should be excluded (e.g., -iabc
+--[reg]: Register value (e.g. --rax=0x1234 --rbx=11
+```
+
+## Example
 ### Executable
 
 ```sh
 ropchain -f /bin/ls -g r2 --rax=0x114514 -d -a amd64
 ```
-
 ### Python
-
+[Examples](./examples) are available.
 ```python
 >>> from ropchain import *
 >>> libropchain.setArch(libropchain.Arch.AMD64)

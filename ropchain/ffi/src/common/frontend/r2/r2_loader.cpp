@@ -21,7 +21,7 @@ json r2cmdj(R2Pipe *r2, const std::string& cmd) {
     return out;
 }
 
-Gadgets Frontend::R2::fromCmd(R2Pipe *r2, const std::string& cmd) {
+Gadgets fromCmd(R2Pipe *r2, const std::string& cmd) {
     auto gadgets = Gadgets();
     const auto outputJson = r2cmdj(r2, cmd);
     for(const auto& g : outputJson) {

@@ -6,7 +6,9 @@
 #include "ropchain.h"
 #include "regs.h"
 
+#ifndef UNUSED
 #define UNUSED(x) (void)(x)
+#endif
 #ifdef _DEBUG
 template<typename T>
 void ERR(T&& x) {

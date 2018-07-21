@@ -1,27 +1,27 @@
 #pragma once
+#include "insn.h"
+#include <cstdio>
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <cstdio>
-#include "insn.h"
 
 struct Gadget {
     Gadget();
-    Gadget(const uint64_t _addr, const std::vector<Insn>& _insns);
+    Gadget(const uint64_t _addr, const std::vector<Insn> &_insns);
     bool isChanged(const RegType::Reg reg) const;
-    bool isAvailable(const RegSet& reg) const;
+    bool isAvailable(const RegSet &reg) const;
     std::string toString() const;
-    Gadget& operator=(const Gadget& gadget);
-    bool operator==(const Gadget& gadget) const;
-    bool operator!=(const Gadget& gadget) const;
-    bool operator<(const Gadget& gadget) const;
+    Gadget &operator=(const Gadget &gadget);
+    bool operator==(const Gadget &gadget) const;
+    bool operator!=(const Gadget &gadget) const;
+    bool operator<(const Gadget &gadget) const;
     const std::vector<Insn> insns;
     const uint64_t addr;
-    //how many byte will be added to esp/rsp
+    // how many byte will be added to esp/rsp
     const uint32_t useStack;
-    //registers which will be changed its value
+    // registers which will be changed its value
     const RegSet changedRegs;
     const size_t hash;
     const bool isUseless;

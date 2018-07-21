@@ -4,7 +4,7 @@
 #endif
 
 namespace Frontend {
-    namespace R2 {
-        std::optional<Gadgets> from(const std::string& fileName);
-    }
+namespace R2 {
+std::optional<Gadgets> from(const std::string &fileName);
 }
+} // namespace Frontend

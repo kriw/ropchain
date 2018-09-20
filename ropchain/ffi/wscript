@@ -16,6 +16,10 @@ def options(ctx):
             dest='MODULE', default=False,
             help='Build a python library')
 
+    ctx.add_option('--r2p', action='store_true',
+            dest='R2P', default=False,
+            help='Build a plugin for radare2')
+
     ctx.add_option('--exe', action='store_true',
             dest='EXE', default=False,
             help='Build a executable')
@@ -36,8 +40,19 @@ def setR2(ctx):
     ctx.check_cfg(package='r_socket')
     ctx.check_cxx(lib='r_socket')
     #XXX
-    ctx.env.CXXFLAGS += ['-I/usr/include/libr', '-D_R2']
+    # ctx.env.CXXFLAGS += ['-I/usr/include/libr', '-D_R2']
+    ctx.env.CXXFLAGS += ['-I/home/kriw/bin/prefix/radare2/include/libr', '-D_R2']
     ctx.env.LIBS += ['r_socket']
+
+def setR2P(ctx):
+    ctx.check_cfg(package='r_core')
+    ctx.check_cxx(lib='r_core')
+    #XXX
+    # ctx.env.CXXFLAGS += ['-I/usr/include/libr', '-D_R2']
+    ctx.env.CXXFLAGS += ['-I/home/kriw/bin/prefix/radare2/include/libr']
+    ctx.env.CFLAGS += ['-I/home/kriw/bin/prefix/radare2/include/libr']
+    ctx.env.LIBS += ['r_core']
+
 
 def setPython(ctx):
     ctx.check_cxx(lib=PYTHON)
@@ -46,6 +61,7 @@ def setPython(ctx):
     ctx.env.CXXFLAGS += ['-I/usr/include',
             '-I/usr/include/%s' % PYTHON]
     ctx.env.LIBS += ['boost_python', PYTHON]
+
 
 def setCommon(ctx):
     if ctx.options.MODE == 'debug':
@@ -64,8 +80,12 @@ def configure(ctx):
     setCommon(ctx)
     if ctx.options.MODULE:
         setPython(ctx)
+
     if ctx.options.R2:
         setR2(ctx)
+
+    if ctx.options.R2P:
+        setR2P(ctx)
     #TODO
     # if ctx.options.RP:
     #     setRP(ctx);
@@ -73,5 +93,9 @@ def configure(ctx):
 def build(ctx):
     if ctx.options.MODULE:
         ctx.recurse('src/python_module')
+
     if ctx.options.EXE:
         ctx.recurse('src/executable')
+
+    if ctx.options.R2P:
+        ctx.recurse('src/r2_plugin')
